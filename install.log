@@ -1,0 +1,35 @@
+# Install Apache
+sudo apt install -y apache2
+sudo apt install -y libapache2-mod-wsgi-py3
+sudo a2enmod wsgi
+
+# configure Apache
+sudo nano /etc/apache2/sites-available/000-default.conf
+## insert apache.conf content
+
+# make VocPrez home dir
+sudo mkdir /var/www/vocprez
+sudo chown -R ubuntu /var/www/vocprez
+
+
+# Get VocPrez
+cd /var/www/vocprez
+git clone https://github.com/RDFLib/VocPrez.git .
+sudo chown -R www-data /var/www/vocprez/vocprez/cache  # so Apache can write cache files
+# configure app.wsgi
+
+# Install Python
+sudo apt install python3-pip
+sudo pip install venv
+python -m venv venv
+source venv/bin/activate
+
+# Install required Python modules
+pip install -r requirements.txt
+
+# Customise
+cd ~
+git clone https://github.com/surroundaustralia/VocPrez-theme-cgi.git 
+# configure VocPrez-theme-cgi/_config/__init__.py
+# configure THIS_DIR & VOCPREZ_HOME in apply.py
+python VocPrez-theme-cgi/apply.py

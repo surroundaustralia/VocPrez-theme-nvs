@@ -1,0 +1,70 @@
+# this is an example custom endpoint from the CGI installation - not for NEVS use
+@app.route("/vocabularies/<string:set_id>/")
+def vocabularies_set(set_id):
+    sets = [
+        "EarthResourceML",
+        "GeoSciML"
+    ]
+    if set_id not in sets:
+        return render_vocprez_response(
+            "The vocab set ID supplied is invalid. It must be one of {}".format(", ".join(sets))
+        )
+
+    page = (
+        int(request.values.get("page")) if request.values.get("page") is not None else 1
+    )
+    per_page = (
+        int(request.values.get("per_page"))
+        if request.values.get("per_page") is not None
+        else 20
+    )
+
+    # get this set's list of vocabs
+    vocabs = []
+    q = """
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        
+        SELECT ?uri ?pl ?prov
+        WHERE {{
+            ?uri a skos:ConceptScheme ;
+                 skos:prefLabel ?pl ;
+                 dcterms:provenance ?prov .
+        
+                FILTER REGEX(?prov, "{}", "i")
+        }}
+        ORDER BY ?pl
+    """.format(set_id)
+
+    desc = ""
+    concept_schemes = sparql_query(
+        q,
+        config.VOCAB_SOURCES["cgi"]["sparql_endpoint"],
+        config.VOCAB_SOURCES["cgi"].get("sparql_username"),
+        config.VOCAB_SOURCES["cgi"].get("sparql_password"),
+    )
+
+    assert concept_schemes is not None, "Unable to query for ConceptSchemes"
+
+    for cs in concept_schemes:
+        vocabs.append((
+            str(url_for("vocabulary", vocab_id=cs["uri"]["value"].split("/")[-1])),
+            str(cs["pl"]["value"])
+        ))
+        desc = str(cs["prov"]["value"])
+
+    start = (page - 1) * per_page
+    end = start + per_page
+    total = len(vocabs)
+    vocabs = vocabs[start:end]
+
+    return ContainerRenderer(
+        request,
+        request.base_url,
+        set_id + ' Vocabularies',
+        desc,
+        None,
+        None,
+        vocabs,
+        total
+    ).render()

@@ -1,0 +1,12 @@
+# JetBrains
+.idea/
+
+# Mac
+.DS_Store
+
+# config
+_config/
+
+
+# Python venv
+venv/
