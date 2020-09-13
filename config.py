@@ -15,7 +15,7 @@ SPARQL_QUERY_LIMIT = 2000  # Maximum number of results to return per SPARQL quer
 MAX_RETRIES = 2
 RETRY_SLEEP_SECONDS = 10
 SPARQL_TIMEOUT = 60
-LOCAL_URLS = False  # Parameter governing whether URLs shown are local or external
+LOCAL_URLS = True  # Parameter governing whether URLs shown are local or external
 
 
 #
