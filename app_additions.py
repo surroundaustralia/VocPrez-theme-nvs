@@ -45,6 +45,8 @@ def nvs_collections():
     end = start + per_page
     members = members[start:end]
 
+    from vocprez.model.nvs_collections import NvsCollectionsRenderer
+
     return NvsCollectionsRenderer(
         request,
         "http://example.com",
