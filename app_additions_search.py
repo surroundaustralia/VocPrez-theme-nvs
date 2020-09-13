@@ -1,6 +1,29 @@
 # ROUTE search
 @app.route("/search")
 def search():
+    searchables = []
+    q = """
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    
+        SELECT ?uri ?pl ?c
+        WHERE {
+            {
+                ?uri a skos:ConceptScheme ;
+                    skos:prefLabel ?pl .
+            }
+            UNION
+            {
+                ?uri a skos:Collection ;
+                    skos:prefLabel ?pl .
+            }
+            
+            ?uri a ?c
+        }
+        ORDER BY ?pl
+        """
+    for r in sparql_query(q):
+        searchables.append((r["uri"]["value"], r["pl"]["value"]))
+
     if request.values.get("search"):
         last_search = request.values.get("search")
         if request.values.get("from") and request.values.get("from") != "all":
@@ -19,6 +42,10 @@ def search():
                     UNION
                     {{
                         <{voc}> skos:hasTopConcept ?uri .
+                    }}
+                    UNION
+                    {{
+                        <{voc}> skos:member ?uri .
                     }}
                 
                     {{  # exact match on a prefLabel always wins
@@ -81,6 +108,10 @@ def search():
                         {{
                             ?voc skos:hasTopConcept ?uri .
                         }}
+                        UNION
+                        {{
+                            ?voc skos:member ?uri .
+                        }}                
                     }}                
                 
                     {{  # exact match on a prefLabel always wins
@@ -138,7 +169,7 @@ def search():
 
         return render_template(
             "search.html",
-            vocabs=[(v.uri, v.title) for k, v in g.VOCABS.items()],
+            vocabs=searchables,
             last_search=last_search,
             selected_vocab=request.values.get("from"),
             results=results
@@ -146,6 +177,6 @@ def search():
     else:
         return render_template(
             "search.html",
-            vocabs=[(v.uri, v.title) for k, v in g.VOCABS.items()]
+            vocabs=searchables
         )
 # END ROUTE search
