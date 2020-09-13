@@ -96,23 +96,21 @@ def search():
 
                 SELECT DISTINCT ?voc ?uri ?pl (SUM(?weight) AS ?wt)
                 WHERE {{
-                    OPTIONAL {{
-                        {{
-                            ?uri skos:inScheme ?voc .
-                        }}
-                        UNION
-                        {{
-                            ?uri skos:topConceptOf ?voc .
-                        }}
-                        UNION
-                        {{
-                            ?voc skos:hasTopConcept ?uri .
-                        }}
-                        UNION
-                        {{
-                            ?voc skos:member ?uri .
-                        }}                
-                    }}                
+                    {{
+                        ?uri skos:inScheme ?voc .
+                    }}
+                    UNION
+                    {{
+                        ?uri skos:topConceptOf ?voc .
+                    }}
+                    UNION
+                    {{
+                        ?voc skos:hasTopConcept ?uri .
+                    }}
+                    UNION
+                    {{
+                        ?voc skos:member ?uri .
+                    }}   
                 
                     {{  # exact match on a prefLabel always wins
                         ?uri a skos:Concept ;
