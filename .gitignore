@@ -10,3 +10,7 @@ _config/
 
 # Python venv
 venv/
+
+
+# Environment Variables
+.ENV
