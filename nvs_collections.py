@@ -5,7 +5,8 @@ from flask_paginate import Pagination
 from rdflib import Graph, Namespace, URIRef, Literal, RDF, RDFS, XSD
 from rdflib.term import Identifier
 import json
-from pyldapi.renderer import Renderer, ContainerRenderer
+from pyldapi.renderer import Renderer
+from pyldapi.renderer_container import ContainerRenderer
 from pyldapi.profile import Profile
 from pyldapi.exceptions import ProfilesMediatypesException, CofCTtlError
 
@@ -45,22 +46,8 @@ class NvsCollectionsRenderer(ContainerRenderer):
 
         return Response(
             render_template(
-                self.members_template or 'members.html',
+                "nvs_collections.html",
                 **_template_context
             ),
-            headers=self.headers
-        )
-
-
-        return Response(
-            json.dumps({
-                'uri': self.instance_uri,
-                'label': self.label,
-                'comment': self.comment,
-                'profiles': list(self.profiles.keys()),
-                'default_profile': self.default_profile_token,
-                'register_items': self.members
-            }),
-            mimetype='application/json',
             headers=self.headers
         )
