@@ -1,0 +1,404 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://goldbook.iupac.org/> a void:dataset .
+
+<http://vocab.nerc.ac.uk#link2_chem_sis_nlm_nih_gov_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://chem.sis.nlm.nih.gov/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "36" .
+
+<http://vocab.nerc.ac.uk#link2_chem_sis_nlm_nih_gov_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://chem.sis.nlm.nih.gov/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2256" .
+
+<http://vocab.nerc.ac.uk#link2_data_ordnancesurvey_co_uk_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://data.ordnancesurvey.co.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "4" .
+
+<http://vocab.nerc.ac.uk#link2_data_ordnancesurvey_co_uk_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://data.ordnancesurvey.co.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "16" .
+
+<http://vocab.nerc.ac.uk#link2_data_ordnancesurvey_co_uk_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://data.ordnancesurvey.co.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "390" .
+
+<http://vocab.nerc.ac.uk#link2_dbpedia_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://dbpedia.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "16" .
+
+<http://vocab.nerc.ac.uk#link2_dbpedia_org_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://dbpedia.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "842" .
+
+<http://vocab.nerc.ac.uk#link2_dbpedia_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://dbpedia.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "82" .
+
+<http://vocab.nerc.ac.uk#link2_environment_data_gov_au_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://environment.data.gov.au/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "162" .
+
+<http://vocab.nerc.ac.uk#link2_environment_data_gov_au_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://environment.data.gov.au/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "440" .
+
+<http://vocab.nerc.ac.uk#link2_gcmdservices_gsfc_nasa_gov_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://gcmdservices.gsfc.nasa.gov/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "24" .
+
+<http://vocab.nerc.ac.uk#link2_gcmdservices_gsfc_nasa_gov_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://gcmdservices.gsfc.nasa.gov/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "150" .
+
+<http://vocab.nerc.ac.uk#link2_gcmdservices_gsfc_nasa_gov_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://gcmdservices.gsfc.nasa.gov/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2968" .
+
+<http://vocab.nerc.ac.uk#link2_helcom_fi_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://helcom.fi/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "792" .
+
+<http://vocab.nerc.ac.uk#link2_lsid_tdwg_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://lsid.tdwg.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "5414" .
+
+<http://vocab.nerc.ac.uk#link2_lsid_tdwg_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://lsid.tdwg.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "8468" .
+
+<http://vocab.nerc.ac.uk#link2_marineregions_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://marineregions.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2" .
+
+<http://vocab.nerc.ac.uk#link2_mmisw_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://mmisw.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "44" .
+
+<http://vocab.nerc.ac.uk#link2_mmisw_org_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://mmisw.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "8" .
+
+<http://vocab.nerc.ac.uk#link2_mmisw_org_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://mmisw.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "28" .
+
+<http://vocab.nerc.ac.uk#link2_mmisw_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://mmisw.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "10012" .
+
+<http://vocab.nerc.ac.uk#link2_onto_nerc_ac_uk_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://onto.nerc.ac.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "10" .
+
+<http://vocab.nerc.ac.uk#link2_onto_nerc_ac_uk_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://onto.nerc.ac.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "14" .
+
+<http://vocab.nerc.ac.uk#link2_onto_nerc_ac_uk_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://onto.nerc.ac.uk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "24" .
+
+<http://vocab.nerc.ac.uk#link2_purl_obolibrary_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.obolibrary.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "146" .
+
+<http://vocab.nerc.ac.uk#link2_purl_obolibrary_org_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.obolibrary.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "14" .
+
+<http://vocab.nerc.ac.uk#link2_purl_obolibrary_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.obolibrary.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "1644" .
+
+<http://vocab.nerc.ac.uk#link2_purl_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "12" .
+
+<http://vocab.nerc.ac.uk#link2_purl_org_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "10" .
+
+<http://vocab.nerc.ac.uk#link2_purl_org_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "14" .
+
+<http://vocab.nerc.ac.uk#link2_purl_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://purl.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "4" .
+
+<http://vocab.nerc.ac.uk#link2_qudt_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://qudt.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "300" .
+
+<http://vocab.nerc.ac.uk#link2_rdfdata_eionet_europa_eu_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://rdfdata.eionet.europa.eu/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "142" .
+
+<http://vocab.nerc.ac.uk#link2_seadatanet_maris2_nl_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://seadatanet.maris2.nl/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "20" .
+
+<http://vocab.nerc.ac.uk#link2_seadatanet_maris2_nl_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://seadatanet.maris2.nl/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2" .
+
+<http://vocab.nerc.ac.uk#link2_sensorml_com_nar> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#narrower> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://sensorml.com/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2" .
+
+<http://vocab.nerc.ac.uk#link2_sensorml_com_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://sensorml.com/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "4" .
+
+<http://vocab.nerc.ac.uk#link2_sws_geonames_org_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://sws.geonames.org/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "252" .
+
+<http://vocab.nerc.ac.uk#link2_vocab_aodn_org_au_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.aodn.org.au/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "2" .
+
+<http://vocab.nerc.ac.uk#link2_vocab_ices_dk_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.ices.dk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "546" .
+
+<http://vocab.nerc.ac.uk#link2_vocab_ices_dk_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.ices.dk/>,
+        <http://vocab.nerc.ac.uk/#> ;
+    void:triples "8" .
+
+<http://vocab.nerc.ac.uk#link2_www_bbc_co_uk_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.nerc.ac.uk/#>,
+        <http://www.bbc.co.uk/> ;
+    void:triples "22" .
+
+<http://vocab.nerc.ac.uk#link2_www_eionet_europa_eu_min> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#related> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.nerc.ac.uk/#>,
+        <http://www.eionet.europa.eu/> ;
+    void:triples "108" .
+
+<http://vocab.nerc.ac.uk#link2_www_marinespecies_org_brd> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2004/02/skos/core#broader> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.nerc.ac.uk/#>,
+        <http://www.marinespecies.org/> ;
+    void:triples "5414" .
+
+<http://vocab.nerc.ac.uk#link2_www_marinespecies_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.nerc.ac.uk/#>,
+        <http://www.marinespecies.org/> ;
+    void:triples "8468" .
+
+<http://vocab.nerc.ac.uk#link2_www_rvinfobase_eurocean_org_syn> a void:Linkset ;
+    void:linkPredicate <http://www.w3.org/2002/07/owl#sameAs> ;
+    void:subset <http://vocab.nerc.ac.uk/#> ;
+    void:target <http://vocab.nerc.ac.uk/#>,
+        <http://www.rvinfobase.eurocean.org/> ;
+    void:triples "116" .
+
+<http://www.nodc.noaa.gov/> a void:dataset .
+
+<http://helcom.fi/> a void:dataset .
+
+<http://marineregions.org/> a void:dataset .
+
+<http://qudt.org/> a void:dataset .
+
+<http://rdfdata.eionet.europa.eu/> a void:dataset .
+
+<http://sws.geonames.org/> a void:dataset .
+
+<http://vocab.aodn.org.au/> a void:dataset .
+
+<http://www.bbc.co.uk/> a void:dataset .
+
+<http://www.eionet.europa.eu/> a void:dataset .
+
+<http://www.rvinfobase.eurocean.org/> a void:dataset .
+
+<http://chem.sis.nlm.nih.gov/> a void:dataset .
+
+<http://environment.data.gov.au/> a void:dataset .
+
+<http://lsid.tdwg.org/> a void:dataset .
+
+<http://seadatanet.maris2.nl/> a void:dataset .
+
+<http://sensorml.com/> a void:dataset .
+
+<http://vocab.ices.dk/> a void:dataset .
+
+<http://www.marinespecies.org/> a void:dataset .
+
+<http://data.ordnancesurvey.co.uk/> a void:dataset .
+
+<http://dbpedia.org/> a void:dataset .
+
+<http://gcmdservices.gsfc.nasa.gov/> a void:dataset .
+
+<http://onto.nerc.ac.uk/> a void:dataset .
+
+<http://purl.obolibrary.org/> a void:dataset .
+
+<http://mmisw.org/> a void:dataset .
+
+<http://purl.org/> a void:dataset .
+
+<http://vocab.nerc.ac.uk/#> a void:Dataset ;
+    dcterms:contributor <http://www.bodc.ac.uk/> ;
+    dcterms:description "Provides standard terms for populating fields in oceanographic and earth science metadata including descriptions of data, platforms, instruments and geographic locations." ;
+    dcterms:publisher <http://www.nerc.ac.uk/> ;
+    dcterms:subject <http://dbpedia.org/resource/Earth_science>,
+        <http://dbpedia.org/resource/Environmental_science>,
+        <http://dbpedia.org/resource/Oceanography> ;
+    dcterms:title "NERC Vocabulary Server" ;
+    void:RootResource <http://vocab.nerc.ac.uk/collection/>,
+        <http://vocab.nerc.ac.uk/scheme/> ;
+    void:TechnicalFeature <http://www.w3.org/ns/formats/RDF_XML> ;
+    void:classes "4" ;
+    void:distinctSubjects "3497783" ;
+    void:entities "2703542" ;
+    void:exampleResource <http://vocab.nerc.ac.uk/collection/P02/>,
+        <http://vocab.nerc.ac.uk/collection/P02/current/PSAL/>,
+        <http://vocab.nerc.ac.uk/scheme/SDNDEV/> ;
+    void:sparqlEndpoint <http://vocab.nerc.ac.uk/sparql/> ;
+    void:triples "23105344" ;
+    void:uriSpace "http://vocab.nerc.ac.uk/" ;
+    void:vocabulary <http://purl.org/dc/elements/1.1/>,
+        <http://www.w3.org/2002/07/owl#>,
+        <http://www.w3.org/2004/02/skos/core#> ;
+    foaf:homepage <http://vocab.nerc.ac.uk/> .

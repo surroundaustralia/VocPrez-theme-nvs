@@ -1,0 +1,38 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://vocab.nerc.ac.uk/collection/A03/current/Jurisdictions/> a skos:Concept ;
+    dc:identifier "SDN:A03::Jurisdictions" ;
+    dcterms:date "2011-08-19 11:46:42.0" ;
+    dcterms:identifier "SDN:A03::Jurisdictions" ;
+    pav:authoredOn "2011-08-19 11:46:42.0" ;
+    pav:hasCurrentVersion <http://vocab.nerc.ac.uk/collection/A03/current/Jurisdictions/1/> ;
+    pav:version "1" ;
+    void:inDataset <http://vocab.nerc.ac.uk/.well-known/void> ;
+    owl:deprecated "false" ;
+    owl:versionInfo "1" ;
+    skos:altLabel "" ;
+    skos:broader <http://vocab.nerc.ac.uk/collection/A03/current/Boundaries/> ;
+    skos:broaderTransitive <http://vocab.nerc.ac.uk/collection/A03/current/Boundaries/> ;
+    skos:definition "" ;
+    skos:inScheme <http://vocab.nerc.ac.uk/scheme/ICANCOERO/current/>,
+        <http://vocab.nerc.ac.uk/scheme/OCACETHES/current/> ;
+    skos:narrower <http://vocab.nerc.ac.uk/collection/A02/current/CityLimits/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/Counties/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/Reservations/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/StateLines/> ;
+    skos:narrowerTransitive <http://vocab.nerc.ac.uk/collection/A02/current/CityLimits/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/Counties/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/Reservations/>,
+        <http://vocab.nerc.ac.uk/collection/A02/current/StateLines/> ;
+    skos:notation "SDN:A03::Jurisdictions" ;
+    skos:note "accepted"@en ;
+    skos:prefLabel "Jurisdictions"@en .

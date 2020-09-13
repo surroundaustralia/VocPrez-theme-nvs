@@ -1,0 +1,219 @@
+# get all CSes
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?uri ?pl
+WHERE {
+    ?uri a skos:ConceptScheme ;
+         skos:prefLabel ?pl 
+}
+ORDER BY ?pl
+
+
+# get all Collections
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?uri ?pl
+WHERE {
+    ?uri a skos:Collection ;
+         skos:prefLabel ?pl 
+}
+ORDER BY ?pl
+
+# get all CSes & Collections
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?uri ?pl
+WHERE {
+    {
+        ?uri a skos:ConceptScheme ;
+            skos:prefLabel ?pl .
+    }
+    UNION
+    {
+        ?uri a skos:Collection ;
+            skos:prefLabel ?pl .
+    }
+}
+ORDER BY ?pl
+
+
+# search for a Concept within a vocab (CS - INSPIRE Themese)
+<http://vocab.nerc.ac.uk/scheme/INSPIRE_THEMES/current/>
+
+
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?uri ?pl (SUM(?weight) AS ?wt)
+WHERE {
+    {
+        ?uri skos:inScheme <http://vocab.nerc.ac.uk/scheme/INSPIRE_THEMES/current/> .
+    }
+    UNION
+    {
+        ?uri skos:topConceptOf <http://vocab.nerc.ac.uk/scheme/INSPIRE_THEMES/current/> .
+    }
+    UNION
+    {
+        <http://vocab.nerc.ac.uk/scheme/INSPIRE_THEMES/current/> skos:hasTopConcept ?uri .
+    }
+
+    {  # exact match on a prefLabel always wins
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (50 AS ?weight)
+        FILTER REGEX(?pl, "^Soil$", "i")
+    }
+    UNION    
+    {
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (10 AS ?weight)
+        FILTER REGEX(?pl, "Soil", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:altLabel ?al ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?al, "Soil", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:hiddenLabel ?hl ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?hl, "Soil", "i")
+    }      
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:definition ?d ;
+                skos:prefLabel ?pl .
+        BIND (1 AS ?weight)
+        FILTER REGEX(?d, "Soil", "i")
+    }
+}
+GROUP BY ?uri ?pl
+ORDER BY DESC(?wt)
+
+
+
+<http://vocab.nerc.ac.uk/scheme/ICANCOERO/current/>
+
+
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?uri ?pl (SUM(?weight) AS ?wt)
+WHERE {
+    {
+        ?uri skos:inScheme <http://vocab.nerc.ac.uk/scheme/ICANCOERO/current/> .
+    }
+    UNION
+    {
+        ?uri skos:topConceptOf <http://vocab.nerc.ac.uk/scheme/ICANCOERO/current/> .
+    }
+    UNION
+    {
+        <http://vocab.nerc.ac.uk/scheme/ICANCOERO/current/> skos:hasTopConcept ?uri .
+    }
+
+    {  # exact match on a prefLabel always wins
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (50 AS ?weight)
+        FILTER REGEX(?pl, "^Juris$", "i")
+    }
+    UNION    
+    {
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (10 AS ?weight)
+        FILTER REGEX(?pl, "Juris", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:altLabel ?al ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?al, "Juris", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:hiddenLabel ?hl ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?hl, "Juris", "i")
+    }      
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:definition ?d ;
+                skos:prefLabel ?pl .
+        BIND (1 AS ?weight)
+        FILTER REGEX(?d, "Juris", "i")
+    }
+}
+GROUP BY ?uri ?pl
+ORDER BY DESC(?wt)
+
+
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?uri ?pl (SUM(?weight) AS ?wt)
+WHERE {
+    {
+        ?uri skos:inScheme <{voc}> .
+    }
+    UNION
+    {
+        ?uri skos:topConceptOf <{voc}> .
+    }
+    UNION
+    {
+        <{voc}> skos:hasTopConcept ?uri .
+    }
+
+    {  # exact match on a prefLabel always wins
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (50 AS ?weight)
+        FILTER REGEX(?pl, "^{input}$", "i")
+    }
+    UNION    
+    {
+        ?uri a skos:Concept ;
+                skos:prefLabel ?pl .
+        BIND (10 AS ?weight)
+        FILTER REGEX(?pl, "{input}", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:altLabel ?al ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?al, "{input}", "i")
+    }
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:hiddenLabel ?hl ;
+                skos:prefLabel ?pl .
+        BIND (5 AS ?weight)
+        FILTER REGEX(?hl, "{input}", "i")
+    }      
+    UNION
+    {
+        ?uri a skos:Concept ;
+                skos:definition ?d ;
+                skos:prefLabel ?pl .
+        BIND (1 AS ?weight)
+        FILTER REGEX(?d, "{input}", "i")
+    }
+}
+GROUP BY ?uri ?pl
+ORDER BY DESC(?wt)
