@@ -30,6 +30,7 @@ class VocabSource:
     RVA = "RVA"
     VOCBENCH = "VOCBENCH"
     GITHUB = "GITHUB"
+    NvsSPARQL = "NvsSPARQL"
 
 # Main cache (SPARQL DB) variables
 # BEGIN Instance Vars
@@ -43,7 +44,7 @@ SOURCE_NAME = "cgi"
 VOCAB_SOURCES = {
     # example SPARQL source configured using varaibles in "Instance Vars" above
     SOURCE_NAME: {
-        "source": VocabSource.SPARQL,
+        "source": VocabSource.NvsSPARQL,
         "sparql_endpoint": SPARQL_ENDPOINT,
         "sparql_username": SPARQL_USERNAME,
         "sparql_password": SPARQL_PASSWORD,
