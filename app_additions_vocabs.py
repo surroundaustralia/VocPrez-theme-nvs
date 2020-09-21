@@ -1,6 +1,6 @@
 # ROUTE vocabs
 @app.route("/vocab/")
-def vocabularies(t=None):
+def vocabularies(t=None, uri=None, label=None, comment=None):
     page = (
         int(request.values.get("page")) if request.values.get("page") is not None else 1
     )
@@ -49,9 +49,9 @@ def vocabularies(t=None):
 
     return ContainerRenderer(
         request,
-        config.VOCS_URI if hasattr(config, "VOCS_URI") else url_for("vocabularies"),
-        config.VOCS_TITLE if hasattr(config, "VOCS_TITLE") else 'Vocabularies',
-        config.VOCS_DESC if hasattr(config, "VOCS_DESC") else None,
+        uri if uri is not None else config.VOCS_URI,
+        label if label is not None else config.VOCS_TITLE,
+        comment if comment is not None else config.VOCS_DESC,
         None,
         None,
         voc_objects,
@@ -61,10 +61,12 @@ def vocabularies(t=None):
 
 @app.route("/collection/")
 def collections():
-    return vocabularies(t="Collection")
+    return vocabularies(t="Collection", uri="https://vocab.nerc.ac.uk/collection/", label="NVS Collections",
+                        comment="SKOS Collections managed by the NERC Vocabulary Server")
 
 
-@app.route("/conceptscheme/")
+@app.route("/scheme/")
 def conceptschemes():
-    return vocabularies(t="ConceptScheme")
+    return vocabularies(t="ConceptScheme", uri="https://vocab.nerc.ac.uk/scheme/", label="NVS Concept Schemes",
+                        comment="SKOS Concept Schemes managed by the NERC Vocabulary Server")
 # END ROUTE vocabs

@@ -53,7 +53,7 @@ VOCAB_SOURCES = {
 
 # Details for the main vocabulary list. Can be overriden in the vocabularies.html template
 # BEGIN Vocabs list info
+VOCS_URI = "https://vocab.nerc.ac.uk/"
 VOCS_TITLE = "NVS Vocabularies"
-VOCS_URI = "http://vocab.nerc.ac.uk/scheme/"
 VOCS_DESC = "Vocabularies managed by the National Vocabulary System (NVS)"
 # END Vocabs list info
