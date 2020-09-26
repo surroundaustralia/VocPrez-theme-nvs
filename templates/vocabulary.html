@@ -51,6 +51,16 @@
           </td>
         </tr>
         {% endif -%}
+        {% if vocab.other_properties is not none %}
+          {% for prop in vocab.other_properties %}
+            <tr>
+              <th><a href="{{ prop.url }}">{{ prop.label }}</a>:</th>
+              <td>
+                {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
         {% if vocab.collections == "Collection" %}
           <tr>
             <th><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>

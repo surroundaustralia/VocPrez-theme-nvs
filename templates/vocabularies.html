@@ -1,0 +1,175 @@
+{% extends "page.html" %}
+
+{% block content %}
+    <div style="display:grid; grid-template-rows: 50px auto auto auto; grid-template-columns: 70% auto;">
+        <div style="grid-column: 1; grid-row: 1;">
+            <h1>{{ label }}</h1>
+        </div>
+        <div style="grid-column: 2; grid-row: 1;">
+            <div id="altprofiles">
+              <h4>Alternates Profiles</h4>
+              <p>Different views of and formats:</p>
+              <p>
+                <a href="{{ url_for('vocabularies') }}?_profile=alt">Alternate Profiles</a>
+                <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
+              </p>
+            </div>
+        </div>
+        <div style="grid-column: 1; grid-row: 2;">
+            <dl>
+              <dt>URI</dt>
+              <dd><strong><a href="{{ uri }}">{{ uri }}</a></strong></dd>
+              {% if comment is not none %}
+              <dt>Description</dt>
+              <dd>{{ comment|safe }}</dd>
+              {% endif %}
+              {% if parent_container_uri is not none %}
+              <dt>Parent Container</dt>
+              {% if parent_container_label is not none %}
+              <dd><a href="{{ parent_container_uri }}">{{ parent_container_uri }}</a></dd>
+              {% else %}
+              <dd><a href="{{ parent_container_uri }}">{{ parent_container_label }}</a></dd>
+              {% endif %}
+              {% endif %}
+            </dl>
+        </div>
+        <div style="grid-column: 1; grid-row: 3;">
+            <h3>Members</h3>
+            <!--
+            ID i.e. identifier for the collection displayed with hyperlink to its URI
+            Title=preflabel (skos:prefLabel)
+            Version number (owl:versionInfo)
+            Version date (dc:date)
+            Description (dc:description)
+            Governance (dc:creator)
+            External link (rdfs:seeAlso rdf:resource)
+            -->
+            <!--
+            @prefix dcterms: <http://purl.org/dc/terms/> .
+            @prefix ns1: <http://www.isotc211.org/schemas/grg/> .
+            @prefix owl: <http://www.w3.org/2002/07/owl#> .
+            @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+            @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+            @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+            @prefix xml: <http://www.w3.org/XML/1998/namespace> .
+            @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+            <http://vocab.nerc.ac.uk/collection/R19/current/> a skos:Collection ;
+                dcterms:alternative "STATUS" ;
+                dcterms:creator "Argo Data Management Team" ;
+                dcterms:date "2020-05-04 03:00:04.0" ;
+                dcterms:description "Flag scale for values in all _STATUS fields" ;
+                dcterms:publisher "Natural Environment Research Council" ;
+                dcterms:title "Argo STATUS flags" ;
+                ns1:RE_RegisterManager "British Oceanographic Data Centre" ;
+                ns1:RE_RegisterOwner "Argo Data Management Team" ;
+                rdfs:comment "Governance for vocabularies used in the Argo data system, published and maintained by the Argo Data Management Team (ADMT) and hosted on the NERC Vocabulary Server." ;
+                owl:versionInfo "1" ;
+                skos:altLabel "STATUS" ;
+                skos:member <http://vocab.nerc.ac.uk/collection/R19/current/0/>,
+                    <http://vocab.nerc.ac.uk/collection/R19/current/1/>,
+                    <http://vocab.nerc.ac.uk/collection/R19/current/2/>,
+                    <http://vocab.nerc.ac.uk/collection/R19/current/3/>,
+                    <http://vocab.nerc.ac.uk/collection/R19/current/4/>,
+                    <http://vocab.nerc.ac.uk/collection/R19/current/9/> ;
+                skos:prefLabel "Argo STATUS flags" .
+            -->
+            <style>
+              table.vocs {
+                border-collapse: collapse;
+                border: none;
+              }
+              table.vocs tr:nth-child(even) {
+                  background-color: lightgrey;
+              }
+              table.vocs th,
+              table.vocs td {
+                  padding: 3px;
+              }
+            </style>
+            <table class="vocs">
+            <tr>
+              <td>ID</td>
+              <td>Title</td>
+              <td>Version No.</td>
+              <td>Version Date</td>
+              <td>Description</td>
+              <td>Governance</td>
+              <td>External Link</td>
+            </tr>
+            {%- for (url, vocab) in members -%}
+            <tr>
+              <td><a href="{{ url }}">{{ vocab.uri.replace('http://vocab.nerc.ac.uk/collection/', '').replace('http://vocab.nerc.ac.uk/scheme/', '').replace('/current/', '') }}</a></td>
+              <td>{{ vocab.title }}</td>
+              <td>{{ vocab.versionInfo }}</td>
+              <td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
+              <td>{{ vocab.description }}</td>
+              <td>{{ vocab.creator }}</td>
+              <td>
+              {% for prop in vocab.other_properties %}
+                {% if prop.label == "See Also" %}
+                  <a href="{{ prop.value }}">{{ prop.value }}</a><br />
+                {% else %}
+                {% endif %}
+              {% endfor %}
+              </td>
+            </tr>
+            {%- endfor -%}
+            </table>
+        </div>
+        <div style="grid-column: 2; grid-row: 3;">
+          <div id="filter">
+            <h4>Filter</h4>
+            <form method="get" action="{{ url_for('vocabularies') }}">
+              <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
+              <button>Filter</button>
+              <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
+            </form>
+            <form method="get" action="{{ url_for('vocabularies') }}">
+              <button>Clear</button>
+            </form>
+          </div>
+        </div>
+        <div style="grid-column: 1; grid-row: 4;">
+          {{ pagination.links }}
+          <div class="autopaginationinfo">
+          <div><h4>Automated Pagination&nbsp;<span id="collapsible-toggle" class="collapsible" style="font-size: 14px;">(more)</span></h4></div>
+          <div id="content-pagination" class="collapsible-content">
+            <p>To page through these items, use query string arguments 'page' and 'per_page'.</p>
+            <p>HTTP <code>Link</code> headers of <code>first</code>, <code>prev</code>, <code>next</code> &amp; <code>last</code> are given in web responses.</p>
+                <p>Example: assuming 500 items, page 7, of 50 per page, is given by:</p>
+                <pre>{{ request.url }}?page=7&amp;per_page=50</pre>
+                <p>Link header with a response assuming 500 items would be:</p>
+                <pre>Link:   &lt;{{ request.url }}?per_page=500&gt; rel="first",
+&lt;{{ request.url }}?per_page=500&amp;page=6&gt; rel="prev",
+&lt;{{ request.url }}?per_page=500&amp;page=8&gt; rel="next",
+&lt;{{ request.url }}?per_page=500&amp;page=10&gt; rel="last"
+                </pre>
+                <p>If you want to page through the whole collection, start at <code>first</code> and follow link headers until you reach <code>last</code> or until no <code>last</code> is given. You shouldn't try to calculate each <code>page</code> query string argument yourself.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var coll = document.getElementById("collapsible-toggle");
+
+        coll.addEventListener("click", function() {
+            var content = document.getElementById("content-pagination");
+            if (content.style.display === "inline") {
+              content.style.display = "none";
+              document.getElementsByClassName("collapsible")[0].innerHTML = "(more)";
+            } else {
+              content.style.display = "inline";
+              document.getElementsByClassName("collapsible")[0].innerHTML = "(less)";
+            }
+        });
+
+        let cards = document.getElementsByClassName("card")
+        let i;
+        for (i = 0; i < cards.length; i++) {
+            if (cards[i].children[1].children[0] === undefined) {
+                cards[i].children[1].innerHTML = "<em>No metadata found.</em>";
+            }
+        }
+    </script>
+{% endblock %}

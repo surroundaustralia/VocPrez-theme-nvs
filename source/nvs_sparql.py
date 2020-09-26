@@ -3,9 +3,10 @@ import dateutil.parser
 from flask import g
 import vocprez.source.utils
 from vocprez import _config as config
-from vocprez.model.vocabulary import Vocabulary
+from vocprez.model.vocabulary import Vocabulary, Property
 from ._source import Source
 from .utils import sparql_query
+from rdflib import Literal, URIRef
 
 
 class NvsSPARQL(Source):
@@ -50,12 +51,18 @@ class NvsSPARQL(Source):
                     FILTER(lang(?title) = "{language}" || lang(?title) = "") }}
                 OPTIONAL {{ ?cs dcterms:created ?created }}
                 OPTIONAL {{ ?cs dcterms:issued ?issued }}
-                OPTIONAL {{ ?cs dcterms:modified ?modified }}
+                OPTIONAL {{ ?cs dcterms:date ?modified }}
                 OPTIONAL {{ ?cs dcterms:creator ?creator }}
                 OPTIONAL {{ ?cs dcterms:publisher ?publisher }}
                 OPTIONAL {{ ?cs owl:versionInfo ?version }}
-                OPTIONAL {{ ?cs skos:definition ?description .
-                    FILTER(lang(?description) = "{language}" || lang(?description) = "") }}
+                OPTIONAL {{ ?cs dcterms:description ?description .
+                    FILTER(lang(?description) = "{language}" || lang(?description) = "") }}   
+                # NVS special properties                 
+                OPTIONAL {{
+                    ?cs <http://www.isotc211.org/schemas/grg/RE_RegisterManager> ?registermanager .
+                    ?cs <http://www.isotc211.org/schemas/grg/RE_RegisterOwner> ?registerowner .
+                }}                
+                OPTIONAL {{ ?cs rdfs:seeAlso ?seeAlso }}                
             }} 
             ORDER BY ?title
             """.format(language=config.DEFAULT_LANGUAGE)
@@ -71,6 +78,44 @@ class NvsSPARQL(Source):
         sparql_vocabs = {}
         for cs in concept_schemes:
             vocab_id = cs["cs"]["value"]
+
+            other_properties = []
+            other_properties.append(
+                Property(
+                    "http://purl.org/dc/terms/identifier",
+                    "Identifier",
+                    Literal(
+                        cs["cs"]["value"]
+                            .replace("http://vocab.nerc.ac.uk/collection/", "")
+                            .replace("http://vocab.nerc.ac.uk/scheme/", "")
+                            .replace("/current/", "")
+                    )
+                )
+            )
+            if cs.get("registermanager") is not None:
+                other_properties.append(
+                    Property(
+                        "http://www.isotc211.org/schemas/grg/RE_RegisterManager",
+                        "Register Manager",
+                        Literal(cs["registermanager"]["value"])
+                    )
+                )
+            if cs.get("registerowner") is not None:
+                other_properties.append(
+                    Property(
+                        "http://www.isotc211.org/schemas/grg/RE_RegisterOwner",
+                        "Register Owner",
+                        Literal(cs["registerowner"]["value"])
+                    )
+                )
+            if cs.get("seeAlso") is not None:
+                other_properties.append(
+                    Property(
+                        "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                        "See Also",
+                        URIRef(cs["seeAlso"]["value"])
+                    )
+                )
 
             sparql_vocabs[vocab_id] = Vocabulary(
                 cs["cs"]["value"],
@@ -88,6 +133,7 @@ class NvsSPARQL(Source):
                 sparql_endpoint=details["sparql_endpoint"],
                 sparql_username=details.get("sparql_username"),
                 sparql_password=details.get("sparql_password"),
+                other_properties=other_properties
             )
         g.VOCABS = {**g.VOCABS, **sparql_vocabs}
         logging.debug("SPARQL collect() complete.")

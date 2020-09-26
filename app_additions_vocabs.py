@@ -18,18 +18,12 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     elif t == "ConceptScheme":
         vocabs = [v for v in vocabs if g.VOCABS[v].collections == "ConceptScheme"]
 
-    voc_objects = []
-    for v in vocabs:
-        k = v
-        voc = g.VOCABS[k]
-        # respond to a filter
-        if request.values.get("filter") is not None:
-            if request.values.get("filter").lower() in voc.title.lower():
-                voc_objects.append((url_for("object", uri=k), voc.title))
-        else:
-            # no filter: list all
-            voc_objects.append((url_for("object", uri=k), voc.title))
-    voc_objects.sort(key=lambda tup: tup[1])
+    # respond to a filter
+    if request.values.get("filter") is not None:
+        vocabs = [v for v in vocabs if request.values.get("filter").lower() in g.VOCABS[v].title.lower()]
+
+    vocabs = [(url_for("object", uri=v), g.VOCABS[v]) for v in vocabs]
+    # voc_objects.sort(key=lambda tup: tup[1])
     total = len(vocabs)
     #
     # # Search
@@ -45,7 +39,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     # # generate vocabs list for requested page and per_page
     start = (page - 1) * per_page
     end = start + per_page
-    voc_objects = voc_objects[start:end]
+    vocabs = vocabs[start:end]
 
     return ContainerRenderer(
         request,
@@ -54,8 +48,9 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
         comment if comment is not None else config.VOCS_DESC,
         None,
         None,
-        voc_objects,
-        total
+        vocabs,
+        total,
+        register_template="vocabularies.html"
     ).render()
 
 

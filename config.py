@@ -42,7 +42,7 @@ SOURCE_NAME = "cgi"
 # END Instance Vars
 
 VOCAB_SOURCES = {
-    # example SPARQL source configured using varaibles in "Instance Vars" above
+    # example SPARQL source configured using variables in "Instance Vars" above
     SOURCE_NAME: {
         "source": VocabSource.NvsSPARQL,
         "sparql_endpoint": SPARQL_ENDPOINT,
@@ -51,7 +51,7 @@ VOCAB_SOURCES = {
     },
 }
 
-# Details for the main vocabulary list. Can be overriden in the vocabularies.html template
+# Details for the main vocabulary list. Can be overridden in the vocabularies.html template
 # BEGIN Vocabs list info
 VOCS_URI = "https://vocab.nerc.ac.uk/"
 VOCS_TITLE = "NVS Vocabularies"
