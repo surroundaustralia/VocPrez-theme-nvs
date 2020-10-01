@@ -31,7 +31,4 @@ mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source
 
-echo "WSGI config"
-cp $VP_THEME_HOME/app.wsgi $VP_HOME/app.wsgi
-
 echo "customisation done"
