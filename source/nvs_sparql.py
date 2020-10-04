@@ -4,9 +4,9 @@ from flask import g
 import vocprez.source.utils
 from vocprez import _config as config
 from vocprez.model.vocabulary import Vocabulary
-from ..model.property import Property
-from ._source import Source
-from .utils import sparql_query
+from vocprez.model.property import Property
+from vocprez.source._source import Source
+from vocprez.source.utils import sparql_query
 from rdflib import Literal, URIRef
 
 
