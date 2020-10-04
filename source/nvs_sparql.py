@@ -3,7 +3,8 @@ import dateutil.parser
 from flask import g
 import vocprez.source.utils
 from vocprez import _config as config
-from vocprez.model.vocabulary import Vocabulary, Property
+from vocprez.model.vocabulary import Vocabulary
+from ..model.property import Property
 from ._source import Source
 from .utils import sparql_query
 from rdflib import Literal, URIRef
@@ -164,14 +165,12 @@ class NvsSPARQL(Source):
         :return:
         :rtype:
         """
-        vocab = g.VOCABS[self.vocab_uri]
-
         # is this a Concept Scheme or a Collection?
-        if vocab.collections == "ConceptScheme":
-            vocab.concept_hierarchy = self.get_concept_hierarchy()
-            vocab.concepts = self.list_concepts()
-            vocab.collections = self.list_collections()
+        if g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
+            g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts()
+            g.VOCABS[self.vocab_uri].collections = self.list_collections()
         else:  # vocab.collection == "Collection":
-            vocab.concepts = self.list_concepts_for_a_collection()
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection()
 
-        return vocab
+        return g.VOCABS[self.vocab_uri]

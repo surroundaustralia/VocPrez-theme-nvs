@@ -1,15 +1,12 @@
 from os import path
-from os import environ
 
 APP_DIR = path.dirname(path.dirname(path.realpath(__file__)))
 SKIN_DIR = path.join(APP_DIR, "view")
 TEMPLATES_DIR = path.join(SKIN_DIR, "templates")
 STATIC_DIR = path.join(SKIN_DIR, "style")
 LOGFILE = APP_DIR + "/flask.log"
-VOCAB_CACHE_DIR = path.join(APP_DIR, "cache")
-VOCAB_CACHE_HOURS = (
-    1  # Number of hours before cache is replaced (set to zero to always replace)
-)
+CACHE_FILE = path.join(APP_DIR, "cache", "DATA.p")
+CACHE_HOURS = 1
 DEFAULT_LANGUAGE = "en"
 SPARQL_QUERY_LIMIT = 2000  # Maximum number of results to return per SPARQL query
 MAX_RETRIES = 2
@@ -41,7 +38,7 @@ SPARQL_PASSWORD = ""
 SOURCE_NAME = "cgi"
 # END Instance Vars
 
-VOCAB_SOURCES = {
+DATA_SOURCES = {
     # example SPARQL source configured using variables in "Instance Vars" above
     SOURCE_NAME: {
         "source": VocabSource.NvsSPARQL,
