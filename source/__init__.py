@@ -1,11 +1,4 @@
-from vocprez.source._source import Source
-from vocprez.source.file import File
-from vocprez.source.sparql import SPARQL
-from vocprez.source.nvs_sparql import NvsSPARQL
-
-__all__ = [
-    "Source",
-    "File",
-    "SPARQL",
-    "NvsSPARQL"
-]
+from vocprez.source._source import *
+from vocprez.source.file import *
+from vocprez.source.sparql import *
+from vocprez.source.nvs_sparql import *
