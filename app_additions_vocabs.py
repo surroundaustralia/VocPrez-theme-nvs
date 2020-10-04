@@ -20,7 +20,12 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
 
     # respond to a filter
     if request.values.get("filter") is not None:
-        vocabs = [v for v in vocabs if request.values.get("filter").lower() in g.VOCABS[v].title.lower()]
+        vocabs = [
+            v for v in vocabs
+            if request.values.get("filter").lower() in g.VOCABS[v].id.lower()
+               or request.values.get("filter").lower() in g.VOCABS[v].title.lower()
+               or request.values.get("filter").lower() in g.VOCABS[v].description.lower()
+        ]
 
     vocabs = [(url_for("object", uri=v), g.VOCABS[v]) for v in vocabs]
     # voc_objects.sort(key=lambda tup: tup[1])
