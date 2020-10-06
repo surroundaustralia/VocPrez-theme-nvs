@@ -138,6 +138,37 @@ class NvsSPARQL(Source):
         g.VOCABS = {**g.VOCABS, **sparql_vocabs}
         logging.debug("SPARQL collect() complete.")
 
+    def list_concepts(self):
+        vocab = g.VOCABS[self.vocab_uri]
+        q = """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT DISTINCT ?c ?pl ?broader
+            WHERE {{
+                {{?c skos:inScheme <{vocab_uri}>}}
+
+                ?c a skos:Concept ;
+                     skos:prefLabel ?pl .
+
+                OPTIONAL {{
+                    {{?c skos:broader ?broader}}
+                    UNION 
+                    {{?broader skos:narrower ?c}}
+                }}
+
+                FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+            }}
+            ORDER BY ?pl
+            """.format(vocab_uri=vocab.uri, language=self.language)
+
+        return [
+            (
+                concept["c"]["value"],
+                concept["pl"]["value"],
+                concept["broader"]["value"] if concept.get("broader") else None
+            )
+            for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
+        ]
+
     def list_concepts_for_a_collection(self):
         vocab = g.VOCABS[self.vocab_uri]
         q = """
@@ -145,16 +176,16 @@ class NvsSPARQL(Source):
 
             SELECT DISTINCT ?c ?pl
             WHERE {{
-                    <{uri}> skos:member ?c .
+                    <{vocab_uri}> skos:member ?c .
 
                     ?c skos:prefLabel ?pl .
                     FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
             }}
             ORDER BY ?pl
-            """.format(uri=vocab.uri, language=self.language)
+            """.format(vocab_uri=vocab.uri, language=self.language)
 
         return [
-            (concept["c"]["value"], concept["pl"]["value"])
+            (concept["c"]["value"], concept["pl"]["value"], None)  # the final None is a space filler for CS' broader
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 
@@ -267,7 +298,7 @@ class NvsSPARQL(Source):
                 if r.get("ropl") is not None:
                     # annotation value has a labe too
                     annotations[r["p"]["value"]] = (
-                    annotation_types[r["p"]["value"]], r["o"]["value"], r["ropl"]["value"])
+                        annotation_types[r["p"]["value"]], r["o"]["value"], r["ropl"]["value"])
                 else:
                     # no label
                     annotations[r["p"]["value"]] = (annotation_types[r["p"]["value"]], r["o"]["value"])
@@ -284,7 +315,8 @@ class NvsSPARQL(Source):
                 )
 
             elif r["p"]["value"] in provenance_properties.keys():
-                other_properties.append(Property(r["p"]["value"], provenance_properties[r["p"]["value"]], r["o"]["value"]))
+                other_properties.append(
+                    Property(r["p"]["value"], provenance_properties[r["p"]["value"]], r["o"]["value"]))
 
             # TODO: Agents
 
