@@ -1,12 +1,11 @@
 import logging
 import dateutil.parser
 from flask import g
-import vocprez.source.utils
 from vocprez import _config as config
 from vocprez.model.vocabulary import Vocabulary
 from vocprez.model.property import Property
-from vocprez.source._source import Source
-from vocprez.source.utils import sparql_query
+from vocprez.source._source import *
+import vocprez.utils as u
 from rdflib import Literal, URIRef
 
 
@@ -68,7 +67,7 @@ class NvsSPARQL(Source):
             ORDER BY ?title
             """.format(language=config.DEFAULT_LANGUAGE)
         # record just the IDs & title for the VocPrez in-memory vocabs list
-        concept_schemes = vocprez.source.utils.sparql_query(
+        concept_schemes = u.sparql_query(
             q,
             details["sparql_endpoint"],  # must specify a SPARQL endpoint if this source is to be a SPARQL source
             details.get("sparql_username"),
@@ -156,7 +155,7 @@ class NvsSPARQL(Source):
 
         return [
             (concept["c"]["value"], concept["pl"]["value"])
-            for concept in sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
+            for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 
     def get_vocabulary(self):
@@ -174,3 +173,131 @@ class NvsSPARQL(Source):
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection()
 
         return g.VOCABS[self.vocab_uri]
+
+    def get_concept(self, uri):
+        vocab = g.VOCABS[self.vocab_uri]
+        # q = """
+        #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        #     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        #
+        #     SELECT *
+        #     WHERE {{
+        #         <{concept_uri}> a skos:Concept ;
+        #                         ?p ?o .
+        #
+        #         OPTIONAL {{
+        #             GRAPH ?predicateGraph {{?p rdfs:label ?predicateLabel .}}
+        #             FILTER(lang(?predicateLabel) = "{language}" || lang(?predicateLabel) = "")
+        #         }}
+        #         OPTIONAL {{
+        #             ?o skos:prefLabel ?objectLabel .
+        #             FILTER(?prefLabel = skos:prefLabel || lang(?objectLabel) = "{language}" || lang(?objectLabel) = "")
+        #             # Don't filter prefLabel language
+        #         }}
+        #     }}
+        #     """.format(
+        #     concept_uri=uri, language=self.language
+        # )
+        q = """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+            SELECT DISTINCT *            
+            WHERE {{
+                <{concept_uri}> a skos:Concept ;
+                                ?p ?o .
+
+                OPTIONAL {{
+                    ?o skos:prefLabel ?ropl .
+                }}                
+            }}
+            """.format(
+            concept_uri=uri, language=self.language
+        )
+
+        pl = None
+        d = None
+        s = {
+            "provenance": None,
+            "source": None,
+            "wasDerivedFrom": None,
+        }
+        annotation_types = {
+            "http://www.opengis.net/def/metamodel/ogc-na/status": "Status"
+        }
+        annotations = {}
+        agent_types = {
+            'http://purl.org/dc/terms/contributor': "Contributor",
+            'http://purl.org/dc/terms/creator': "Creator",
+            'http://purl.org/dc/terms/publisher': "Publisher",
+        }
+        agent = {}
+        related_instance_types = {
+            'http://www.w3.org/2004/02/skos/core#exactMatch': "Exact Match",
+            'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
+            'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
+            'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
+            'http://www.w3.org/2004/02/skos/core#broader': "Broader",
+            'http://www.w3.org/2004/02/skos/core#narrower': "Narrower"
+        }
+        provenance_properties = {
+            "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
+            "http://purl.org/pav/version": "Version",
+            "http://www.w3.org/2002/07/owl#deprecated": "Deprecated",
+            "http://purl.org/pav/previousVersion": "Previous Version",
+            "http://purl.org/dc/terms/isVersionOf": "Is Version Of",
+            "http://purl.org/pav/authoredOn": "Authored On"
+        }
+        related_instances = {}
+
+        other_properties = []
+        for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
+            if r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#prefLabel":
+                pl = r["o"]["value"]
+            elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#definition":
+                d = r["o"]["value"]
+            elif r["p"]["value"] == "http://purl.org/dc/terms/provenance":
+                s["provenance"] = r["o"]["value"]
+            elif r["p"]["value"] == "http://purl.org/dc/terms/source":
+                s["source"] = r["o"]["value"]
+            elif r["p"]["value"] == "http://www.w3.org/ns/prov#wasDerivedFrom":
+                s["wasDerivedFrom"] = r["o"]["value"]
+
+            elif r["p"]["value"] in annotation_types.keys():
+                if r.get("ropl") is not None:
+                    # annotation value has a labe too
+                    annotations[r["p"]["value"]] = (
+                    annotation_types[r["p"]["value"]], r["o"]["value"], r["ropl"]["value"])
+                else:
+                    # no label
+                    annotations[r["p"]["value"]] = (annotation_types[r["p"]["value"]], r["o"]["value"])
+
+            elif r["p"]["value"] in related_instance_types.keys():
+                if related_instances.get(r["p"]["value"]) is None:
+                    related_instances[r["p"]["value"]] = {}
+                    related_instances[r["p"]["value"]] = {
+                        "instances": [],
+                        "label": related_instance_types[r["p"]["value"]]
+                    }
+                related_instances[r["p"]["value"]]["instances"].append(
+                    (r["o"]["value"], r["ropl"]["value"] if r["ropl"] is not None else None)
+                )
+
+            elif r["p"]["value"] in provenance_properties.keys():
+                other_properties.append(Property(r["p"]["value"], provenance_properties[r["p"]["value"]], r["o"]["value"]))
+
+            # TODO: Agents
+
+            # TODO: more Annotations
+
+        from vocprez.model.concept import Concept
+
+        return Concept(
+            self.vocab_uri,
+            uri,
+            pl,
+            d,
+            related_instances,
+            annotations,
+            other_properties=other_properties
+        )

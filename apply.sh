@@ -18,12 +18,6 @@ cat $VP_THEME_HOME/app_additions_vocabs.py >> $VP_THEME_HOME/app_temp.py
 sed -e '1,/# END ROUTE vocabs/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
-echo "Routes for search.py"
-sed -n '/# ROUTE search/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
-cat $VP_THEME_HOME/app_additions_search_two_forms.py >> $VP_THEME_HOME/app_temp.py
-sed -e '1,/# END ROUTE search/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
-mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
-
 sed -n '/# ROUTE collections/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
 sed -e '1,/# END ROUTE collections/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py

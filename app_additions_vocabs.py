@@ -28,20 +28,8 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
         ]
 
     vocabs = [(url_for("object", uri=v), g.VOCABS[v]) for v in vocabs]
-    # voc_objects.sort(key=lambda tup: tup[1])
+    vocabs.sort(key=lambda tup: tup[1].title)
     total = len(vocabs)
-    #
-    # # Search
-    # query = request.values.get("search")
-    # results = []
-    # if query:
-    #     for m in match(vocabs, query):
-    #         results.append(m)
-    #     vocabs[:] = results
-    #     vocabs.sort(key=lambda v: v.title)
-    #     total = len(vocabs)
-    #
-    # # generate vocabs list for requested page and per_page
     start = (page - 1) * per_page
     end = start + per_page
     vocabs = vocabs[start:end]
@@ -61,12 +49,20 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
 
 @app.route("/collection/")
 def collections():
-    return vocabularies(t="Collection", uri="https://vocab.nerc.ac.uk/collection/", label="NVS Collections",
-                        comment="SKOS Collections managed by the NERC Vocabulary Server")
+    return vocabularies(
+        t="Collection",
+        uri="https://vocab.nerc.ac.uk/collection/",
+        label="NVS Collections",
+        comment="SKOS Collections managed by the NERC Vocabulary Server"
+    )
 
 
 @app.route("/scheme/")
 def conceptschemes():
-    return vocabularies(t="ConceptScheme", uri="https://vocab.nerc.ac.uk/scheme/", label="NVS Concept Schemes",
-                        comment="SKOS Concept Schemes managed by the NERC Vocabulary Server")
+    return vocabularies(
+        t="ConceptScheme",
+        uri="https://vocab.nerc.ac.uk/scheme/",
+        label="NVS Concept Schemes",
+        comment="SKOS Concept Schemes managed by the NERC Vocabulary Server"
+)
 # END ROUTE vocabs

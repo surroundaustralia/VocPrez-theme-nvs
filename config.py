@@ -31,11 +31,11 @@ class VocabSource:
 
 # Main cache (SPARQL DB) variables
 # BEGIN Instance Vars
-DEBUG = True
+DEBUG = False
 SPARQL_ENDPOINT = "$SPARQL_ENDPOINT"
 SPARQL_USERNAME = ""
 SPARQL_PASSWORD = ""
-SOURCE_NAME = "cgi"
+SOURCE_NAME = "nvs"
 # END Instance Vars
 
 DATA_SOURCES = {
