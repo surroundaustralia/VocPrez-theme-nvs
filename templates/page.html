@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>VocPrez</title>
 
-  <style type="text/css">
+  <style type="text/css">/* Webfont: Lato-Regular */
     body {
+        margin: 0;
         display:grid;
         grid-template-columns: 1fr 3fr 1fr ;
         grid-template-rows: 140px 50px auto 50px;
 
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
         line-height: 1.2em;
     }
 
@@ -38,20 +39,76 @@
     }
 
     #header {
-        background-color: lightgrey;
-        padding: 20px;
-        color: white;
-        font-size: 100px;
+        margin-top: 10px;
+        color: rgba(19, 50, 77, 0.9);
         font-weight: bold;
+        text-align: center;
+    }
+
+    #header-title {
+        font-size: 30px;
+        padding-left: 120px;
+    }
+
+    #header-title a {
+        display: inline-block;
+        background-color: rgba(19, 50, 77, 0.9);
+        color: white;
+        font-size: 15px;
+        font-weight: normal;
+        padding: 3px 5px 3px 5px;
+        float: right;
+        margin-left: 10px;
     }
 
     #mainmenu {
 	      margin-top: 10px;
         text-align: center;
+
+        background-color: rgba(19, 50, 77, 0.9);
+        color: white;
+        padding: 10px 0;
+    }
+
+    #mainmenu a {
+        color: white;
+        margin: 0 5px 0 5px;
     }
 
     #footer {
-        background-color: #eee;
+        border-top:solid 2px rgba(19, 50, 77, 0.9);
+        display: grid ;
+        grid-template-rows: 50px 100px 10px;
+        color: white;
+        padding-bottom: 20px;
+    }
+    #footer-top {
+        text-align: center;
+        background-color: rgb(53, 80, 119);
+        padding-top: 15px;
+        font-size: 20px;
+    }
+    #footer-top a {
+        color: white;
+        margin: 0 10px 0 10px;
+    }
+    #footer-bottom {
+        background-color: rgb(19, 50, 77);
+        color: lightgrey;
+        text-align: right;
+        padding:20px 10px 20px 10px;
+    }
+    #footer-bottom a {
+        color: white;
+        display: inline-block;
+        background-color: rgb(53, 80, 119);
+        border: solid 1px rgb(73, 100, 139);
+        padding:5px 10px 5px 10px;
+        float: left;
+        margin-left: 30px;
+    }
+    #footer-bottom-border {
+        background-color: rgb(19, 50, 77);
     }
 
     .disabled a {
@@ -323,8 +380,16 @@
     made by <a href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;
     <a id="versionlink" href="https://github.com/RDFLib/VocPrez/releases/tag/{{ utils.version() }}">{{ utils.version() }}</a>
   </div>
-  <div id="header" style="grid-column:2;">
-    BODC VocPrez
+  <div id="header" style="grid-column:2; display:grid; grid-template-rows: 100px 50px;">
+    <div style="grid-row:1;">
+      <img src="/style/ukri-grey.png" alt="UK RI logo" style="height:70%; float:left ;" />
+      <img src="/style/bodc-bw.png" alt="BODC logo" style="height:70%; float:right ;" />
+    </div>
+    <div id="header-title" style="grid-row:2;">
+      The NERC Vocabulary Server (NVS)
+      <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
+      <a href="vocab.services@bodc.ac.uk">Contact Us</a>
+    </div>
   </div><!-- #header -->
   <div id="mainmenu" style="grid-column:2;">
     {% include 'nav.html' %}
@@ -332,6 +397,19 @@
   <div id="content" style="grid-column:2;">
       {% block content %}{% endblock %}
   </div><!-- #content -->
-  <div id="footer" style="grid-column:2;"></div><!-- #footer -->
+  <div id="footer" style="grid-column:1/4;">
+    <div id="footer-top">
+      <a href="">Vocab Editor  </a> |
+      <a href="">Parameter Tools</a> |
+      <a href="https://github.com/nvs-vocabs">NVS GitHub</a>
+    </div>
+    <div id="footer-bottom">
+      <img src="/style/noc.svg" alt="NOC logo" style="height:80px; float:left;" />
+      <a href="">Disclaimer</a>
+      <a href="">Licence</a>
+      &copy; National Oceanography Centre, 2020
+    </div>
+    <div id="footer-bottom-border"></div>
+  </div><!-- #footer -->
 </body>
 </html>
