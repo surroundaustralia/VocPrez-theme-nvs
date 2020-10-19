@@ -8,6 +8,7 @@
     html {
         height:100%;
     }
+
     body {
         margin: 0;
         display:grid;
@@ -32,8 +33,9 @@
         font-size: 2em;
         font-weight: bold;
         text-decoration: none;
-        color: #005A9C;
+        color: #007dbb;
     }
+
     #vocprez a:hover {
         color: #333;
     }
@@ -386,13 +388,13 @@
   </div>
   <div id="header" style="grid-column:2; display:grid; grid-template-rows: 100px 50px;">
     <div style="grid-row:1;">
-      <img src="/style/ukri-grey.png" alt="UK RI logo" style="height:70%; float:left ;" />
-      <img src="/style/bodc-bw.png" alt="BODC logo" style="height:70%; float:right ;" />
+      <a href="https://nerc.ukri.org/"><img src="/style/ukri-grey.png" alt="UK RI logo" style="height:70%; float:left ;" /></a>
+      <a href="https://www.bodc.ac.uk/"><img src="/style/bodc-bw.png" alt="BODC logo" style="height:70%; float:right ;" /></a>
     </div>
     <div id="header-title" style="grid-row:2;">
       The NERC Vocabulary Server (NVS)
       <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
-      <a href="vocab.services@bodc.ac.uk">Contact Us</a>
+      <a href="{{ url_for('contact_us') }}">Contact Us</a>
     </div>
   </div><!-- #header -->
   <div id="mainmenu" style="grid-column:2;">
@@ -403,14 +405,15 @@
   </div><!-- #content -->
   <div id="footer" style="grid-column:1/4;">
     <div id="footer-top">
-      <a href="">Vocab Editor  </a> |
+      <a href="">Vocabularies Licence</a> |
+      <a href="">Vocabularies Editor</a> |
       <a href="">Parameter Tools</a> |
       <a href="https://github.com/nvs-vocabs">NVS GitHub</a>
     </div>
     <div id="footer-bottom">
       <img src="/style/noc.svg" alt="NOC logo" style="height:80px; float:left;" />
       <a href="https://noc.ac.uk/disclaimer">Disclaimer</a>
-      <a href="">Licence</a>
+      <!-- https://www.bodc.ac.uk/resources/help_and_hints/using_this_web_site/disclaimer/ -->
       &copy; National Oceanography Centre, 2020
     </div>
     <div id="footer-bottom-border"></div>

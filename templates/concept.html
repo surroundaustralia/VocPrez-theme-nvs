@@ -11,11 +11,11 @@
       {% endif %}
       <table class="metadata concept">
   <tr>
-    <th>URI:</th>
+    <th>URI</th>
     <td><a href="{{ uri }}">{{ uri }}</a></td>
   </tr>
   <tr>
-    <th>Within Vocab:</th>
+    <th>Within Vocab</th>
     <td><a href="{{ url_for('object', uri=vocab_uri) }}">{{ vocab_title }}</a></td>
   </tr>
   <tr>
@@ -67,7 +67,7 @@
 {% if concept.other_properties is not none %}
   {% for prop in concept.other_properties %}
     <tr>
-      <th><a href="{{ prop.url }}">{{ prop.label }}</a>:</th>
+      <th><a href="{{ prop.url }}">{{ prop.label }}</a></th>
       <td>
         {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
       </td>

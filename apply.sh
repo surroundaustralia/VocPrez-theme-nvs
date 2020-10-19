@@ -13,13 +13,22 @@ echo "Move $VP_THEME_HOME/config.py to $VP_HOME/vocprez/_config/__init__.py"
 mv $VP_THEME_HOME/config_updated.py $VP_HOME/vocprez/_config/__init__.py
 
 echo "Routes for app.py"
+echo "Route vocabs"
 sed -n '/# ROUTE vocabs/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
 cat $VP_THEME_HOME/app_additions_vocabs.py >> $VP_THEME_HOME/app_temp.py
 sed -e '1,/# END ROUTE vocabs/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
-sed -n '/# ROUTE collections/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
-sed -e '1,/# END ROUTE collections/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
+echo "Route search"
+sed -n '/# ROUTE search/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
+cat $VP_THEME_HOME/app_additions_search.py >> $VP_THEME_HOME/app_temp.py
+sed -e '1,/# END ROUTE search/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
+mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
+
+echo "Route contact us"
+sed -n '/# END ROUTE about/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
+cat $VP_THEME_HOME/app_additions_contact_us.py >> $VP_THEME_HOME/app_temp.py
+sed -e '1,/# ROUTE sparql/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
 echo "NVS Source"

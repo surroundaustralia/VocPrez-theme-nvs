@@ -135,7 +135,8 @@ class NvsSPARQL(Source):
                 sparql_password=details.get("sparql_password"),
                 other_properties=other_properties
             )
-        g.VOCABS = {**g.VOCABS, **sparql_vocabs}
+        g.VOCABS = {}
+        g.VOCABS.update(**sparql_vocabs)
         logging.debug("SPARQL collect() complete.")
 
     def list_concepts(self):
