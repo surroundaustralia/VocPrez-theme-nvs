@@ -80,7 +80,13 @@
             <tbody>
             {%- for (url, vocab) in members -%}
             <tr>
-              <td><a href="{{ url }}">{{ vocab.uri.replace('http://vocab.nerc.ac.uk/collection/', '').replace('http://vocab.nerc.ac.uk/scheme/', '').replace('/current/', '') }}</a></td>
+            {%  set vocab_id = vocab.uri.replace('http://vocab.nerc.ac.uk/collection/', '').replace('http://vocab.nerc.ac.uk/scheme/', '').replace('/current/', '') %}
+            {% if vocab.collections == "Collection" %}
+            {% set vocab_url = url_for('index') + "collection/" + vocab_id %}
+            {% else %}
+            {% set vocab_url = url_for('index') + "scheme/" + vocab_id %}
+            {% endif %}
+              <td><a href="{{ vocab_url }}">{{ vocab_id }}</a></td>
               <td>{{ vocab.title }}</td>
               <td>{{ vocab.versionInfo }}</td>
               <td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
