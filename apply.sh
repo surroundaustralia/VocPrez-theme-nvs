@@ -37,6 +37,12 @@ cat $VP_THEME_HOME/app_additions_contact_us.py >> $VP_THEME_HOME/app_temp.py
 sed -e '1,/# ROUTE sparql/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
+echo "Route RESTful Concept"
+sed -n '/# END ROUTE object/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
+cat $VP_THEME_HOME/app_additions_concept.py >> $VP_THEME_HOME/app_temp.py
+sed -e '1,/# ROUTE about/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
+mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
+
 echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source
 

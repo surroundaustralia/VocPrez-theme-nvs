@@ -66,7 +66,9 @@
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
               {% for concept in vocab.concepts %}
-                <a href="{% if LOCAL_URLS %}{{ url_for('object') }}?vocab_uri={{ uri }}&uri={% endif %}{{ concept[0] }}">{{ concept[1] }}</a><br />
+                {% set vocab_id = concept[0].split('/collection/')[1].split('/current/')[0] %}
+                {% set concept_id = concept[0].split('/current/')[1].rstrip('/') %}
+                <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a><br />
               {% endfor -%}
             </td>
           </tr>
