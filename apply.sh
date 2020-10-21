@@ -6,6 +6,10 @@ echo "Templates"
 echo "copying $VP_THEME_HOME/templates content to $VP_HOME/vocprez/view/templates"
 cp $VP_THEME_HOME/templates/* $VP_HOME/vocprez/view/templates
 
+echo "Model"
+echo "copying $VP_THEME_HOME/model content to $VP_HOME/vocprez/model"
+cp $VP_THEME_HOME/model/* $VP_HOME/vocprez/model
+
 echo "Config"
 echo "Alter $VP_THEME_HOME/config.py to include variables"
 sed 's#$SPARQL_ENDPOINT#'"$SPARQL_ENDPOINT"'#' $VP_THEME_HOME/config.py > $VP_THEME_HOME/config_updated.py

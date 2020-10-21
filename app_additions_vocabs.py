@@ -34,7 +34,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     end = start + per_page
     vocabs = vocabs[start:end]
 
-    return ContainerRenderer(
+    return NvsContainerRenderer(
         request,
         uri if uri is not None else config.VOCS_URI,
         label if label is not None else config.VOCS_TITLE,
