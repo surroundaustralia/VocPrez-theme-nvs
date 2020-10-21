@@ -64,7 +64,7 @@ profile_nvscol = Profile(
     "NVS Collections List Profile",
     comment="A profile of simple RDF Containers that includes Dublin Core Terms metadata for items within the Container",
     mediatypes=["text/html"] + Renderer.RDF_MEDIA_TYPES,
-    default_mediatype="application/rdf+xml",
+    default_mediatype="text/html",
     languages=["en"],
     default_language="en",
 )

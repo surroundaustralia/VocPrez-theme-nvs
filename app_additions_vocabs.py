@@ -43,6 +43,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
         None,
         vocabs,
         total,
+        default_profile_token="nvs",
         register_template="vocabularies.html"
     ).render()
 
