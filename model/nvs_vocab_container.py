@@ -52,19 +52,29 @@ class NvsContainerRenderer(ContainerRenderer):
             if self.paging_error is None:
                 if self.mediatype == 'text/html':
                     return self._render_mem_profile_html()
-                elif self.mediatype in ['text/xml', 'application/xml', 'application/rdf+xml']:
-                    return self._render_nvs_profile_rdf_xml()
                 elif self.mediatype in Renderer.RDF_MEDIA_TYPES:
-                    self.members = [(x[1].uri, x[1].title) for x in self.members]
-                    return self._render_mem_profile_rdf()
+                    return self._render_nvs_profile_rdf()
                 else:
                     return self._render_mem_profile_json()
             else:  # there is a paging error (e.g. page > last_page)
                 return Response(self.paging_error, status=400, mimetype='text/plain')
         return response
 
-    def _render_nvs_profile_rdf_xml(self):
+    def _render_nvs_profile_rdf(self):
+        import pickle
         if "/scheme/" in self.request.base_url:
-            return send_from_directory("/Users/nick/Work/surround/VocPrez-theme-nvs/dummy-data/", "scheme.rdf")
+            g = pickle.load(open("/Users/nick/Work/surround/VocPrez-theme-nvs/dummy-data/scheme.p", "rb"))
         else:
-            return send_from_directory("/Users/nick/Work/surround/VocPrez-theme-nvs/dummy-data/", "collection.rdf")
+            g = pickle.load(open("/Users/nick/Work/surround/VocPrez-theme-nvs/dummy-data/collection.p", "rb"))
+
+        # serialise in the appropriate RDF format
+        if self.mediatype in ["application/rdf+json", "application/json"]:
+            graph_text = g.serialize(format="json-ld")
+        else:
+            graph_text = g.serialize(format=self.mediatype)
+
+        return Response(
+            graph_text,
+            mimetype=self.mediatype,
+            headers=self.headers,
+        )
