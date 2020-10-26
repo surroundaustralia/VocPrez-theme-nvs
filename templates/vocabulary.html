@@ -107,7 +107,7 @@
       <form action="{{ url_for("search") }}" method="get" style="">
         <input type="text" id="search" name="search" style="grid-column: 1;" />
         <input type="hidden" id="from" name="from" value="{{ uri }}" />
-        <label for="voc" style="grid-column: 2;">Your search term</label><br />
+        <label for="voc" class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Your search term</span></label>
         <input type="submit" value="Search" style="grid-column: 1;" />
       </form>
     </div>
