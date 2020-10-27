@@ -63,7 +63,7 @@ def conceptschemes():
     return vocabularies(
         t="ConceptScheme",
         uri="https://vocab.nerc.ac.uk/scheme/",
-        label="NVS Concept Schemes",
+        label="NVS Thesauri",
         comment="SKOS Concept Schemes managed by the NERC Vocabulary Server"
 )
 # END ROUTE vocabs
