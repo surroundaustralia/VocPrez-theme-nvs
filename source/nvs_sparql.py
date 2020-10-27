@@ -143,7 +143,7 @@ class NvsSPARQL(Source):
         vocab = g.VOCABS[self.vocab_uri]
         q = """
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-            SELECT DISTINCT ?c ?pl ?broader
+            SELECT DISTINCT ?c ?pl ?broader ?dep
             WHERE {{
                 {{?c skos:inScheme <{vocab_uri}>}}
 
@@ -175,9 +175,13 @@ class NvsSPARQL(Source):
         q = """
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-            SELECT DISTINCT ?c ?pl
+            SELECT DISTINCT ?c ?pl ?dep
             WHERE {{
                     <{vocab_uri}> skos:member ?c .
+                    
+                    OPTIONAL {{
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                    }}
 
                     ?c skos:prefLabel ?pl .
                     FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
@@ -186,7 +190,11 @@ class NvsSPARQL(Source):
             """.format(vocab_uri=vocab.uri, language=self.language)
 
         return [
-            (concept["c"]["value"], concept["pl"]["value"], None)  # the final None is a space filler for CS' broader
+            (
+                concept["c"]["value"],
+                concept["pl"]["value"],
+                True if concept.get("dep") and concept["dep"]["value"] == "true" else False
+            )
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 

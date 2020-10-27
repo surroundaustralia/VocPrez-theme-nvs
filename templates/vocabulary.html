@@ -8,7 +8,7 @@
     <table class="metadata concept_scheme">
         <tr>
           <th>URI</th>
-          <td><strong><a href="{{ uri }}">{{ uri }}</a></strong></td>
+          <td><strong><a id="this_uri" href="{{ uri }}">{{ uri }}</a></strong></td>
         </tr>
         {%  if vocab.description is not none  -%}
         <tr>
@@ -54,7 +54,7 @@
         {% if vocab.other_properties is not none %}
           {% for prop in vocab.other_properties %}
             <tr>
-              <th><a href="{{ prop.url }}">{{ prop.label }}</a></th>
+              <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
               <td>
                 {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
               </td>
@@ -68,7 +68,7 @@
               {% for concept in vocab.concepts %}
                 {% set vocab_id = concept[0].split('/collection/')[1].split('/current/')[0] %}
                 {% set concept_id = concept[0].split('/current/')[1].rstrip('/') %}
-                <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a><br />
+                <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
               {% endfor -%}
             </td>
           </tr>
@@ -87,7 +87,7 @@
         </tr>
         {% endif -%}
     </table>
-</div>
+  </div>
   </div>
   <div style="grid-column: 2;">
     <div class="altprof">
@@ -104,13 +104,57 @@
     </div>
     <div class="search">
       <h3>Search</h3>
-      <form action="{{ url_for("search") }}" method="get" style="">
-        <input type="text" id="search" name="search" style="grid-column: 1;" />
-        <input type="hidden" id="from" name="from" value="{{ uri }}" />
-        <label for="voc" class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Your search term</span></label>
-        <input type="submit" value="Search" style="grid-column: 1;" />
-      </form>
+      <input type="text" id="sw-text" name="sw-text" />
+      <label for="sw-text" class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Enter a search term here to search within this vocabulary. To search across all vocabularies, use the 'Search NVS' link at top</span></label>
+      <input id="#sw-submit" type="submit" value="Search" />
     </div>
   </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $("#sw-submit").click(function(event) {
+        console.log("click");
+      var redirect = 'https://www.bodc.ac.uk/resources/vocabularies/vocabulary_search/{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}/';
+      var payload = {
+        "searchstrVocab": $("#sw-text").val(),
+        "identifier": "identifier",
+        "preflabel": "preflabel",
+        "altlabel": "altlabel",
+        "definition": "definition",
+        "searchtype": "concepts",
+        "collectionID": "{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}",
+        "vocab": "{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}",
+        "dosearch": "true",
+        "vocabtitle": "{{ vocab.title }}",
+        "resultsPerPage": 10,
+      };
+      console.log(payload);
+      //$.redirectPost(redirect, payload);
+    });
+
+    /* redirects to NVS search system */
+    $.extend({
+        redirectPost: function(location, args)
+        {
+          var form = $('<form></form>');
+          form.attr("method", "post");
+          form.attr("action", location);
+
+          $.each( args, function( key, value ) {
+            var field = $('<input></input>');
+
+            field.attr("type", "hidden");
+            field.attr("name", key);
+            field.attr("value", value);
+
+            form.append(field);
+          });
+
+          $(form).appendTo('body').submit();
+        }
+      });
+  });
+  </script>
 {% endblock -%}

@@ -3,7 +3,15 @@
 {% block content %}
   <div style="display:grid; grid-template-columns: 80% auto;">
     <div style="grid-column: 1;">
-      <h1>Concept</h1>
+      <h1>Concept
+      {% if concept.other_properties is not none %}
+        {% for prop in concept.other_properties %}
+          {% if prop.uri == 'http://www.w3.org/2002/07/owl#deprecated' and prop.value == 'true' %}
+            <sup style="color:red;">DEPRECATED</sup>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      </h1>
       <h2>{{ concept.prefLabel }}</h2>
       <table class="metadata concept">
         <tr>
@@ -51,7 +59,7 @@
       {% if concept.annotations is not none %}
         {% for prop in concept.annotations %}
         <tr>
-          <th><a href="{{ prop.url }}">{{ prop.label }}</a></th>
+          <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
           <td>
             {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
           </td>
@@ -61,7 +69,7 @@
       {% if concept.other_properties is not none %}
         {% for prop in concept.other_properties %}
           <tr>
-            <th><a href="{{ prop.url }}">{{ prop.label }}</a></th>
+            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
             <td>
               {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
             </td>
