@@ -38,12 +38,11 @@
           <tr>
             <th><a href="{{ k }}">{{ v["label"] }}</a></th>
             <td>
-              {%  for inst in v["instances"] %}
-                {% if LOCAL_URLS -%}
-                  <a href="{{ inst[0].replace('http://vocab.nerc.ac.uk/collection/', url_for('collections')) }}">{{ inst[1] }}</a><br />
-                {% else %}
-                  <a href="{{ inst[0] }}">{{ inst[1] }}</a><br />
-                {% endif -%}
+              {% for inst in v["instances"] %}
+                {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/collection/', url_for('collections')) %}
+                {% set ri_vocab_uri = ri_clean_uri.split('/current/')[0] + '/current/' %}
+                {% set ri_vocab_id = inst[0].replace('http://vocab.nerc.ac.uk/collection/', '').split('/')[0] %}
+                <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
               {% endfor %}
             </td>
           </tr>
@@ -74,7 +73,6 @@
     <div class="altprof" style="grid-column: 2;">
         <h3>Alternate Profiles</h3>
         <p>Different views and formats:</p>
-        {% if LOCAL_URLS %}
           <p>
             {% if vocab_uri is not none %}
             <a href="{{ url_for('object') }}?vocab_uri={{ vocab_uri }}&uri={{ uri }}&_profile=alt">Alternate Profiles</a>
@@ -83,9 +81,6 @@
             {% endif %}
             <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
           </p>
-        {% else %}
-          <p>Different views and formats of this concept are here: <a href="{{ uri }}&_profile=alt">Alternate Profiles</a>.</p>
-        {% endif %}
       </div>
   </div>
 {% endblock %}
