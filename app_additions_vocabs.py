@@ -53,7 +53,7 @@ def collections():
     return vocabularies(
         t="Collection",
         uri="https://vocab.nerc.ac.uk/collection/",
-        label="NVS Collections",
+        label="NVS Vocabularies",
         comment="SKOS Collections managed by the NERC Vocabulary Server"
     )
 
