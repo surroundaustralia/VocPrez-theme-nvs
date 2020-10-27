@@ -208,28 +208,6 @@ class NvsSPARQL(Source):
 
     def get_concept(self, uri):
         vocab = g.VOCABS[self.vocab_uri]
-        # q = """
-        #     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        #     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        #
-        #     SELECT *
-        #     WHERE {{
-        #         <{concept_uri}> a skos:Concept ;
-        #                         ?p ?o .
-        #
-        #         OPTIONAL {{
-        #             GRAPH ?predicateGraph {{?p rdfs:label ?predicateLabel .}}
-        #             FILTER(lang(?predicateLabel) = "{language}" || lang(?predicateLabel) = "")
-        #         }}
-        #         OPTIONAL {{
-        #             ?o skos:prefLabel ?objectLabel .
-        #             FILTER(?prefLabel = skos:prefLabel || lang(?objectLabel) = "{language}" || lang(?objectLabel) = "")
-        #             # Don't filter prefLabel language
-        #         }}
-        #     }}
-        #     """.format(
-        #     concept_uri=uri, language=self.language
-        # )
         q = """
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -244,7 +222,7 @@ class NvsSPARQL(Source):
                 }}                
             }}
             """.format(
-            concept_uri=uri, language=self.language
+            concept_uri=uri
         )
 
         pl = None
@@ -255,9 +233,13 @@ class NvsSPARQL(Source):
             "wasDerivedFrom": None,
         }
         annotation_types = {
-            "http://www.opengis.net/def/metamodel/ogc-na/status": "Status"
+            "http://www.opengis.net/def/metamodel/ogc-na/status": "Status",
+            'http://www.w3.org/2004/02/skos/core#altLabel': "Alternative Label",
+            'http://www.w3.org/2004/02/skos/core#note': "Note",
+            'http://www.w3.org/2004/02/skos/core#scopeNote': "Scope Note",
+            'http://www.w3.org/2004/02/skos/core#hostryNote': "History Note",
         }
-        annotations = {}
+        annotations = []
         agent_types = {
             'http://purl.org/dc/terms/contributor': "Contributor",
             'http://purl.org/dc/terms/creator': "Creator",
@@ -272,7 +254,7 @@ class NvsSPARQL(Source):
             'http://www.w3.org/2004/02/skos/core#broader': "Broader",
             'http://www.w3.org/2004/02/skos/core#narrower': "Narrower"
         }
-        provenance_properties = {
+        provenance_property_types = {
             "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
             "http://purl.org/pav/version": "Version",
             "http://www.w3.org/2002/07/owl#deprecated": "Deprecated",
@@ -296,13 +278,8 @@ class NvsSPARQL(Source):
                 s["wasDerivedFrom"] = r["o"]["value"]
 
             elif r["p"]["value"] in annotation_types.keys():
-                if r.get("ropl") is not None:
-                    # annotation value has a labe too
-                    annotations[r["p"]["value"]] = (
-                        annotation_types[r["p"]["value"]], r["o"]["value"], r["ropl"]["value"])
-                else:
-                    # no label
-                    annotations[r["p"]["value"]] = (annotation_types[r["p"]["value"]], r["o"]["value"])
+                annotations.append(
+                    Property(r["p"]["value"], annotation_types[r["p"]["value"]], r["o"]["value"]))
 
             elif r["p"]["value"] in related_instance_types.keys():
                 if related_instances.get(r["p"]["value"]) is None:
@@ -315,9 +292,13 @@ class NvsSPARQL(Source):
                     (r["o"]["value"], r["ropl"]["value"] if r["ropl"] is not None else None)
                 )
 
-            elif r["p"]["value"] in provenance_properties.keys():
+            elif r["p"]["value"] in provenance_property_types.keys():
                 other_properties.append(
-                    Property(r["p"]["value"], provenance_properties[r["p"]["value"]], r["o"]["value"]))
+                    Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
+
+            elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#altLabel":
+                other_properties.append(
+                    Property(r["p"]["value"], "Alternative Label", r["o"]["value"]))
 
             # TODO: Agents
 
@@ -331,6 +312,6 @@ class NvsSPARQL(Source):
             pl,
             d,
             related_instances,
-            annotations,
+            annotations=annotations,
             other_properties=other_properties
         )
