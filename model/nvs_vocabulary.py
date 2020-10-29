@@ -13,9 +13,10 @@ import requests
 class NvsVocabularyRenderer(VocabularyRenderer):
     def __init__(self, request, vocab, language="en"):
         self.profiles = {
+            "nvs": profile_nvs,
             "dcat": profile_dcat,
-             "skos": profile_skos,
-             "dd": profile_dd
+            "skos": profile_skos,
+            "dd": profile_dd
         }
         self.vocab = vocab
         self.uri = self.vocab.uri
