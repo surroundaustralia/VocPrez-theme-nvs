@@ -54,4 +54,7 @@ sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez
 echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source
 
+echo "NVS Utils"
+cp $VP_THEME_HOME/utils.py $VP_HOME/vocprez/utils.py
+
 echo "customisation done"

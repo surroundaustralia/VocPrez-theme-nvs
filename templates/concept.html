@@ -16,12 +16,11 @@
       <table class="metadata concept">
         <tr>
           <th>URI</th>
-          <td><a href="{{ uri }}">{{ uri }}</a></td>
+          <td><a href="{{ concept.uri }}">{{ concept.uri }}</a></td>
         </tr>
         <tr>
           <th>Within Vocab</th>
-          {% set vocab_id = uri.replace('http://vocab.nerc.ac.uk/collection/', '').split('/')[0] %}
-          <td><a href="{{ url_for("vocabulary", vocab_id=vocab_id) }}">{{ vocab_title }}</a></td>
+          <td><a href="{{ request.base_url.split('/current/')[0] + '/' }}">{{ vocab_title }}</a></td>
         </tr>
         <tr>
           <th><a href="http://www.w3.org/2004/02/skos/core#prefLabel">Preferred Label</a></th>

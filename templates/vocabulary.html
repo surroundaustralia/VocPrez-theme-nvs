@@ -47,7 +47,7 @@
         <tr>
           <th valign="top"><a href="http://www.w3.org/2004/02/skos/core#hasTopConcept">Concept Hierarchy</a></th>
           <td>
-              {{ render_concept_hierarchy(vocab.concept_hierarchy)|safe }}
+              {{ render_concept_hierarchy(vocab.concept_hierarchy).replace('weefwrgr', '')|safe }}
           </td>
         </tr>
         {% endif -%}
