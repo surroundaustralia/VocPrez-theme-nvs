@@ -84,7 +84,7 @@
             <tbody>
             {%- for (url, vocab) in members -%}
             <tr>
-            {%  set vocab_id = vocab.uri.replace('http://vocab.nerc.ac.uk/collection/', '').replace('http://vocab.nerc.ac.uk/scheme/', '').replace('/current/', '') %}
+            {%  set vocab_id = vocab.uri.split('/')[-3] %}
             {% if vocab.collections == "Collection" %}
             {% set vocab_url = url_for('index') + "collection/" + vocab_id %}
             {% else %}
