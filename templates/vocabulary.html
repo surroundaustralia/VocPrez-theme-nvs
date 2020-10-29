@@ -95,7 +95,7 @@
       <p>Different views and formats:</p>
       <p>
       {% if LOCAL_URLS -%}
-        <a href="{{ url_for("object") }}?uri={{ uri }}&_profile=alt">Alternate Profiles</a>.
+        <a href="{{ request.base_url }}?_profile=alt">Alternate Profiles</a>.
       {% else -%}
         <a href="{{ uri }}&_profile=alt">Alternate Profiles</a>.
       {% endif -%}

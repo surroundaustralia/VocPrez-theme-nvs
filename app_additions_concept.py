@@ -14,7 +14,8 @@ def concept(vocab_id, concept_id):
     c = getattr(source, g.VOCABS[vocab_uri].source) \
         (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
 
-    return ConceptRenderer(request, c).render()
+    from vocprez.model.nvs_concept import NvsConceptRenderer
+    return NvsConceptRenderer(request, c).render()
 # END ROUTE single concept
 
 

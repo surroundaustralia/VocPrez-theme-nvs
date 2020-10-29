@@ -59,7 +59,7 @@ profile_dd = Profile(
     default_language="en",
 )
 
-profile_nvscol = Profile(
+profile_nvs = Profile(
     "https://w3id.org/profile/nvs-col",
     "NVS Collections List Profile",
     comment="A profile of simple RDF Containers that includes Dublin Core Terms metadata for items within the Container",

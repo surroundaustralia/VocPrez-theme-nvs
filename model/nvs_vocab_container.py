@@ -1,8 +1,7 @@
 from flask import Response, send_from_directory
 from pyldapi import Renderer, ContainerRenderer
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, RDFS
-from vocprez.model.profiles import profile_nvscol
+from vocprez.model.profiles import profile_nvs
 import requests
 
 
@@ -33,7 +32,7 @@ class NvsContainerRenderer(ContainerRenderer):
             members,
             members_total_count,
             *args,
-            profiles={"nvs": profile_nvscol},
+            profiles={"nvs": profile_nvs},
             default_profile_token=default_profile_token,
             super_register=super_register,
             page_size_max=page_size_max,
@@ -62,7 +61,6 @@ class NvsContainerRenderer(ContainerRenderer):
         return response
 
     def _render_nvs_profile_rdf(self):
-        import pickle
         if "/scheme/" in self.request.base_url:
             r = requests.get("$DB2RDF_SCHEMES_URI")
         else:
