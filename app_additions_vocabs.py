@@ -52,7 +52,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
 def collections():
     return vocabularies(
         t="Collection",
-        uri="https://vocab.nerc.ac.uk/collection/",
+        uri="http://vocab.nerc.ac.uk/collection/",
         label="NVS Vocabularies",
         comment="SKOS Collections managed by the NERC Vocabulary Server"
     )
@@ -62,7 +62,7 @@ def collections():
 def conceptschemes():
     return vocabularies(
         t="ConceptScheme",
-        uri="https://vocab.nerc.ac.uk/scheme/",
+        uri="http://vocab.nerc.ac.uk/scheme/",
         label="NVS Thesauri",
         comment="SKOS Concept Schemes managed by the NERC Vocabulary Server"
 )
