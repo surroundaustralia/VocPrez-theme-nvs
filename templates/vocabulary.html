@@ -66,9 +66,14 @@
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
               {% for concept in vocab.concepts %}
-                {% set vocab_id = concept[0].split('/collection/')[1].split('/current/')[0] %}
-                {% set concept_id = concept[0].split('/current/')[1].rstrip('/') %}
+                {% if "/standard_name/" in concept[0] %}
+                  {% set concept_id = concept[0].split('/standard_name/')[-1] %}
+                <a href="{% if LOCAL_URLS %}{{ url_for('standard_name_concept', concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
+                {% else %}
+                {% set vocab_id = concept[0].split('/collection/')[-1].split('/current/')[0] %}
+                {% set concept_id = concept[0].split('/current/')[-1].rstrip('/') %}
                 <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
+                {% endif %}
               {% endfor -%}
             </td>
           </tr>

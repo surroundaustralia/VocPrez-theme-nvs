@@ -36,7 +36,7 @@
             </div>
             <div id="filter">
               <h4>Filter</h4>
-              <form method="get" action="{{ url_for('vocabularies') }}"  style="display: inline-block;">
+              <form method="get" action="{{ request.base_url }}"  style="display: inline-block;">
                 <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
                 <button>Filter</button>
               </form>
@@ -88,7 +88,11 @@
             <tbody>
             {%- for (url, vocab) in members -%}
             <tr>
-            {%  set vocab_id = vocab.uri.split('/')[-3] %}
+            {% if 'standard_name' in vocab.uri %}
+              {% set vocab_id = 'standard_name' %}
+            {% else %}
+              {% set vocab_id = vocab.uri.split('/')[-3] %}
+            {% endif %}
             {% if vocab.collections == "Collection" %}
             {% set vocab_url = url_for('index') + "collection/" + vocab_id %}
             {% else %}
@@ -97,7 +101,7 @@
               <td><a href="{{ vocab_url }}">{{ vocab_id }}</a></td>
               <td>{{ vocab.title }}</td>
               <td>{{ vocab.versionInfo }}</td>
-              <td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
+              <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
               <td>{{ vocab.description }}</td>
               <td>{{ vocab.creator }}</td>
               <td>

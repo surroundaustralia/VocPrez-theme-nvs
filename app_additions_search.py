@@ -6,7 +6,6 @@ def search():
         for k, v in g.VOCABS.items()
         if v.collections == "Collection"
     ]
-    logging.info(vs)
     return render_template(
         "search.html",
         vocabs=sorted(vs, key=lambda tup: tup[0])

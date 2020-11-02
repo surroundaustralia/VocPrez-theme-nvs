@@ -25,4 +25,21 @@ def vocabulary(vocab_id):
         )
 
     return return_vocab(vocab_uri)
+
+
+@app.route("/standard_name/")
+def standard_name():
+    return return_vocab("http://vocab.nerc.ac.uk/standard_name/")
+
+
+@app.route("/standard_name/<string:concept_id>/")
+def standard_name_concept(concept_id):
+    vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+    concept_uri = "http://vocab.nerc.ac.uk/standard_name/{}/".format(concept_id)
+
+    c = getattr(source, g.VOCABS[vocab_uri].source) \
+        (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
+
+    from vocprez.model.nvs_concept import NvsConceptRenderer
+    return NvsConceptRenderer(request, c).render()
 # END ROUTE one vocab

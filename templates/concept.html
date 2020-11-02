@@ -20,7 +20,11 @@
         </tr>
         <tr>
           <th>Within Vocab</th>
+          {% if '/standard_name/' in concept.uri %}
+          <td><a href="{{ url_for('standard_name') }}">{{ vocab_title }}</a></td>
+          {% else %}
           <td><a href="{{ request.base_url.split('/current/')[0] + '/' }}">{{ vocab_title }}</a></td>
+          {% endif %}
         </tr>
         <tr>
           <th><a href="http://www.w3.org/2004/02/skos/core#prefLabel">Preferred Label</a></th>
@@ -46,10 +50,23 @@
             <th><a href="{{ k }}">{{ v["label"] }}</a></th>
             <td>
               {% for inst in v["instances"] %}
-                {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/collection/', url_for('collections')) %}
-                {% set ri_vocab_uri = ri_clean_uri.split('/current/')[0] + '/current/' %}
-                {% set ri_vocab_id = inst[0].replace('http://vocab.nerc.ac.uk/collection/', '').split('/')[0] %}
-                <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
+                {% if '/standard_name/' in inst[0] %}
+                  {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/standard_name/', url_for('standard_name')) %}
+                  {% set ri_vocab_uri = url_for('standard_name') %}
+                  {% set ri_vocab_id = 'standard_name' %}
+                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
+                {% elif '/collection/' in inst[0] %}
+                  {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/collection/', url_for('collections')) %}
+                  {% set ri_vocab_uri = ri_clean_uri.split('/current/')[0] + '/current/' %}
+                  {% set ri_vocab_id = inst[0].replace('http://vocab.nerc.ac.uk/collection/', '').split('/')[0] %}
+                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
+                {% else %}
+                  {% set ri_clean_uri = inst[0] %}
+                  {% set ri_vocab_uri = inst[0] %}
+                  {% set ri_vocab_id = 'Extnl' %}
+                  {% set inst_1 = inst[0].split('/')[-1] %}
+                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst_1 }}</a><br />
+                {% endif %}
               {% endfor %}
             </td>
           </tr>

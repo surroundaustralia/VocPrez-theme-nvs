@@ -6,7 +6,7 @@ from vocprez.model.vocabulary import Vocabulary
 from vocprez.model.property import Property
 from vocprez.source._source import *
 import vocprez.utils as u
-from rdflib import Literal, URIRef
+from rdflib import Literal, URIRef, Graph
 
 
 class NvsSPARQL(Source):
@@ -52,6 +52,7 @@ class NvsSPARQL(Source):
                 OPTIONAL {{ ?cs dcterms:created ?created }}
                 OPTIONAL {{ ?cs dcterms:issued ?issued }}
                 OPTIONAL {{ ?cs dcterms:date ?modified }}
+                OPTIONAL {{ ?cs dcterms:modified ?modified }}
                 OPTIONAL {{ ?cs dcterms:creator ?creator }}
                 OPTIONAL {{ ?cs dcterms:publisher ?publisher }}
                 OPTIONAL {{ ?cs owl:versionInfo ?version }}
@@ -135,9 +136,76 @@ class NvsSPARQL(Source):
                 sparql_password=details.get("sparql_password"),
                 other_properties=other_properties
             )
+        logging.debug("pickle latest standard_name")
+        import requests
+        from pathlib import Path
+        import pickle
+
+        r = requests.get("http://vocab.nerc.ac.uk/standard_name/")
+        gr = Graph()
+        gr.parse(data=r.text, format="xml")
+        with open(Path(config.APP_DIR) / "cache" / "standard_name.p", "wb") as f:
+            pickle.dump(gr, f)
+
+        for cs in gr.query(q):
+            vocab_id = str(cs["cs"])
+
+            other_properties = []
+            other_properties.append(
+                Property(
+                    "http://purl.org/dc/terms/identifier",
+                    "Identifier",
+                    Literal("standard_name")
+                )
+            )
+            # the following properties are filled with blanks, not None, in the vocab
+            # if cs.get("registermanager") is not None:
+            #     other_properties.append(
+            #         Property(
+            #             "http://www.isotc211.org/schemas/grg/RE_RegisterManager",
+            #             "Register Manager",
+            #             Literal(cs["registermanager"])
+            #         )
+            #     )
+            # if cs.get("registerowner") is not None:
+            #     other_properties.append(
+            #         Property(
+            #             "http://www.isotc211.org/schemas/grg/RE_RegisterOwner",
+            #             "Register Owner",
+            #             Literal(cs["registerowner"])
+            #         )
+            #     )
+            # if cs.get("seeAlso") is not None:
+            #     other_properties.append(
+            #         Property(
+            #             "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            #             "See Also",
+            #             URIRef(cs["seeAlso"])
+            #         )
+            #     )
+
+            sparql_vocabs[vocab_id] = Vocabulary(
+                "standard_name",
+                vocab_id,
+                str(cs["title"]),
+                str(cs["description"]),
+                str(cs["creator"]),
+                None,
+                # dct:issued not in Vocabulary
+                # dateutil.parser.parse(cs.get('issued').get('value')) if cs.get('issued') is not None else None,
+                dateutil.parser.parse(cs.get("modified")),
+                str(cs["version"]),  # versionInfo
+                config.VocabSource.NvsSPARQL,
+                collections="Collection",  # just like the other Collections
+                sparql_endpoint=details["sparql_endpoint"],
+                sparql_username=details.get("sparql_username"),
+                sparql_password=details.get("sparql_password"),
+                other_properties=other_properties
+            )
+
         g.VOCABS = {}
         g.VOCABS.update(**sparql_vocabs)
-        logging.debug("SPARQL collect() complete.")
+        logging.debug("NvsSPARQL collect() complete.")
 
     def list_concepts(self):
         vocab = g.VOCABS[self.vocab_uri]
@@ -198,14 +266,44 @@ class NvsSPARQL(Source):
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 
+    def list_concepts_for_standard_name(self):
+        q = """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+            SELECT DISTINCT ?c ?pl ?dep
+            WHERE {
+                    <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+
+                    OPTIONAL {
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                    }
+
+                    ?c skos:prefLabel ?pl .
+            }
+            ORDER BY ?pl
+            """
+
+        import pickle
+        from pathlib import Path
+        return [
+            (
+                str(concept["c"]),
+                str(concept["pl"]),
+                True if concept.get("dep") and concept["dep"] == "true" else False
+            )
+            for concept in pickle.load(open(Path(config.APP_DIR) / "cache" / "standard_name.p", "rb")).query(q)
+        ]
+
     def get_vocabulary(self):
         """
         Get a vocab from the cache
         :return:
         :rtype:
         """
+        if self.vocab_uri == "http://vocab.nerc.ac.uk/standard_name/":
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name()
         # is this a Concept Scheme or a Collection?
-        if g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
+        elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
             g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts()
             g.VOCABS[self.vocab_uri].collections = self.list_collections()
@@ -297,7 +395,7 @@ class NvsSPARQL(Source):
                         "label": related_instance_types[r["p"]["value"]]
                     }
                 related_instances[r["p"]["value"]]["instances"].append(
-                    (r["o"]["value"], r["ropl"]["value"] if r["ropl"] is not None else None)
+                    (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
                 )
 
             elif r["p"]["value"] in provenance_property_types.keys():
