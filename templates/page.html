@@ -48,7 +48,7 @@
 
     #header {
         margin-top: 10px;
-        color: rgba(19, 50, 77, 0.9);
+        color: rgb(19, 50, 77);
         font-weight: bold;
         text-align: center;
     }
@@ -60,7 +60,7 @@
 
     #header-title a {
         display: inline-block;
-        background-color: rgba(19, 50, 77, 0.9);
+        background-color: rgb(19, 50, 77);
         color: white;
         font-size: 15px;
         font-weight: normal;
@@ -70,10 +70,10 @@
     }
 
     #mainmenu {
-	      margin-top: 10px;
+        margin-top: 10px;
         text-align: center;
 
-        background-color: rgba(19, 50, 77, 0.9);
+        background-color: rgb(19, 50, 77);
         color: white;
         padding: 10px 0;
     }
@@ -84,7 +84,7 @@
     }
 
     #footer {
-        border-top:solid 2px rgba(19, 50, 77, 0.9);
+        border-top:solid 2px rgb(19, 50, 77);
         display: grid ;
         grid-template-rows: 50px 100px 10px;
         color: white;
@@ -138,7 +138,7 @@
     }
 
     h1, h2, h3, h4 {
-        color: rgba(19, 50, 77, 0.9);
+        color: rgb(19, 50, 77);
         font-weight: bold;
     }
 
@@ -409,7 +409,6 @@
     <div id="header-title" style="grid-row:2;">
       The NERC Vocabulary Server (NVS)
       <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
-      <a href="{{ url_for('contact_us') }}">Contact Us</a>
     </div>
   </div><!-- #header -->
   <div id="mainmenu" style="grid-column:2;">
@@ -420,10 +419,7 @@
   </div><!-- #content -->
   <div id="footer" style="grid-column:1/4;">
     <div id="footer-top">
-      <a href="">Vocabularies Licence</a> |
-      <a href="">Vocabularies Editor</a> |
-      <a href="">Parameter Tools</a> |
-      <a href="https://github.com/nvs-vocabs">NVS GitHub</a>
+      {% include 'nav.html' %}
     </div>
     <div id="footer-bottom">
       <img src="/style/noc.svg" alt="NOC logo" style="height:80px; float:left;" />
