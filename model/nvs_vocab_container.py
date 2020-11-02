@@ -1,4 +1,5 @@
-from flask import Response, send_from_directory
+from flask import Response, send_from_directory, render_template
+from flask_paginate import Pagination
 from pyldapi import Renderer, ContainerRenderer
 from rdflib import Graph, Literal, URIRef
 from vocprez.model.profiles import profile_nvs
@@ -40,6 +41,9 @@ class NvsContainerRenderer(ContainerRenderer):
             **kwargs
         )
 
+        if self.per_page == 20:
+            self.per_page = 500
+
     def render(self):
         """
         Renders the register profile.
@@ -51,7 +55,7 @@ class NvsContainerRenderer(ContainerRenderer):
         if response is None and self.profile == 'nvs':
             if self.paging_error is None:
                 if self.mediatype == 'text/html':
-                    return self._render_mem_profile_html()
+                    return self._render_nvs_profile_html()
                 elif self.mediatype in Renderer.RDF_MEDIA_TYPES:
                     return self._render_nvs_profile_rdf()
                 else:
@@ -59,6 +63,43 @@ class NvsContainerRenderer(ContainerRenderer):
             else:  # there is a paging error (e.g. page > last_page)
                 return Response(self.paging_error, status=400, mimetype='text/plain')
         return response
+
+    def _render_nvs_profile_html(self, template_context=None):
+        print("self.per_page")
+        print(self.per_page)
+        pagination = Pagination(
+            page=self.page,
+            per_page=self.per_page,
+            total=self.members_total_count,
+            page_parameter='page', per_page_parameter='per_page'
+        )
+        _template_context = {
+            'uri': self.instance_uri,
+            'label': self.label,
+            'comment': self.comment,
+            'parent_container_uri': self.parent_container_uri,
+            'parent_container_label': self.parent_container_label,
+            'members': self.members,
+            'page': self.page,
+            'per_page': self.per_page,
+            'first_page': self.first_page,
+            'prev_page': self.prev_page,
+            'next_page': self.next_page,
+            'last_page': self.last_page,
+            'pagination': pagination
+        }
+        if self.template_extras is not None:
+            _template_context.update(self.template_extras)
+        if template_context is not None and isinstance(template_context, dict):
+            _template_context.update(template_context)
+
+        return Response(
+            render_template(
+                self.members_template or 'members.html',
+                **_template_context
+            ),
+            headers=self.headers
+        )
 
     def _render_nvs_profile_rdf(self):
         if "/scheme/" in self.request.base_url:

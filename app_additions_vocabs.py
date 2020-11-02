@@ -7,7 +7,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     per_page = (
         int(request.values.get("per_page"))
         if request.values.get("per_page") is not None
-        else 20
+        else 500
     )
 
     # get this instance's list of vocabs
