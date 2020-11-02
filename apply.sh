@@ -59,6 +59,7 @@ sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez
 sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez/model/nvs_concept.py
 sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
 sed -i 's#$DB2RDF_SCHEMES_URI#'"$DB2RDF_SCHEMES_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
+sed -i 's#$DB2RDF_STANDARD_NAME_URI#'"$DB2RDF_STANDARD_NAME_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
 
 echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source

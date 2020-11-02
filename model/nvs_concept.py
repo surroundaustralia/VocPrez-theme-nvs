@@ -39,8 +39,6 @@ class NvsConceptRenderer(ConceptRenderer):
 
     def _render_nvs_rdf(self):
         api_concept_uri = "$DB2RDF_COLLECTIONS_URI" + self.concept.uri.split("/collection/")[1]
-        logging.info("api_concept_uri")
-        logging.info(api_concept_uri)
         r = requests.get(api_concept_uri)
 
         if self.mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:

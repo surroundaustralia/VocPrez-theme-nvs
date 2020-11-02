@@ -17,7 +17,7 @@
         {% endif -%}
         {%  if vocab.creator is not none  -%}
         <tr>
-          <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td><a href="{{ vocab.creator }}">{{ vocab.creator.split('/')[-1].split('#')[-1] }}</a></td>
+          <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</a></td>
         </tr>
         {% endif -%}
         {%  if vocab.created is not none  -%}
@@ -43,14 +43,6 @@
           </td>
         </tr>
         {% endif -%}
-        {%  if vocab.concept_hierarchy is not none and vocab.concept_hierarchy|length > 0  -%}
-        <tr>
-          <th valign="top"><a href="http://www.w3.org/2004/02/skos/core#hasTopConcept">Concept Hierarchy</a></th>
-          <td>
-              {{ render_concept_hierarchy(vocab.concept_hierarchy).replace('weefwrgr', '')|safe }}
-          </td>
-        </tr>
-        {% endif -%}
         {% if vocab.other_properties is not none %}
           {% for prop in vocab.other_properties %}
             <tr>
@@ -61,13 +53,21 @@
             </tr>
           {% endfor %}
         {% endif %}
+        {%  if vocab.concept_hierarchy is not none and vocab.concept_hierarchy|length > 0  -%}
+        <tr>
+          <th valign="top"><a href="http://www.w3.org/2004/02/skos/core#hasTopConcept">Concept Hierarchy</a></th>
+          <td>
+              {{ render_concept_hierarchy(vocab.concept_hierarchy).replace('weefwrgr', '')|safe }}
+          </td>
+        </tr>
+        {% endif -%}
         {% if vocab.collections == "Collection" %}
           <tr>
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
               {% for concept in vocab.concepts %}
                 {% if "/standard_name/" in concept[0] %}
-                  {% set concept_id = concept[0].split('/standard_name/')[-1] %}
+                  {% set concept_id = concept[0].split('/standard_name/')[-1].rstrip('/') %}
                 <a href="{% if LOCAL_URLS %}{{ url_for('standard_name_concept', concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
                 {% else %}
                 {% set vocab_id = concept[0].split('/collection/')[-1].split('/current/')[0] %}

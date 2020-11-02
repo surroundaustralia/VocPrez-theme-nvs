@@ -40,10 +40,13 @@ class NvsVocabularyRenderer(VocabularyRenderer):
 
     def _render_nvs_rdf(self):
         if self.vocab.collections == "Collection":
-            api_vocab_uri = "$DB2RDF_COLLECTIONS_URI" + self.vocab.uri.split("/collection/")[1]
+            if "/standard_name/" in self.vocab.uri:
+                api_vocab_uri = "$DB2RDF_STANDARD_NAME_URI"
+            else:
+                api_vocab_uri = "$DB2RDF_COLLECTIONS_URI" + self.vocab.uri.split("/collection/")[1]
         else:
-            api_vocab_uri = "$DB2RDF_SCHEME_URI" + self.vocab.uri.split("/scheme/")[1]
-        logging.info(api_vocab_uri)
+            api_vocab_uri = "$DB2RDF_SCHEMES_URI" + self.vocab.uri.split("/scheme/")[1]
+
         r = requests.get(api_vocab_uri)
 
         if self.mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:

@@ -90,13 +90,14 @@
             <tr>
             {% if 'standard_name' in vocab.uri %}
               {% set vocab_id = 'standard_name' %}
+              {% set vocab_url = url_for('standard_name') %}
             {% else %}
               {% set vocab_id = vocab.uri.split('/')[-3] %}
-            {% endif %}
-            {% if vocab.collections == "Collection" %}
-            {% set vocab_url = url_for('index') + "collection/" + vocab_id %}
-            {% else %}
-            {% set vocab_url = url_for('index') + "scheme/" + vocab_id %}
+              {% if vocab.collections == "Collection" %}
+                {% set vocab_url = url_for('index') + "collection/" + vocab_id + '/current/' %}
+              {% else %}
+                {% set vocab_url = url_for('index') + "scheme/" + vocab_id + '/current/' %}
+              {% endif %}
             {% endif %}
               <td><a href="{{ vocab_url }}">{{ vocab_id }}</a></td>
               <td>{{ vocab.title }}</td>

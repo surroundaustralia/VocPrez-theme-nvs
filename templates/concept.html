@@ -23,7 +23,7 @@
           {% if '/standard_name/' in concept.uri %}
           <td><a href="{{ url_for('standard_name') }}">{{ vocab_title }}</a></td>
           {% else %}
-          <td><a href="{{ request.base_url.split('/current/')[0] + '/' }}">{{ vocab_title }}</a></td>
+          <td><a href="{{ '/'.join(request.base_url.split('/')[:-2]) + '/' }}">{{ vocab_title }}</a></td>
           {% endif %}
         </tr>
         <tr>
