@@ -65,8 +65,6 @@ class NvsContainerRenderer(ContainerRenderer):
         return response
 
     def _render_nvs_profile_html(self, template_context=None):
-        print("self.per_page")
-        print(self.per_page)
         pagination = Pagination(
             page=self.page,
             per_page=self.per_page,

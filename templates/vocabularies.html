@@ -48,7 +48,7 @@
         </div>
         <div style="grid-column: 1/3; grid-row: 3;">
             <h3>Vocabularies</h3>
-            <p><em>Filter using the search to the right, sort by click on table headings</em></p>
+            <p><em>Sort by click on table headings, Filter using the search to the right.</em></p>
             <style>
               table.vocs {
                   border-collapse: collapse;
@@ -61,10 +61,14 @@
               table.vocs thead td {
                   cursor: pointer;
               }
+              table.vocs thead th {
+                  padding: 3px;
+                  white-space: nowrap;
+                  cursor: pointer;
+              }
               table.vocs tr:nth-child(even) {
                   background-color: lightgrey;
               }
-              table.vocs th,
               table.vocs td {
                   padding: 3px;
               }
@@ -72,13 +76,13 @@
             <table id="vocsort" class="vocs tablesorter">
             <thead>
             <tr>
-              <th style="width:50px; overflow-wrap: break-word; word-break: break-word;">ID</th>
-              <th style="width:100px;">Title</th>
-              <th style="width:60px;">Version</th>
-              <th style="width:100px;">Version Date</th>
-              <th>Description</th>
-              <th style="width:100px;">Governance</th>
-              <th style="width:100px;">External Link</th>
+              <th style="width:50px;">ID <span class="arr">&uarr;</span></th>
+              <th style="width:100px; white-space: nowrap;">Title <span class="arr">&uarr;</span></th>
+              <th style="width:60px;">Version <span class="arr">&uarr;</span></th>
+              <th style="width:100px;">Version Date <span class="arr">&uarr;</span></th>
+              <th>Description <span class="arr">&uarr;</span></th>
+              <th style="width:100px;">Governance <span class="arr">&uarr;</span></th>
+              <th style="width:100px;">External Link <span class="arr">&uarr;</span></th>
             </tr>
             </thead>
             <tbody>
@@ -157,5 +161,19 @@
       $(function() {
         $("#vocsort").tablesorter();
       });
+
+      $("#vocsort thead tr th").click(function(event) {
+          // reset all others
+
+          // set this one
+          console.log($(this).find(".arr").html());
+          if ($(this).find(".arr").html() == "↓") {
+              $(".arr").html("&uarr;")
+          } else {
+              $(".arr").html("&uarr;")
+              $(this).find(".arr").html("&darr;")
+          }
+      });
+
     </script>
 {% endblock %}
