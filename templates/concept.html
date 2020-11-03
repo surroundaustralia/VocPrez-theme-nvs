@@ -87,7 +87,19 @@
           <tr>
             <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
             <td>
-              {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
+              {% if prop.value[:4] == 'http' %}
+                {% if prop.value.startswith(concept.uri) %}
+                  {% set link = request.base_url + prop.value.split('/')[-2] + '/' %}
+                  <a href="{{ link }}">{{ prop.value }}</a>
+                {% elif concept.uri.startswith(prop.value) %}
+                  {% set link = '/'.join(request.base_url.split('/')[:-2]) + '/'  %}
+                  <a href="{{ link }}">{{ prop.value }}</a>
+                {% else %}
+                  <a href="{{ prop.value }}">{{ prop.value }}</a>
+                {% endif %}
+              {% else %}
+                {{ prop.value }}
+              {% endif %}
             </td>
           </tr>
         {% endfor %}
