@@ -29,6 +29,18 @@ class NvsVocabularyRenderer(VocabularyRenderer):
         response = super().render()
         if response is not None:
             return response
+        elif self.profile == "dcat":
+            if self.mediatype in Renderer.RDF_SERIALIZER_TYPES_MAP:
+                return self._render_dcat_rdf()
+            else:
+                return self._render_dcat_html()
+        elif self.profile == "skos":
+            if self.mediatype in Renderer.RDF_SERIALIZER_TYPES_MAP:
+                return self._render_skos_rdf()
+            else:
+                return self._render_dcat_html()  # same as DCAT, for now
+        elif self.profile == "dd":
+            return self._render_dd_json()
         elif self.profile == "nvs":
             if (
                     self.mediatype in Renderer.RDF_MEDIA_TYPES
@@ -82,3 +94,16 @@ class NvsVocabularyRenderer(VocabularyRenderer):
             render_template("vocabulary.html", **_template_context),
             headers=self.headers,
         )
+
+    def _render_dd_json(self):
+        concepts = {}
+        concepts2 = []
+        if self.vocab.concepts:
+            for c in self.vocab.concepts:
+                concepts[c[0]] = c[1]
+            for k, v in concepts.items():
+                concepts2.append({
+                    "uri": k,
+                    "prefLabel": v
+                })
+        return Response(j.dumps(concepts2), mimetype="application/json", headers=self.headers)
