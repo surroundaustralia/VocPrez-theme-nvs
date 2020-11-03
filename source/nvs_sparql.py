@@ -207,27 +207,152 @@ class NvsSPARQL(Source):
         g.VOCABS.update(**sparql_vocabs)
         logging.debug("NvsSPARQL collect() complete.")
 
-    def list_concepts(self):
+    # def get_concept_hierarchy(self):
+    #     """
+    #     Function to draw concept hierarchy for vocabulary
+    #     """
+    #
+    #     def build_hierarchy(bindings_list, broader_concept=None, level=0):
+    #         """
+    #         Recursive helper function to build hierarchy list from a bindings list
+    #         Returns list of tuples: (<level>, <concept>, <concept_preflabel>, <broader_concept>)
+    #         """
+    #         level += 1  # Start with level 1 for top concepts
+    #         hier = []
+    #
+    #         narrower_list = sorted(
+    #             [
+    #                 binding_dict
+    #                 for binding_dict in bindings_list
+    #                 if (  # Top concept
+    #                            (broader_concept is None)
+    #                            and (binding_dict.get("broader_concept") is None)
+    #                    )
+    #                    or  # Narrower concept
+    #                    (
+    #                            (binding_dict.get("broader_concept") is not None)
+    #                            and (
+    #                                    binding_dict["broader_concept"]["value"] == broader_concept
+    #                            )
+    #                    )
+    #             ],
+    #             key=lambda binding_dict: binding_dict["concept_preflabel"]["value"],
+    #         )
+    #         for binding_dict in narrower_list:
+    #             concept = binding_dict["concept"]["value"]
+    #             hier += [
+    #                         (
+    #                             level,
+    #                             concept,
+    #                             binding_dict["concept_preflabel"]["value"],
+    #                             binding_dict["broader_concept"]["value"]
+    #                             if binding_dict.get("broader_concept")
+    #                             else None,
+    #                         )
+    #                     ] + build_hierarchy(bindings_list, concept, level)
+    #         return hier
+    #
+    #     vocab = g.VOCABS[self.vocab_uri]
+    #
+    #     query = """
+    #         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    #         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    #
+    #         SELECT distinct ?concept ?concept_preflabel ?broader_concept
+    #         WHERE {{
+    #             {{ ?concept skos:inScheme <{vocab_uri}> . }}
+    #             UNION
+    #             {{ ?concept skos:topConceptOf <{vocab_uri}> . }}
+    #             UNION
+    #             {{ <{vocab_uri}> skos:hasTopConcept ?concept . }}
+    #             ?concept skos:prefLabel ?concept_preflabel .
+    #             OPTIONAL {{
+    #                 ?concept skos:broader ?broader_concept .
+    #                 ?broader_concept skos:inScheme <{vocab_uri}> .
+    #             }}
+    #             FILTER(lang(?concept_preflabel) = "{language}" || lang(?concept_preflabel) = "")
+    #         }}
+    #         ORDER BY ?concept_preflabel
+    #         """.format(
+    #         vocab_uri=vocab.uri,
+    #         language=self.language
+    #     )
+    #
+    #     bindings_list = u.sparql_query(query, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
+    #
+    #     assert bindings_list is not None, "SPARQL concept hierarchy query failed"
+    #
+    #     hierarchy = build_hierarchy(bindings_list)
+    #
+    #     return u.draw_concept_hierarchy(hierarchy, self.request, self.vocab_uri)
+
+    def list_concepts(self, acc_dep=None):
         vocab = g.VOCABS[self.vocab_uri]
-        q = """
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-            SELECT DISTINCT ?c ?pl ?broader ?dep
-            WHERE {{
-                {{?c skos:inScheme <{vocab_uri}>}}
 
-                ?c a skos:Concept ;
-                     skos:prefLabel ?pl .
+        if acc_dep == "accepted":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT DISTINCT ?c ?pl ?broader ?dep
+                WHERE {{
+                    {{?c skos:inScheme <{vocab_uri}>}}
 
-                OPTIONAL {{
-                    {{?c skos:broader ?broader}}
-                    UNION 
-                    {{?broader skos:narrower ?c}}
+                    ?c a skos:Concept ;
+                         skos:prefLabel ?pl .
+                        
+                    ?c <http://www.w3.org/2002/07/owl#deprecated> "false" .
+
+                    OPTIONAL {{
+                        {{?c skos:broader ?broader}}
+                        UNION 
+                        {{?broader skos:narrower ?c}}
+                    }}
+
+                    FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
                 }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
+        elif acc_dep == "deprecated":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT DISTINCT ?c ?pl ?broader ?dep
+                WHERE {{
+                    {{?c skos:inScheme <{vocab_uri}>}}
 
-                FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
-            }}
-            ORDER BY ?pl
-            """.format(vocab_uri=vocab.uri, language=self.language)
+                    ?c a skos:Concept ;
+                         skos:prefLabel ?pl .
+                         
+                    ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
+
+                    OPTIONAL {{
+                        {{?c skos:broader ?broader}}
+                        UNION 
+                        {{?broader skos:narrower ?c}}
+                    }}
+
+                    FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
+        else:
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT DISTINCT ?c ?pl ?broader ?dep
+                WHERE {{
+                    {{?c skos:inScheme <{vocab_uri}>}}
+
+                    ?c a skos:Concept ;
+                         skos:prefLabel ?pl .
+
+                    OPTIONAL {{
+                        {{?c skos:broader ?broader}}
+                        UNION 
+                        {{?broader skos:narrower ?c}}
+                    }}
+
+                    FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
 
         return [
             (
@@ -238,24 +363,64 @@ class NvsSPARQL(Source):
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 
-    def list_concepts_for_a_collection(self):
+    def list_concepts_for_a_collection(self, acc_dep=None):
         vocab = g.VOCABS[self.vocab_uri]
-        q = """
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-            SELECT DISTINCT ?c ?pl ?dep
-            WHERE {{
-                    <{vocab_uri}> skos:member ?c .
-                    
-                    OPTIONAL {{
-                        ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                    }}
+        if acc_dep == "accepted":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                    ?c skos:prefLabel ?pl .
-                    FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
-            }}
-            ORDER BY ?pl
-            """.format(vocab_uri=vocab.uri, language=self.language)
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {{
+                        <{vocab_uri}> skos:member ?c .
+                        
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> "false" .
+
+                        OPTIONAL {{
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }}
+
+                        ?c skos:prefLabel ?pl .
+                        FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
+        elif acc_dep == "deprecated":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {{
+                        <{vocab_uri}> skos:member ?c .
+                        
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
+
+                        OPTIONAL {{
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }}
+
+                        ?c skos:prefLabel ?pl .
+                        FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
+        else:
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {{
+                        <{vocab_uri}> skos:member ?c .
+
+                        OPTIONAL {{
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }}
+
+                        ?c skos:prefLabel ?pl .
+                        FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
 
         return [
             (
@@ -266,22 +431,59 @@ class NvsSPARQL(Source):
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
 
-    def list_concepts_for_standard_name(self):
-        q = """
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    def list_concepts_for_standard_name(self, acc_dep=None):
+        if acc_dep == "accepted":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-            SELECT DISTINCT ?c ?pl ?dep
-            WHERE {
-                    <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {
+                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+                        
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> "false" .
 
-                    OPTIONAL {
-                        ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                    }
+                        OPTIONAL {
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }
 
-                    ?c skos:prefLabel ?pl .
-            }
-            ORDER BY ?pl
-            """
+                        ?c skos:prefLabel ?pl .
+                }
+                ORDER BY ?pl
+                """
+        elif acc_dep == "deprecated":
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {
+                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+                        
+                        ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
+
+                        OPTIONAL {
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }
+
+                        ?c skos:prefLabel ?pl .
+                }
+                ORDER BY ?pl
+                """
+        else:
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    
+                SELECT DISTINCT ?c ?pl ?dep
+                WHERE {
+                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+    
+                        OPTIONAL {
+                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
+                        }
+    
+                        ?c skos:prefLabel ?pl .
+                }
+                ORDER BY ?pl
+                """
 
         import pickle
         from pathlib import Path
@@ -294,21 +496,40 @@ class NvsSPARQL(Source):
             for concept in pickle.load(open(Path(config.APP_DIR) / "cache" / "standard_name.p", "rb")).query(q)
         ]
 
-    def get_vocabulary(self):
+    def get_vocabulary(self, acc_dep=None):
         """
         Get a vocab from the cache
         :return:
         :rtype:
         """
         if self.vocab_uri == "http://vocab.nerc.ac.uk/standard_name/":
-            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name()
+            if acc_dep == "accepted":
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep="accepted")
+            elif acc_dep == "deprecated":
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep="deprecated")
+            else:
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name()
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
             g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
-            g.VOCABS[self.vocab_uri].concepts = self.list_concepts()
+            if acc_dep == "accepted":
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep="accepted")
+            elif acc_dep == "deprecated":
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep="deprecated")
+            else:
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts()
             g.VOCABS[self.vocab_uri].collections = self.list_collections()
         else:  # vocab.collection == "Collection":
-            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection()
+            if acc_dep == "accepted":
+                logging.debug('accepted')
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep="accepted")
+            elif acc_dep == "deprecated":
+                logging.debug('deprecated')
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep="deprecated")
+            else:
+                logging.debug('nonw')
+                logging.debug(self.vocab_uri)
+                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection()
 
         return g.VOCABS[self.vocab_uri]
 
