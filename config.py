@@ -12,8 +12,9 @@ SPARQL_QUERY_LIMIT = 2000  # Maximum number of results to return per SPARQL quer
 MAX_RETRIES = 2
 RETRY_SLEEP_SECONDS = 10
 SPARQL_TIMEOUT = 60
-LOCAL_URLS = True  # Parameter governing whether URLs shown are local or external
-ABSOLUTE_URI_BASE = "http://vocab.nerc.ac.uk"
+LOCAL_URLS = False  # Parameter governing whether URLs shown are local or external
+ABSOLUTE_URI_BASE = "http://vocabdev.nerc.ac.uk"
+ABSOLUTE_URI_BASE_IN_DATA = "http://vocab.nerc.ac.uk"
 SYSTEM_URI_BASE = "http://localhost:5000"
 
 #

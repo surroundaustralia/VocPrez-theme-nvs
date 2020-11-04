@@ -61,12 +61,12 @@ body {
 }
 
 #mainmenu {
-    margin-top: 10px;
     text-align: center;
 
     background-color: rgb(19, 50, 77);
     color: white;
     padding: 10px 0;
+    height: 20px;
 }
 
 #mainmenu a {
