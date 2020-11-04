@@ -8,7 +8,7 @@
     <table class="metadata concept_scheme">
         <tr>
           <th>URI</th>
-          <td><strong><a id="this_uri" href="{{ uri }}">{{ uri }}</a></strong></td>
+          <td><strong><a id="this_uri" href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></td>
         </tr>
         {%  if vocab.description is not none  -%}
         <tr>

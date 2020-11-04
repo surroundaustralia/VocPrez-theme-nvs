@@ -6,7 +6,7 @@
             <h1>{{ label }}</h1>
             <dl>
               <dt>URI</dt>
-              <dd><strong><a href="{{ uri }}">{{ uri }}</a></strong></dd>
+              <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
               {% if comment is not none %}
               <dt>Description</dt>
               <dd>{{ comment|safe }}</dd>
