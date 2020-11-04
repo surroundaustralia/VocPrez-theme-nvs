@@ -432,25 +432,7 @@ class NvsSPARQL(Source):
         ]
 
     def list_concepts_for_standard_name(self, acc_dep=None):
-        if acc_dep == "accepted":
-            q = """
-                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-                SELECT DISTINCT ?c ?pl ?dep
-                WHERE {
-                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
-                        
-                        ?c <http://www.w3.org/2002/07/owl#deprecated> "false" .
-
-                        OPTIONAL {
-                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                        }
-
-                        ?c skos:prefLabel ?pl .
-                }
-                ORDER BY ?pl
-                """
-        elif acc_dep == "deprecated":
+        if acc_dep == "deprecated":
             q = """
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
@@ -503,33 +485,14 @@ class NvsSPARQL(Source):
         :rtype:
         """
         if self.vocab_uri == "http://vocab.nerc.ac.uk/standard_name/":
-            if acc_dep == "accepted":
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep="accepted")
-            elif acc_dep == "deprecated":
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep="deprecated")
-            else:
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name()
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep=acc_dep)
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
             g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
-            if acc_dep == "accepted":
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep="accepted")
-            elif acc_dep == "deprecated":
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep="deprecated")
-            else:
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts()
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep=acc_dep)
             g.VOCABS[self.vocab_uri].collections = self.list_collections()
         else:  # vocab.collection == "Collection":
-            if acc_dep == "accepted":
-                logging.debug('accepted')
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep="accepted")
-            elif acc_dep == "deprecated":
-                logging.debug('deprecated')
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep="deprecated")
-            else:
-                logging.debug('nonw')
-                logging.debug(self.vocab_uri)
-                g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection()
+            g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep=acc_dep)
 
         return g.VOCABS[self.vocab_uri]
 
@@ -630,6 +593,9 @@ class NvsSPARQL(Source):
             # TODO: Agents
 
             # TODO: more Annotations
+
+        if pl is None:
+            return None
 
         from vocprez.model.concept import Concept
 

@@ -17,7 +17,7 @@
         {% endif -%}
         {%  if vocab.creator is not none  -%}
         <tr>
-          <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</a></td>
+          <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</td>
         </tr>
         {% endif -%}
         {%  if vocab.created is not none  -%}
@@ -66,15 +66,8 @@
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
               {% for concept in vocab.concepts %}
-                {% if "/standard_name/" in concept[0] %}
-                  {% set concept_id = concept[0].split('/standard_name/')[-1].rstrip('/') %}
-                <a href="{% if LOCAL_URLS %}{{ url_for('standard_name_concept', concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
-                {% else %}
-                {% set vocab_id = concept[0].split('/collection/')[-1].split('/current/')[0] %}
-                {% set concept_id = concept[0].split('/current/')[-1].rstrip('/') %}
-                <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
-                {% endif %}
-              {% endfor -%}
+                <a href="{{ utils.get_content_uri(concept[0]) }}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
+              {% endfor %}
               {% if vocab.concepts|length < 1 %}
                 <p><em>There are no Concepts listed for this view of a Vocabulary</em></p>
               {% endif %}
@@ -102,11 +95,7 @@
       <h3>Alternate Profiles</h3>
       <p>Different views and formats:</p>
       <p>
-      {% if LOCAL_URLS -%}
-        <a href="{{ request.base_url }}?_profile=alt">Alternate Profiles</a>.
-      {% else -%}
-        <a href="{{ uri }}&_profile=alt">Alternate Profiles</a>.
-      {% endif -%}
+        <a href="{{ utils.get_content_uri(uri) }}?_profile=alt">Alternate Profiles</a>
         <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
       </p>
     </div>

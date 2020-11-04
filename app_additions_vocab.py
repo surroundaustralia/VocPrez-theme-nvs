@@ -15,14 +15,7 @@ def vocabulary(vocab_id, acc_dep=None):
             vocab_uri = v
 
     if vocab_uri is None:
-        return return_vocrez_error(
-            "vocab_id not valid",
-            400,
-            markdown.markdown(
-                "The 'vocab_id' you supplied could not be translated to a valid vocab's URI. Valid vocab_ids are:\n\n"
-                "{}".format("".join(["* [{}]({})   \n".format(x[0], x[1]) for x in vocab_id_uri_list()]))
-            ),
-        )
+        return render_template("vocabulary_404.html", id=vocab_id), 404
 
     return return_vocab2(vocab_uri, acc_dep)
 
@@ -52,20 +45,8 @@ def scheme(vocab_id, acc_dep=None):
 
 
 @app.route("/standard_name/")
-def standard_name():
-    return return_vocab("http://vocab.nerc.ac.uk/standard_name/")
-
-
-@app.route("/standard_name/<string:concept_id>/")
-def standard_name_concept(concept_id):
-    vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
-    concept_uri = "http://vocab.nerc.ac.uk/standard_name/{}/".format(concept_id)
-
-    c = getattr(source, g.VOCABS[vocab_uri].source) \
-        (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
-
-    from vocprez.model.nvs_concept import NvsConceptRenderer
-    return NvsConceptRenderer(request, c).render()
+def standard_name(acc_dep=None):
+    return return_vocab2("http://vocab.nerc.ac.uk/standard_name/", acc_dep)
 
 
 def return_vocab2(uri, acc_dep):

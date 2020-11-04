@@ -433,3 +433,53 @@ def match(vocabs, query):
 
 def parse_markdown(s):
     return markdown.markdown(s)
+
+
+def get_system_uri(vocab_or_concept_absolute_uri):
+    if vocab_or_concept_absolute_uri.startswith(config.ABSOLUTE_URI_BASE):
+        return config.SYSTEM_URI_BASE + vocab_or_concept_absolute_uri.replace(config.ABSOLUTE_URI_BASE, "")
+    else:
+        return vocab_or_concept_absolute_uri
+
+
+def get_absolute_uri(vocab_or_concept_system_uri):
+    if vocab_or_concept_system_uri.startswith(config.SYSTEM_URI_BASE):
+        return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.SYSTEM_URI_BASE, "")
+    else:
+        return config.SYSTEM_URI_BASE
+
+
+def get_content_uri(vocab_or_concept_uri):
+    if config.LOCAL_URLS:
+        return get_system_uri(vocab_or_concept_uri)
+    else:
+        return get_absolute_uri(vocab_or_concept_uri)
+
+
+def get_vocab_uri_from_concept_uri(concept_uri):
+    new_uri = get_content_uri(concept_uri)
+    if config.LOCAL_URLS:
+        base = config.SYSTEM_URI_BASE
+    else:
+        base = config.ABSOLUTE_URI_BASE
+
+    if "/standard_name/" in concept_uri:
+        return base + "/standard_name/"
+    elif "/collection/" in concept_uri:
+        m = re.search(base + "/collection/([A-Z][0-9]{2})/current/", new_uri)
+        if m:
+            return m[0]
+        else:
+            return concept_uri
+    else:
+        return concept_uri
+
+
+def get_vocab_id(vocab_or_concept_uri):
+    if "/standard_name/" in vocab_or_concept_uri:
+        return "standard_name"
+    m = re.search("collection\/([A-Z][0-9]{2})\/current", vocab_or_concept_uri)
+    if m is not None:
+        return m[1]
+    else:
+        return "Ext"

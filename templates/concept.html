@@ -1,5 +1,4 @@
 {% extends "page.html" %}
-{% from "_format.html" import format with context -%}
 {% block content %}
   <div style="display:grid; grid-template-columns: 80% auto;">
     <div style="grid-column: 1;">
@@ -20,11 +19,7 @@
         </tr>
         <tr>
           <th>Within Vocab</th>
-          {% if '/standard_name/' in concept.uri %}
-          <td><a href="{{ url_for('standard_name') }}">{{ vocab_title }}</a></td>
-          {% else %}
-          <td><a href="{{ '/'.join(request.base_url.split('/')[:-2]) + '/' }}">{{ vocab_title }}</a></td>
-          {% endif %}
+          <td><a href="{{ utils.get_vocab_uri_from_concept_uri(concept.uri) }}">{{ vocab_title }}</a></td>
         </tr>
         <tr>
           <th><a href="http://www.w3.org/2004/02/skos/core#prefLabel">Preferred Label</a></th>
@@ -42,7 +37,7 @@
         {% endif %}
         <tr>
           <th><a href="http://www.w3.org/2004/02/skos/core#definition">Definition</a></th>
-            <td>{{ format(concept.definition)|safe }}</td>
+            <td>{{ concept.definition|safe }}</td>
         </tr>
         {% if concept.related_instances|length > 0 %}
           {% for k, v in concept.related_instances.items() %}
@@ -50,23 +45,8 @@
             <th><a href="{{ k }}">{{ v["label"] }}</a></th>
             <td>
               {% for inst in v["instances"] %}
-                {% if '/standard_name/' in inst[0] %}
-                  {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/standard_name/', url_for('standard_name')) %}
-                  {% set ri_vocab_uri = url_for('standard_name') %}
-                  {% set ri_vocab_id = 'standard_name' %}
-                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
-                {% elif '/collection/' in inst[0] %}
-                  {% set ri_clean_uri = inst[0].replace('http://vocab.nerc.ac.uk/collection/', url_for('collections')) %}
-                  {% set ri_vocab_uri = ri_clean_uri.split('/current/')[0] + '/current/' %}
-                  {% set ri_vocab_id = inst[0].replace('http://vocab.nerc.ac.uk/collection/', '').split('/')[0] %}
-                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst[1] }}</a><br />
-                {% else %}
-                  {% set ri_clean_uri = inst[0] %}
-                  {% set ri_vocab_uri = inst[0] %}
-                  {% set ri_vocab_id = 'Extnl' %}
-                  {% set inst_1 = inst[0].split('/')[-1] %}
-                  <strong><a href="{{ ri_vocab_uri }}">{{ ri_vocab_id }}</a></strong>: <a href="{{ ri_clean_uri }}">{{ inst_1 }}</a><br />
-                {% endif %}
+                <strong><a href="{{ utils.get_vocab_uri_from_concept_uri(inst[0]) }}">{{ utils.get_vocab_id(inst[0]) }}</a></strong>:
+                <a href="{{ utils.get_content_uri(inst[0]) }}">{% if inst[1] is none %}{{ inst[0] }}{% else %}{{ inst[1] }}{% endif %}</a><br />
               {% endfor %}
             </td>
           </tr>
@@ -88,15 +68,7 @@
             <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
             <td>
               {% if prop.value[:4] == 'http' %}
-                {% if prop.value.startswith(concept.uri) %}
-                  {% set link = request.base_url + prop.value.split('/')[-2] + '/' %}
-                  <a href="{{ link }}">{{ prop.value }}</a>
-                {% elif concept.uri.startswith(prop.value) %}
-                  {% set link = '/'.join(request.base_url.split('/')[:-2]) + '/'  %}
-                  <a href="{{ link }}">{{ prop.value }}</a>
-                {% else %}
-                  <a href="{{ prop.value }}">{{ prop.value }}</a>
-                {% endif %}
+                <a href="{{ utils.get_content_uri(prop.value) }}">{{ prop.value }}</a>
               {% else %}
                 {{ prop.value }}
               {% endif %}
@@ -110,7 +82,7 @@
         <h3>Alternate Profiles</h3>
         <p>Different views and formats:</p>
           <p>
-            <a href="{{ request.root_url }}?_profile=alt">Alternate Profiles</a>
+            <a href="{{ utils.get_content_uri(concept.uri) }}?_profile=alt">Alternate Profiles</a>
             <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
           </p>
       </div>

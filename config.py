@@ -13,7 +13,8 @@ MAX_RETRIES = 2
 RETRY_SLEEP_SECONDS = 10
 SPARQL_TIMEOUT = 60
 LOCAL_URLS = True  # Parameter governing whether URLs shown are local or external
-
+ABSOLUTE_URI_BASE = "http://vocab.nerc.ac.uk"
+SYSTEM_URI_BASE = "http://localhost:5000"
 
 #
 #   Vocabulary data sources

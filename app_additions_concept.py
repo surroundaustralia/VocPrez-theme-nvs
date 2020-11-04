@@ -18,6 +18,27 @@ def concept(vocab_id, concept_id, version_no=None):
     c = getattr(source, g.VOCABS[vocab_uri].source) \
         (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
 
+    if c is None:
+        return render_template("concept_404.html", uri=concept_uri), 404
+
+    from vocprez.model.nvs_concept import NvsConceptRenderer
+    return NvsConceptRenderer(request, c).render()
+
+
+@app.route("/standard_name/<string:concept_id>/")
+def standard_name_concept(concept_id):
+    if concept_id in ["accepted", "deprecated"]:
+        return standard_name(acc_dep=concept_id)
+
+    vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+    concept_uri = "http://vocab.nerc.ac.uk/standard_name/{}/".format(concept_id)
+
+    c = getattr(source, g.VOCABS[vocab_uri].source) \
+        (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
+
+    if c is None:
+        return render_template("concept_404.html", uri=concept_uri), 404
+
     from vocprez.model.nvs_concept import NvsConceptRenderer
     return NvsConceptRenderer(request, c).render()
 # END ROUTE single concept

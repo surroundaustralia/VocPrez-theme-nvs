@@ -54,6 +54,7 @@
                   border-collapse: collapse;
                   border: none;
                   table-layout: fixed;
+                  max-width: 1000px;
               }
               table.vocs thead {
                   background-color: lightgrey;
@@ -161,7 +162,7 @@
         }
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
     <script>
       $(function() {
         $("#vocsort").tablesorter();
