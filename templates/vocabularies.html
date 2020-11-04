@@ -50,11 +50,14 @@
             <h3>Vocabularies</h3>
             <p><em>Sort by click on table headings, Filter using the search to the right.</em></p>
             <style>
+              #table_holder {
+                  max-width: 1100px;
+                  overflow: hidden;
+              }
               table.vocs {
                   border-collapse: collapse;
                   border: none;
                   table-layout: fixed;
-                  max-width: 1000px;
               }
               table.vocs thead {
                   background-color: lightgrey;
@@ -72,6 +75,7 @@
               }
               table.vocs td {
                   padding: 3px;
+                  max-width: 230px;
               }
             </style>
             <table id="vocsort" class="vocs tablesorter">
@@ -81,7 +85,7 @@
               <th style="width:100px; white-space: nowrap;">Title <span class="arr">&uarr;</span></th>
               <th style="width:60px;">Version <span class="arr">&uarr;</span></th>
               <th style="width:100px;">Version Date <span class="arr">&uarr;</span></th>
-              <th>Description <span class="arr">&uarr;</span></th>
+              <th style="width:200px;">Description <span class="arr">&uarr;</span></th>
               <th style="width:100px;">Governance <span class="arr">&uarr;</span></th>
               <th style="width:100px;">External Link <span class="arr">&uarr;</span></th>
             </tr>
