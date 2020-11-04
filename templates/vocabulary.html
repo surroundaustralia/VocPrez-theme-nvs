@@ -65,7 +65,6 @@
           <tr>
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
-              {% set has_concepts = 'false' %}
               {% for concept in vocab.concepts %}
                 {% if "/standard_name/" in concept[0] %}
                   {% set concept_id = concept[0].split('/standard_name/')[-1].rstrip('/') %}
@@ -75,9 +74,8 @@
                 {% set concept_id = concept[0].split('/current/')[-1].rstrip('/') %}
                 <a href="{% if LOCAL_URLS %}{{ url_for('concept', vocab_id=vocab_id, concept_id=concept_id) }}{% else %}{{ concept[0] }}{% endif %}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
                 {% endif %}
-                {% set has_concepts = 'true' %}
               {% endfor -%}
-              {% if has_concepts == 'false' %}
+              {% if vocab.concepts|length < 1 %}
                 <p><em>There are no Concepts listed for this view of a Vocabulary</em></p>
               {% endif %}
             </td>
