@@ -118,15 +118,7 @@ def draw_concept_hierarchy(hierarchy, request, vocab_uri):
             if mult is None:  # else: # everything is normal
                 mult = item[0] - 1
 
-            # Default to showing local URLs unless told otherwise
-            if (not hasattr(config, "LOCAL_URLS")) or config.LOCAL_URLS:
-                uri = (
-                        request.url_root
-                        + "collection/"
-                        + item[1].split('/collection/')[1]
-                )
-            else:
-                uri = item[1]
+            uri = get_content_uri(item[1])
 
             t = tab * mult + "* [" + item[2] + "](" + uri + ")\n"
             text += t
