@@ -481,5 +481,9 @@ def get_vocab_id(vocab_or_concept_uri):
     m = re.search("collection\/([A-Z][0-9]{2})\/current", vocab_or_concept_uri)
     if m is not None:
         return m[1]
-    else:
-        return "Ext"
+
+    m = re.search("scheme\/([A-Z\_]+)\/current", vocab_or_concept_uri)
+    if m is not None:
+        return m[1]
+
+    return "Ext"

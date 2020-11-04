@@ -33,6 +33,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     start = (page - 1) * per_page
     end = start + per_page
     vocabs = vocabs[start:end]
+    logging.debug(vocabs)
 
     return NvsContainerRenderer(
         request,

@@ -89,18 +89,7 @@
             <tbody>
             {%- for (url, vocab) in members -%}
             <tr>
-            {% if 'standard_name' in vocab.uri %}
-              {% set vocab_id = 'standard_name' %}
-              {% set vocab_url = url_for('standard_name') %}
-            {% else %}
-              {% set vocab_id = vocab.uri.split('/')[-3] %}
-              {% if vocab.collections == "Collection" %}
-                {% set vocab_url = url_for('index') + "collection/" + vocab_id + '/current/' %}
-              {% else %}
-                {% set vocab_url = url_for('index') + "scheme/" + vocab_id + '/current/' %}
-              {% endif %}
-            {% endif %}
-              <td><a href="{{ vocab_url }}">{{ vocab_id }}</a></td>
+              <td><a href="{{ utils.get_content_uri(vocab.uri) }}">{{ utils.get_vocab_id(vocab.uri) }}</a></td>
               <td>{{ vocab.title }}</td>
               <td>{{ vocab.versionInfo }}</td>
               <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
