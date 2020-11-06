@@ -12,36 +12,19 @@
         <p>Enter SPARQL queries in the text box below to lodge them against this VocPrez' endpoint:</p>
         <div id="yasgui" style="margin-bottom: 25px;"></div>
       </div>
-      <div style="grid-row:2; grid-column:1; padding-right:10px; display: grid;">
-        <div style="grid-row:1;">
-          <h3>Endpoint</h3>
-          <p>
-              This web page forwards all SPARQL queries entered into the Query UI above to its SPARQL endpoint,
-              which is:
-          </p>
-          <p>
-              <code>
-                  <a href="{{ url_for('endpoint', _external=True) }}">{{ url_for('endpoint', _external=True) }}</a>
-              </code>
-          </p>
-          <p>
-              Use the Query UI above to lodge queries.
-          </p>
-        </div>
-        <div style="grid-row:2;">
-          <h3>Test Query</h3>
-          <p>
-              Here is an example query you can copy 'n paste into the Query UI text area above to test with. It counts the number of
-              vocabulary <em>Concepts</em> in the all vocabularies in this system and will return an integer:
-          </p>
-          <pre><code>
+      <div style="grid-row:2; grid-column:1; padding-right:10px;">
+        <h3>Test Query</h3>
+        <p>
+            Here is an example query you can copy 'n paste into the Query UI text area above to test with. It counts the number of
+            vocabulary <em>Concepts</em> in the all vocabularies in this system and will return an integer:
+        </p>
+        <pre><code>
 PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
 SELECT (COUNT(?c) AS ?count)
 WHERE {
-  ?c a skos:Concept .
+    ?c a skos:Concept .
 }
-          </code></pre>
-        </div>
+        </code></pre>
       </div>
       <div style="grid-row:2; grid-column:2;">
         <h3>Raw queries</h3>
@@ -50,7 +33,7 @@ WHERE {
             above, first create the query, URL-encode it, and lodge it like this:
         </p>
         <pre>
-{{ url_for('endpoint', _external=True) }}?query={YOUR_QUERY_URL_ENCODED}
+{{ url_for('sparql', _external=True) }}?query={YOUR_QUERY_URL_ENCODED}
         </pre>
         <p>
             Enter your SPARQL query into this text box and click "URL Encode" to URL encode it. That will
@@ -64,7 +47,7 @@ WHERE {
         <button id="url_encode">URL Encode</button> <button id="url_decode">URL Decode</button>
       </div>
     </div>
-
+    <p>&nbsp;</p>
     <link href='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.css' rel='stylesheet' type='text/css'/>
     <script src='//cdn.jsdelivr.net/npm/yasgui@2.7.29/dist/yasgui.min.js'></script>
 
