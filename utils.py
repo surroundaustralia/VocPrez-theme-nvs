@@ -472,7 +472,7 @@ def get_vocab_uri_from_concept_uri(concept_uri):
 def get_vocab_id(vocab_or_concept_uri):
     if "/standard_name/" in vocab_or_concept_uri:
         return "standard_name"
-    m = re.search("collection\/([A-Z][0-9]{2})\/current", vocab_or_concept_uri)
+    m = re.search("collection\/([A-Z0-9]{3})\/current", vocab_or_concept_uri)
     if m is not None:
         return m[1]
 
