@@ -670,6 +670,11 @@ class NvsSPARQL(Source):
                 ?concept skos:prefLabel ?concept_preflabel .
                 OPTIONAL {{ 
                     ?concept skos:broader ?broader_concept .
+                    {{ ?broader_concept skos:inScheme <{vocab_uri}> . }}
+                    UNION
+                    {{ ?broader_concept skos:topConceptOf <{vocab_uri}> . }}
+                    UNION
+                    {{ <{vocab_uri}> skos:hasTopConcept ?broader_concept . }}  
                 }}
                 FILTER(lang(?concept_preflabel) = "{language}" || lang(?concept_preflabel) = "")
             }}
