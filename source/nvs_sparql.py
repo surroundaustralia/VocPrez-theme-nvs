@@ -489,7 +489,6 @@ class NvsSPARQL(Source):
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
             g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
-            g.VOCABS[self.vocab_uri].concepts = self.list_concepts(acc_dep=acc_dep)
             g.VOCABS[self.vocab_uri].collections = self.list_collections()
         else:  # vocab.collection == "Collection":
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep=acc_dep)
@@ -683,11 +682,40 @@ class NvsSPARQL(Source):
             vocab_uri=vocab.uri,
             language=self.language
         )
+        try:
+            bindings_list = u.sparql_query(query, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
 
-        bindings_list = u.sparql_query(query, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
+            assert bindings_list is not None, "SPARQL concept hierarchy query failed"
 
-        assert bindings_list is not None, "SPARQL concept hierarchy query failed"
+            hierarchy = build_hierarchy(bindings_list)
 
-        hierarchy = build_hierarchy(bindings_list)
+            return u.draw_concept_hierarchy(hierarchy, self.request, self.vocab_uri)
+        except RecursionError as e:
+            logging.warning("Encountered a recursion limit error for {}".format(self.vocab_uri))
+            # make a flat list of concepts
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT DISTINCT ?c ?pl
+                WHERE {{
+                    ?c skos:inScheme <{vocab_uri}> .              
 
-        return u.draw_concept_hierarchy(hierarchy, self.request, self.vocab_uri)
+                    ?c skos:prefLabel ?pl .
+
+                    FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                }}
+                ORDER BY ?pl
+                """.format(vocab_uri=vocab.uri, language=self.language)
+
+            concepts = [
+                (
+                    concept["c"]["value"],
+                    concept["pl"]["value"]
+                )
+                for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
+            ]
+
+            concepts_html = "<br />".join(["<a href=\"{}\">{}</a>".format(c[0], c[1]) for c in concepts])
+            return """<p><strong><em>This concept hierarchy cannot be displayed</em></strong><p>
+                        <p>The flat list of all this Scheme's Concepts is:</p>
+                        <p>{}</p>
+                    """.format(concepts_html)
