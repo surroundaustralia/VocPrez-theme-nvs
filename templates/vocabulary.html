@@ -66,7 +66,7 @@
             <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
             <td>
               {% for concept in vocab.concepts %}
-                <a href="{{ utils.get_content_uri(concept[0]) }}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}<br />
+                <p style="line-height:0.75em;"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</p>
               {% endfor %}
               {% if vocab.concepts|length < 1 %}
                 <p><em>There are no Concepts listed for this view of a Vocabulary</em></p>
