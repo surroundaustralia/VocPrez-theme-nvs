@@ -92,22 +92,24 @@
             </thead>
             <tbody>
             {%- for (url, vocab) in members -%}
-            <tr>
-              <td><a href="{{ utils.get_content_uri(vocab.uri) }}">{{ utils.get_vocab_id(vocab.uri) }}</a></td>
-              <td>{{ vocab.title }}</td>
-              <td>{{ vocab.versionInfo }}</td>
-              <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
-              <td>{{ vocab.description }}</td>
-              <td>{{ vocab.creator }}</td>
-              <td>
-              {% for prop in vocab.other_properties %}
-                {% if prop.label == "See Also" %}
-                  <a href="{{ prop.value }}">{{ prop.value }}</a><br />
-                {% else %}
-                {% endif %}
-              {% endfor %}
-              </td>
-            </tr>
+              {% if 'standard_name' not in vocab.uri %}
+                <tr>
+                  <td><a href="{{ utils.get_content_uri(vocab.uri) }}">{{ utils.get_vocab_id(vocab.uri) }}</a></td>
+                  <td>{{ vocab.title }}</td>
+                  <td>{{ vocab.versionInfo }}</td>
+                  <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
+                  <td>{{ vocab.description }}</td>
+                  <td>{{ vocab.creator }}</td>
+                  <td>
+                  {% for prop in vocab.other_properties %}
+                    {% if prop.label == "See Also" %}
+                      <a href="{{ prop.value }}">{{ prop.value }}</a><br />
+                    {% else %}
+                    {% endif %}
+                  {% endfor %}
+                  </td>
+                </tr>
+              {% endif %}
             {%- endfor -%}
             </tbody>
             </table>
