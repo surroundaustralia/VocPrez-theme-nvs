@@ -53,6 +53,12 @@ cat $VP_THEME_HOME/app_additions_concept.py >> $VP_THEME_HOME/app_temp.py
 sed -e '1,/# ROUTE about/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
+echo "Route mapping"
+sed -n '/# END ROUTE cache_reload/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
+cat $VP_THEME_HOME/app_additions_mapping.py >> $VP_THEME_HOME/app_temp.py
+sed -e '1,/# run the Flask app/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
+mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
+
 echo "Extra SPARQL endpoint alias"
 if `grep -q "/sparql/sparql" "$VP_HOME/vocprez/app.py"`; then
     echo "already there"
