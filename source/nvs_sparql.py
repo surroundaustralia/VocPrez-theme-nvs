@@ -496,6 +496,7 @@ class NvsSPARQL(Source):
         return g.VOCABS[self.vocab_uri]
 
     def get_concept(self, uri):
+        logging.debug("get_concept")
         vocab = g.VOCABS[self.vocab_uri]
         q = """
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -523,7 +524,7 @@ class NvsSPARQL(Source):
         }
         annotation_types = {
             "http://www.opengis.net/def/metamodel/ogc-na/status": "Status",
-            'http://www.w3.org/2004/02/skos/core#altLabel': "Alternative Label",
+            # 'http://www.w3.org/2004/02/skos/core#altLabel': "Alternative Label",
             'http://www.w3.org/2004/02/skos/core#note': "Note",
             'http://www.w3.org/2004/02/skos/core#scopeNote': "Scope Note",
             'http://www.w3.org/2004/02/skos/core#hostryNote': "History Note",
@@ -554,7 +555,9 @@ class NvsSPARQL(Source):
         related_instances = {}
 
         other_properties = []
+        unique_alt_labels = []
         for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
+            logging.debug(r["p"]["value"])
             if r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#prefLabel":
                 pl = r["o"]["value"]
             elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#definition":
@@ -565,11 +568,8 @@ class NvsSPARQL(Source):
                 s["source"] = r["o"]["value"]
             elif r["p"]["value"] == "http://www.w3.org/ns/prov#wasDerivedFrom":
                 s["wasDerivedFrom"] = r["o"]["value"]
-
             elif r["p"]["value"] in annotation_types.keys():
-                annotations.append(
-                    Property(r["p"]["value"], annotation_types[r["p"]["value"]], r["o"]["value"]))
-
+                annotations.append(Property(r["p"]["value"], annotation_types[r["p"]["value"]], r["o"]["value"]))
             elif r["p"]["value"] in related_instance_types.keys():
                 if related_instances.get(r["p"]["value"]) is None:
                     related_instances[r["p"]["value"]] = {}
@@ -580,14 +580,16 @@ class NvsSPARQL(Source):
                 related_instances[r["p"]["value"]]["instances"].append(
                     (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
                 )
-
             elif r["p"]["value"] in provenance_property_types.keys():
                 other_properties.append(
                     Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
-
             elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#altLabel":
-                other_properties.append(
-                    Property(r["p"]["value"], "Alternative Label", r["o"]["value"]))
+                logging.debug("Alt:")
+                logging.debug(r["o"]["value"])
+                if r["o"]["value"] not in unique_alt_labels:
+                    unique_alt_labels.append(r["o"]["value"])
+                    other_properties.append(
+                        Property(r["p"]["value"], "Alternative Label", r["o"]["value"]))
 
             # TODO: Agents
 

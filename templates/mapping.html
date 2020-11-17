@@ -1,0 +1,62 @@
+{% extends "page.html" %}
+{% block content %}
+  <div style="display:grid; grid-template-columns: 80% auto;">
+    <div style="grid-column: 1;">
+      <h1>Mapping</h1>
+      <h3>An RDF mapping statement</h3>
+      <table class="metadata concept">
+        <tr>
+          <th>URI</th>
+          <td><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#subject">Subject</a></th>
+          <td><a href="{{ utils.get_content_uri(subject) }}">{{ subject }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate">Predicate</a></th>
+          <td><a href="{{ predicate }}">{{ predicate.split("#")[1].rstrip("/") }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#object">Object</a></th>
+          <td><a href="{{ utils.get_content_uri(object) }}">{{ object }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://purl.org/dc/terms/modified">Modified</a></th>
+          <td>{{ modified }}</td>
+        </tr>
+        <tr>
+          <th><a href="http://purl.org/linked-data/registry#status">Status</a></th>
+          <td><a href="{{ status }}">{{ status.split("#status")[1] }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://purl.org/linked-data/registry#submitter">Submitter</a></th>
+          <td>
+            {{ submitter_title }} {{ submitter_name }}<br />
+            <a href="{{ submitter_memberof }}">{{ submitter_memberof.split("/")[-2] }}</a>
+          </td>
+        </tr>
+        {% for prop in properties %}
+          <tr>
+            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+            <td>
+              {% if prop.value[:4] == 'http' %}
+                <a href="{{ utils.get_content_uri(prop.value) }}">{{ prop.value }}</a>
+              {% else %}
+                {{ prop.value }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="altprof" style="grid-column: 2;">
+        <h3>Alternate Profiles</h3>
+        <p>Different views and formats:</p>
+          <p>
+            <a href="{{ utils.get_content_uri(uri) }}?_profile=alt">Alternate Profiles</a>
+            <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
+          </p>
+      </div>
+  </div>
+{% endblock %}

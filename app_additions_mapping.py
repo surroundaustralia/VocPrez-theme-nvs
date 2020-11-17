@@ -7,3 +7,4 @@ def mapping(mapping_id):
     return MappingRenderer(request, mapping_id).render()
 # END ROUTE mapping
 
+
