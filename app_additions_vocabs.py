@@ -55,7 +55,11 @@ def collections():
         t="Collection",
         uri="http://vocab.nerc.ac.uk/collection/",
         label="NVS Vocabularies",
-        comment="SKOS Collections managed by the NERC Vocabulary Server"
+        comment="SKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
+                "group of concepts shares something in common, and it is convenient to group them under a common label."
+                " In the NVS, concept collections are synonymous with controlled vocabularies or code lists. Each "
+                "collection is associated with its governance body. An external website link is displayed when "
+                "applicable."
     )
 
 
@@ -65,6 +69,10 @@ def conceptschemes():
         t="ConceptScheme",
         uri="http://vocab.nerc.ac.uk/scheme/",
         label="NVS Thesauri",
-        comment="SKOS Concept Schemes managed by the NERC Vocabulary Server"
+        comment="SKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
+                "aggregation of one or more SKOS concepts. Semantic relationships (links) between those concepts may "
+                "also be viewed as part of a concept scheme. A concept scheme is therefore useful for containing the "
+                "concepts registered in multiple concept collections that relate to each other as a single semantic "
+                "unit, such as a thesaurus."
 )
 # END ROUTE vocabs
