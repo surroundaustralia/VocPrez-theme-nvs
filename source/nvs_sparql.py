@@ -496,7 +496,6 @@ class NvsSPARQL(Source):
         return g.VOCABS[self.vocab_uri]
 
     def get_concept(self, uri):
-        logging.debug("get_concept")
         vocab = g.VOCABS[self.vocab_uri]
         q = """
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -542,7 +541,8 @@ class NvsSPARQL(Source):
             'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
             'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
             'http://www.w3.org/2004/02/skos/core#broader': "Broader",
-            'http://www.w3.org/2004/02/skos/core#narrower': "Narrower"
+            'http://www.w3.org/2004/02/skos/core#narrower': "Narrower",
+            'http://www.w3.org/2002/07/owl#sameAs': "Same As"
         }
         provenance_property_types = {
             "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
@@ -557,7 +557,6 @@ class NvsSPARQL(Source):
         other_properties = []
         unique_alt_labels = []
         for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
-            logging.debug(r["p"]["value"])
             if r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#prefLabel":
                 pl = r["o"]["value"]
             elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#definition":
@@ -584,8 +583,6 @@ class NvsSPARQL(Source):
                 other_properties.append(
                     Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
             elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#altLabel":
-                logging.debug("Alt:")
-                logging.debug(r["o"]["value"])
                 if r["o"]["value"] not in unique_alt_labels:
                     unique_alt_labels.append(r["o"]["value"])
                     other_properties.append(
