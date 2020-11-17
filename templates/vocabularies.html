@@ -1,7 +1,6 @@
 {% extends "page.html" %}
-
 {% block content %}
-    <div style="display:grid; grid-template-rows: 250px auto auto auto; grid-template-columns: 80% auto;">
+    <div style="display:grid; grid-template-columns: 80% auto;">
         <div style="grid-column: 1; grid-row: 1;">
             <h1>{{ label }}</h1>
             <dl>
@@ -46,7 +45,7 @@
               <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
             </div>
         </div>
-        <div style="grid-column: 1/3; grid-row: 3;">
+        <div style="grid-column: 1/3; grid-row: 2;">
             <h3>Vocabularies</h3>
             <p><em>Sort by click on table headings, Filter using the search to the right.</em></p>
             <style>
@@ -114,7 +113,7 @@
             </tbody>
             </table>
         </div>
-        <div style="grid-column: 1; grid-row: 4;">
+        <div style="grid-column: 1; grid-row: 3;">
           {{ pagination.links }}
           <div class="autopaginationinfo">
           <div><h4>Automated Pagination&nbsp;<span id="collapsible-toggle" class="collapsible" style="font-size: 14px;">(more)</span></h4></div>

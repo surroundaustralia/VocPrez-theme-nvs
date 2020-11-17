@@ -1,16 +1,17 @@
 html {
-    height:100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     margin: 0;
+    padding: 0;
     display:grid;
     grid-template-columns: 1fr fit-content(1000px) 1fr ;
     /*grid-template-rows: 140px 50px auto 50px;*/
 
     font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
     line-height: 1.2em;
-    height:100%;
 }
 
 #vocprez {
@@ -83,7 +84,6 @@ body {
     display: grid ;
     grid-template-rows: 50px 100px 10px;
     color: white;
-    padding-bottom: 20px;
 }
 #footer-top {
     text-align: center;
@@ -191,9 +191,9 @@ ul {
 }
 
 .metadata {
-    margin-top: 10px;
     border-collapse: collapse;
     border: none;
+    max-width: 900px;
 }
 .metadata td,
 .metadata th {
