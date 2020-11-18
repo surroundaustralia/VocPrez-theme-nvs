@@ -33,7 +33,9 @@
           <th><a href="http://purl.org/linked-data/registry#submitter">Submitter</a></th>
           <td>
             {{ submitter_title }} {{ submitter_name }}<br />
+            {% if submitter_memberof is not none %}
             <a href="{{ submitter_memberof }}">{{ submitter_memberof.split("/")[-2] }}</a>
+            {% endif %}
           </td>
         </tr>
         {% for prop in properties %}
