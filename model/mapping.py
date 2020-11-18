@@ -8,10 +8,10 @@ from flask import Response, render_template
 
 
 class MappingRenderer(Renderer):
-    def __init__(self, request, mapping_id):
+    def __init__(self, request, int_ext, mapping_id):
         self.request = request
         self.profiles = {"nvs": profile_nvs}
-        self.uri = "http://vocab.nerc.ac.uk/mapping/I/" + mapping_id + "/"
+        self.uri = "http://vocab.nerc.ac.uk/mapping/" + int_ext + "/" + mapping_id + "/"
 
         super().__init__(self.request, self.uri, self.profiles, "nvs")
 
