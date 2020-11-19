@@ -571,7 +571,6 @@ class NvsSPARQL(Source):
                 annotations.append(Property(r["p"]["value"], annotation_types[r["p"]["value"]], r["o"]["value"]))
             elif r["p"]["value"] in related_instance_types.keys():
                 if related_instances.get(r["p"]["value"]) is None:
-                    related_instances[r["p"]["value"]] = {}
                     related_instances[r["p"]["value"]] = {
                         "instances": [],
                         "label": related_instance_types[r["p"]["value"]]
@@ -596,6 +595,16 @@ class NvsSPARQL(Source):
             return None
 
         from vocprez.model.concept import Concept
+
+        def nvs_rel_concept_sort(s):
+            for ss in s:
+                if ss.startswith("http://vocab.nerc.ac.uk/"):
+                    return "zz" + ss
+                else:
+                    return ss
+
+        for i, ri in related_instances.items():
+            ri["instances"].sort(key=nvs_rel_concept_sort)
 
         return Concept(
             self.vocab_uri,

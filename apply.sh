@@ -1,3 +1,5 @@
+source .ENV
+
 echo "Styles"
 echo "copying $VP_THEME_HOME/style content to $VP_HOME/vocprez/view/style"
 cp $VP_THEME_HOME/style/* $VP_HOME/vocprez/view/style
