@@ -21,6 +21,7 @@ class NvsVocabularyRenderer(VocabularyRenderer):
         self.vocab = vocab
         self.uri = self.vocab.uri
         self.language = language
+        self.request = request
 
         super(VocabularyRenderer, self).__init__(request, vocab.uri, self.profiles, "nvs")
 
@@ -122,7 +123,14 @@ class NvsVocabularyRenderer(VocabularyRenderer):
         #     for c in self.vocab.hasTopConcept:
         #         g.add((s, SKOS.hasTopConcept, URIRef(c[0])))
         #         g.add((URIRef(c[0]), SKOS.prefLabel, Literal(c[1])))
-        if self.vocab.concepts:
+        if not self.vocab.concepts or len(self.vocab.concepts) == 0:
+            from vocprez.source import NvsSPARQL
+            concepts = NvsSPARQL(self.vocab.uri, self.request, language=self.request.values.get("lang")).list_concepts()
+            for concept in concepts:
+                g.add((s, SKOS.inScheme, URIRef(concept[0])))
+                g.add((URIRef(concept[0]), SKOS.prefLabel, Literal(concept[1])))
+
+        else:
             for c in self.vocab.concepts:
                 if self.vocab.collections == "Collection":
                     g.add((s, SKOS.member, URIRef(c[0])))
