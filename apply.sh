@@ -14,7 +14,7 @@ echo "Config"
 echo "Alter $VP_THEME_HOME/config.py to include variables"
 sed 's#$SPARQL_ENDPOINT#'"$SPARQL_ENDPOINT"'#' $VP_THEME_HOME/config.py > $VP_THEME_HOME/config_updated.py
 sed -i 's#$ABSOLUTE_URI_BASE#'"$ABSOLUTE_URI_BASE"'#' $VP_THEME_HOME/config_updated.py
-sed -i 's#$ABSOLUTE_URI_BASE_IN_DATA#'"$ABSOLUTE_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/config_updated.py
+sed -i 's#$ABS_URI_BASE_IN_DATA#'"$ABS_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/config_updated.py
 sed -i 's#$SYSTEM_URI_BASE#'"$SYSTEM_URI_BASE"'#' $VP_THEME_HOME/config_updated.py
 echo "Move $VP_THEME_HOME/config.py to $VP_HOME/vocprez/_config/__init__.py"
 mv $VP_THEME_HOME/config_updated.py $VP_HOME/vocprez/_config/__init__.py
