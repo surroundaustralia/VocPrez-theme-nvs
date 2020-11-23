@@ -85,12 +85,7 @@ class NvsSPARQL(Source):
                 Property(
                     "http://purl.org/dc/terms/identifier",
                     "Identifier",
-                    Literal(
-                        cs["cs"]["value"]
-                            .replace("http://vocab.nerc.ac.uk/collection/", "")
-                            .replace("http://vocab.nerc.ac.uk/scheme/", "")
-                            .replace("/current/", "")
-                    )
+                    Literal(u.get_vocab_id(cs["cs"]["value"]))
                 )
             )
             if cs.get("registermanager") is not None:
