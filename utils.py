@@ -437,8 +437,8 @@ def get_system_uri(vocab_or_concept_absolute_uri):
 def get_absolute_uri(vocab_or_concept_system_uri):
     if vocab_or_concept_system_uri.startswith(config.SYSTEM_URI_BASE):
         return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.SYSTEM_URI_BASE, "")
-    elif vocab_or_concept_system_uri.startswith(config.ABSOLUTE_URI_BASE_IN_DATA):
-        return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.ABSOLUTE_URI_BASE_IN_DATA, "")
+    elif vocab_or_concept_system_uri.startswith(config.ABS_URI_BASE_IN_DATA):
+        return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.ABS_URI_BASE_IN_DATA, "")
     else:
         return vocab_or_concept_system_uri
 
