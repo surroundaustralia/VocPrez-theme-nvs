@@ -551,6 +551,7 @@ class NvsSPARQL(Source):
 
         other_properties = []
         unique_alt_labels = []
+        unique_versions = []
         for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
             if r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#prefLabel":
                 pl = r["o"]["value"]
@@ -574,8 +575,14 @@ class NvsSPARQL(Source):
                     (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
                 )
             elif r["p"]["value"] in provenance_property_types.keys():
-                other_properties.append(
-                    Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
+                if r["p"]["value"] == "http://purl.org/pav/hasCurrentVersion":
+                    if r["o"]["value"] not in unique_versions:
+                        unique_versions.append(r["o"]["value"])
+                        other_properties.append(
+                            Property(r["p"]["value"], "Has Current Version", r["o"]["value"]))
+                else:
+                    other_properties.append(
+                        Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
             elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#altLabel":
                 if r["o"]["value"] not in unique_alt_labels:
                     unique_alt_labels.append(r["o"]["value"])
