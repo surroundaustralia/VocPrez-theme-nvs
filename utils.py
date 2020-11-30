@@ -444,7 +444,7 @@ def get_absolute_uri(vocab_or_concept_system_uri):
 
 
 def get_content_uri(vocab_or_concept_uri):
-    if config.LOCAL_URLS:
+    if config.USE_SYSTEM_URIS:
         return get_system_uri(vocab_or_concept_uri)
     else:
         return get_absolute_uri(vocab_or_concept_uri)
@@ -452,7 +452,7 @@ def get_content_uri(vocab_or_concept_uri):
 
 def get_vocab_uri_from_concept_uri(concept_uri):
     new_uri = get_content_uri(concept_uri)
-    if config.LOCAL_URLS:
+    if config.USE_SYSTEM_URIS:
         base = config.SYSTEM_URI_BASE
     else:
         base = config.ABSOLUTE_URI_BASE
@@ -481,3 +481,33 @@ def get_vocab_id(vocab_or_concept_uri):
         return m[1]
 
     return "Ext"
+
+
+def get_pretty_mediatype(mediatype):
+    MEDIATYPE_NAMES = {
+        "text/html": "HTML",
+        "application/json": "JSON",
+        "text/turtle": "Turtle",
+        "application/rdf+xml": "RDF/XML",
+        "application/ld+json": "JSON-LD",
+        "text/n3": "Notation-3",
+        "application/n-triples": "N-Triples",
+    }
+    return MEDIATYPE_NAMES.get(mediatype, mediatype)
+
+
+def get_status_label(mediatype):
+    STATUSES = {
+        "http://www.opengis.net/def/status/accepted": "accepted",
+        "http://www.opengis.net/def/status/deprecated": "deprecated",
+        "http://www.opengis.net/def/status/experimental": "experimental",
+        "http://www.opengis.net/def/status/invalid": "invalid",
+        "http://www.opengis.net/def/status/notAccepted": "notAccepted",
+        "http://www.opengis.net/def/status/reserved": "reserved",
+        "http://www.opengis.net/def/status/retired": "retired",
+        "http://www.opengis.net/def/status/stable": "stable",
+        "http://www.opengis.net/def/status/submitted": "submitted",
+        "http://www.opengis.net/def/status/superseded": "superseded",
+        "http://www.opengis.net/def/status/valid": "valid",
+    }
+    return STATUSES.get(mediatype, mediatype)

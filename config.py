@@ -4,7 +4,7 @@ APP_DIR = path.dirname(path.dirname(path.realpath(__file__)))
 SKIN_DIR = path.join(APP_DIR, "view")
 TEMPLATES_DIR = path.join(SKIN_DIR, "templates")
 STATIC_DIR = path.join(SKIN_DIR, "style")
-LOGFILE = APP_DIR + "/flask.log"
+LOGFILE = APP_DIR + "/vocprez.log"
 CACHE_FILE = path.join(APP_DIR, "cache", "DATA.p")
 CACHE_HOURS = 1
 DEFAULT_LANGUAGE = "en"
@@ -12,10 +12,7 @@ SPARQL_QUERY_LIMIT = 2000  # Maximum number of results to return per SPARQL quer
 MAX_RETRIES = 2
 RETRY_SLEEP_SECONDS = 10
 SPARQL_TIMEOUT = 60
-LOCAL_URLS = True  # Parameter governing whether URLs shown are local or external
-ABSOLUTE_URI_BASE = "$ABSOLUTE_URI_BASE"
-ABS_URI_BASE_IN_DATA = "$ABS_URI_BASE_IN_DATA"
-SYSTEM_URI_BASE = "$SYSTEM_URI_BASE"
+PORT = 5000
 
 #
 #   Vocabulary data sources
@@ -33,15 +30,18 @@ class VocabSource:
 
 # Main cache (SPARQL DB) variables
 # BEGIN Instance Vars
+SYSTEM_URI_BASE = "$SYSTEM_URI_BASE"
+ABSOLUTE_URI_BASE = "$ABSOLUTE_URI_BASE"
+ABS_URI_BASE_IN_DATA = "$ABS_URI_BASE_IN_DATA"
+USE_SYSTEM_URIS = True
 DEBUG = False
 SPARQL_ENDPOINT = "$SPARQL_ENDPOINT"
-SPARQL_USERNAME = ""
-SPARQL_PASSWORD = ""
+SPARQL_USERNAME = None
+SPARQL_PASSWORD = None
 SOURCE_NAME = "nvs"
 # END Instance Vars
 
 DATA_SOURCES = {
-    # example SPARQL source configured using variables in "Instance Vars" above
     SOURCE_NAME: {
         "source": VocabSource.NvsSPARQL,
         "sparql_endpoint": SPARQL_ENDPOINT,
@@ -50,7 +50,6 @@ DATA_SOURCES = {
     },
 }
 
-# Details for the main vocabulary list. Can be overridden in the vocabularies.html template
 # BEGIN Vocabs list info
 VOCS_URI = "https://vocab.nerc.ac.uk/"
 VOCS_TITLE = "NVS Vocabularies"

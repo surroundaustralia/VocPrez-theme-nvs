@@ -98,11 +98,7 @@
         <th><a href="http://www.w3.org/2004/02/skos/core#Collection">Collections</a></th>
         <td>
           {% for collection in vocab.collections %}
-            {% if LOCAL_URLS -%}
-              <a href="{{ url_for('object') }}?vocab_uri={{ uri }}&uri={{ collection[0] }}">{{ collection[1] }}</a><br />
-            {% else -%}
-              <a href="{{ collection[0] }}">{{ collection[1] }}</a><br />
-            {% endif -%}
+            <a href="{{ utils.get_content_uri(collection[0]) }}">{{ collection[1] }}</a>
           {% endfor %}
         </td>
       </tr>
