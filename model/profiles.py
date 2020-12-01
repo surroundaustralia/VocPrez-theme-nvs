@@ -62,7 +62,8 @@ profile_dd = Profile(
 profile_nvs = Profile(
     "https://w3id.org/profile/nvs-col",
     "NVS Collections List Profile",
-    comment="A profile of simple RDF Containers that includes Dublin Core Terms metadata for items within the Container",
+    comment="The NERC Vocabulary Server's profile of SKOS that include Provenance Ontology (PROV) and Registry Ontology"
+            "relationships for term governance.",
     mediatypes=["text/html"] + Renderer.RDF_MEDIA_TYPES,
     default_mediatype="text/html",
     languages=["en"],
