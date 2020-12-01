@@ -136,7 +136,7 @@ class NvsSPARQL(Source):
         from pathlib import Path
         import pickle
 
-        r = requests.get(config.ABS_URI_BASE_IN_DATA + "/standard_name/")
+        r = requests.get(config.ABS_URI_BASE_IN_DATA + "/db2rdf/standard_name/")
         gr = Graph()
         gr.parse(data=r.text, format="xml")
         with open(Path(config.APP_DIR) / "cache" / "standard_name.p", "wb") as f:
