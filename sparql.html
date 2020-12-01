@@ -64,14 +64,14 @@ ORDER BY ?pl
           The SPARQL endpoint for this system is:
         </p>
         <p><pre>
-http://vocab.nerc.ac.uk/sparql/sparql
+$ABS_URI_BASE_IN_DATA/sparql/sparql
         </pre></p>
         <p>
           If you would like to lodge queries directly against this SPARQL endpoint without using the Query UI
           above, first create the query, URL-encode it, and lodge it like this:
         </p>
         <p><pre>
-http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}
+$ABS_URI_BASE_IN_DATA/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}
         </pre></p>
         <p>You can use the query encoder below to URL-encode your query.</p>
         <h4>Machine-readable responses</h4>
@@ -79,7 +79,7 @@ http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}
         <p>To obtain a machine-readable response to your query, you must supply an HTTP Accept header for the type of response you would like, in accordance with the <a href="https://www.w3.org/TR/sparql11-protocol/">SPARQL Protocol standard</a>.</p>
         <p>For example, to get a SPARQL JSON format response for <code>{YOUR_QUERY_URL_ENCODED}</code>, use the <a href="https://curl.haxx.se/">curl</a> program like this:</p>
         <p><pre>
-http://vocab.nerc.ac.uk/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}<br />-H 'Accept: application/sparql-results+json'
+$ABS_URI_BASE_IN_DATA/sparql/sparql?query={YOUR_QUERY_URL_ENCODED}<br />-H 'Accept: application/sparql-results+json'
         </pre></p>
         <p><strong>SPARQL response Accept Headers</strong></p>
         <p>The following Media Types are to be used for machine-readable responses:</p>

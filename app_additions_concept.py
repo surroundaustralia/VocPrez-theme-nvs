@@ -6,9 +6,6 @@
 @app.route("/collection/<string:vocab_id>/current/<string:concept_id>/")
 @app.route("/collection/<string:vocab_id>/current/<string:concept_id>/<string:version_no>/")
 def concept(vocab_id, concept_id, version_no=None):
-    # return redirect(
-    #     url_for("object") + "?uri=http://vocab.nerc.ac.uk/collection/{}/current/{}/".format(vocab_id, concept_id)
-    # )
     vocab_uri = config.ABS_URI_BASE_IN_DATA + "/collection/{}/current/".format(vocab_id, concept_id)
     if version_no is not None:
         concept_uri = config.ABS_URI_BASE_IN_DATA + "/collection/{}/current/{}/{}/".format(vocab_id, concept_id, version_no)

@@ -46,7 +46,7 @@ def scheme(vocab_id, acc_dep=None):
 
 @app.route("/standard_name/")
 def standard_name(acc_dep=None):
-    return return_vocab2("http://vocab.nerc.ac.uk/standard_name/", acc_dep)
+    return return_vocab2(config.ABS_URI_BASE_IN_DATA + "/standard_name/", acc_dep)
 
 
 def return_vocab2(uri, acc_dep):

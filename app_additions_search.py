@@ -2,7 +2,7 @@
 @app.route("/search")
 def search():
     vs = [
-        (k.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", ""), v.title)
+        (k.replace(config.ABS_URI_BASE_IN_DATA + "/collection/", "").replace("/current/", ""), v.title)
         for k, v in g.VOCABS.items()
         if v.collections == "Collection"
     ]

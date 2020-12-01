@@ -33,7 +33,7 @@ class VocabSource:
 SYSTEM_URI_BASE = "$SYSTEM_URI_BASE"
 ABSOLUTE_URI_BASE = "$ABSOLUTE_URI_BASE"
 ABS_URI_BASE_IN_DATA = "$ABS_URI_BASE_IN_DATA"
-USE_SYSTEM_URIS = True
+USE_SYSTEM_URIS = False
 DEBUG = False
 SPARQL_ENDPOINT = "$SPARQL_ENDPOINT"
 SPARQL_USERNAME = None
@@ -51,7 +51,7 @@ DATA_SOURCES = {
 }
 
 # BEGIN Vocabs list info
-VOCS_URI = "https://vocab.nerc.ac.uk/"
+VOCS_URI = ABS_URI_BASE_IN_DATA + "/"
 VOCS_TITLE = "NVS Vocabularies"
 VOCS_DESC = "Vocabularies managed by the National Vocabulary System (NVS)"
 # END Vocabs list info

@@ -136,7 +136,7 @@ class NvsSPARQL(Source):
         from pathlib import Path
         import pickle
 
-        r = requests.get("http://vocab.nerc.ac.uk/standard_name/")
+        r = requests.get(config.ABS_URI_BASE_IN_DATA + "/standard_name/")
         gr = Graph()
         gr.parse(data=r.text, format="xml")
         with open(Path(config.APP_DIR) / "cache" / "standard_name.p", "wb") as f:
@@ -432,35 +432,35 @@ class NvsSPARQL(Source):
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
                 SELECT DISTINCT ?c ?pl ?dep
-                WHERE {
-                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+                WHERE {{
+                        <{}/standard_name/> skos:member ?c .
                         
                         ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
 
-                        OPTIONAL {
+                        OPTIONAL {{
                             ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                        }
+                        }}
 
                         ?c skos:prefLabel ?pl .
-                }
+                }}
                 ORDER BY ?pl
-                """
+                """.format(config.ABS_URI_BASE_IN_DATA)
         else:
             q = """
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     
                 SELECT DISTINCT ?c ?pl ?dep
-                WHERE {
-                        <http://vocab.nerc.ac.uk/standard_name/> skos:member ?c .
+                WHERE {{
+                        <{}/standard_name/> skos:member ?c .
     
-                        OPTIONAL {
+                        OPTIONAL {{
                             ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                        }
+                        }}
     
                         ?c skos:prefLabel ?pl .
-                }
+                }}
                 ORDER BY ?pl
-                """
+                """.format(config.ABS_URI_BASE_IN_DATA)
 
         import pickle
         from pathlib import Path
@@ -479,7 +479,7 @@ class NvsSPARQL(Source):
         :return:
         :rtype:
         """
-        if self.vocab_uri == "http://vocab.nerc.ac.uk/standard_name/":
+        if self.vocab_uri == config.ABS_URI_BASE_IN_DATA + "/standard_name/":
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep=acc_dep)
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
@@ -600,7 +600,7 @@ class NvsSPARQL(Source):
 
         def nvs_rel_concept_sort(s):
             for ss in s:
-                if ss.startswith("http://vocab.nerc.ac.uk/"):
+                if ss.startswith(config.ABS_URI_BASE_IN_DATA + "/"):
                     return "zz" + ss
                 else:
                     return ss

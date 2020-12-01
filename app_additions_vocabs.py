@@ -53,7 +53,7 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
 def collections():
     return vocabularies(
         t="Collection",
-        uri="http://vocab.nerc.ac.uk/collection/",
+        uri=config.ABS_URI_BASE_IN_DATA + "/collection/",
         label="NVS Vocabularies",
         comment="SKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
                 "group of concepts shares something in common, and it is convenient to group them under a common label."
@@ -67,7 +67,7 @@ def collections():
 def conceptschemes():
     return vocabularies(
         t="ConceptScheme",
-        uri="http://vocab.nerc.ac.uk/scheme/",
+        uri=config.ABS_URI_BASE_IN_DATA + "/scheme/",
         label="NVS Thesauri",
         comment="SKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
                 "aggregation of one or more SKOS concepts. Semantic relationships (links) between those concepts may "

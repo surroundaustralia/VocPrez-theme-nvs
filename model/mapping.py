@@ -11,7 +11,7 @@ class MappingRenderer(Renderer):
     def __init__(self, request, int_ext, mapping_id):
         self.request = request
         self.profiles = {"nvs": profile_nvs}
-        self.uri = "http://vocab.nerc.ac.uk/mapping/" + int_ext + "/" + mapping_id + "/"
+        self.uri = config.ABS_URI_BASE_IN_DATA + "/mapping/" + int_ext + "/" + mapping_id + "/"
 
         super().__init__(self.request, self.uri, self.profiles, "nvs")
 
