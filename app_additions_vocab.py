@@ -3,7 +3,7 @@
 @app.route("/collection/<string:vocab_id>/current/<string:acc_dep>/")
 def vocabulary(vocab_id, acc_dep=None):
     if acc_dep is not None:
-        if acc_dep not in ["accepted", "deprecated"]:
+        if acc_dep not in ["accepted", "deprecated", "all"]:
             return concept(vocab_id, acc_dep)
 
     def vocab_id_uri_list():
