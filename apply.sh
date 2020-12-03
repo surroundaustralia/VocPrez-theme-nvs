@@ -3,7 +3,7 @@ echo "copying $VP_THEME_HOME/style content to $VP_HOME/vocprez/view/style"
 cp $VP_THEME_HOME/style/* $VP_HOME/vocprez/view/style
 
 echo "Pre-process sparql.html"
-sed -e 's#$ABS_URI_BASE_IN_DATA#'"$ABS_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/sparql.html >> $VP_THEME_HOME/templates/sparql.html
+sed -e 's#$ABS_URI_BASE_IN_DATA#'"$ABS_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/sparql.html > $VP_THEME_HOME/templates/sparql.html
 
 echo "Templates"
 echo "copying $VP_THEME_HOME/templates content to $VP_HOME/vocprez/view/templates"
@@ -74,6 +74,13 @@ if `grep -q "/sparql/sparql" "$VP_HOME/vocprez/app.py"`; then
     echo "already there"
 else
     sed -i 's?# ROUTE sparql?# ROUTE sparql\n@app.route("/sparql/sparql", methods=["GET", "POST"])?' $VP_HOME/vocprez/app.py
+fi
+
+echo "Route SPARQL training slash"
+if `grep -q '"/sparql/"' "$VP_HOME/vocprez/app.py"`; then
+    echo "already there"
+else
+    sed -i 's#"/sparql"#"/sparql/"#' $VP_HOME/vocprez/app.py
 fi
 
 echo "Add in real db2rdf endpoints"
