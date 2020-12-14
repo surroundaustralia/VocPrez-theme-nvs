@@ -194,6 +194,7 @@ ul {
     border-collapse: collapse;
     border: none;
     max-width: 900px;
+    margin-bottom: 20px;
 }
 .metadata td,
 .metadata th {
