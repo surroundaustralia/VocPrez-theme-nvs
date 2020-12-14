@@ -13,12 +13,12 @@
     <a id="versionlink" href="https://github.com/RDFLib/VocPrez/releases/tag/{{ utils.version() }}">{{ utils.version() }}</a>
   </div>
   <div id="header" style="grid-column:2; display:grid; grid-template-rows: 100px 50px;">
-    <div style="grid-row:1;">
+    <div id="header-logos" style="grid-row:1;">
       <a href="https://nerc.ukri.org/"><img src="/style/ukri-grey.png" alt="UK RI logo" style="height:70%; float:left ;" /></a>
       <a href="https://www.bodc.ac.uk/"><img src="/style/bodc-bw.png" alt="BODC logo" style="height:70%; float:right ;" /></a>
     </div>
     <div id="header-title" style="grid-row:2;">
-      The NERC Vocabulary Server (NVS)
+      <span>The NERC Vocabulary Server (NVS)</span>
       <a href="https://sdc.ui.argo.grnet.gr/sdc/dashboard/Critical/VOCABULARY">Service Status</a>
     </div>
   </div><!-- #header -->
@@ -36,7 +36,10 @@
       <img src="/style/noc.svg" alt="NOC logo" style="height:80px; float:left;" />
       <a href="https://noc.ac.uk/disclaimer">Disclaimer</a>
       <!-- https://www.bodc.ac.uk/resources/help_and_hints/using_this_web_site/disclaimer/ -->
-      &copy; National Oceanography Centre, 2020
+      <p class="copyright">&copy; National Oceanography Centre, 2020</p>
+    </div>
+    <div id="vocprez2">
+      <span>made by</span> <a id="bottom-vocprez" href="http://github.com/rdflib/VocPrez">VocPrez</a>&nbsp;<a id="versionlink2" href="https://github.com/RDFLib/VocPrez/releases/tag/{{ utils.version() }}">{{ utils.version() }}</a>
     </div>
     <div id="footer-bottom-border"></div>
   </div><!-- #footer -->

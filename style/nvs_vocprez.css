@@ -389,3 +389,105 @@ ul {
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+#vocprez2 {
+    display: none;
+}
+
+@media (max-device-width: 575.98px) {
+    #mainmenu {
+        font-size: 20px;
+    }
+
+    #footer-top {
+        align-items: center;
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    #footer-top > .dropdown > a {
+        font-size: 20px;
+    }
+
+    #vocprez {
+        display: none;
+    }
+
+    #vocprez2 {
+        background-color: lightgrey;
+        height: 40px;
+        padding: 8px;
+        align-items: center;
+        display: flex;
+        font-size: normal;
+        color: grey;
+        justify-content: flex-start;
+    }
+
+    #bottom-vocprez {
+        margin-left: 10px;
+    }
+
+    #vocprez2 span {
+        font-size: 1.5em;
+        margin-left: 10px;
+    }
+
+    #vocprez2 a {
+        font-size: 2em;
+        font-weight: bold;
+        text-decoration: none;
+        color: #007dbb;
+    }
+
+    #vocprez2 a:hover {
+        color: #333;
+    }
+
+    #vocprez2 a#versionlink2 {
+        font-size: 1.5em;
+        margin-right: auto;
+    }
+
+    #content {
+         text-align: justify;
+         padding: 16px;
+    }
+
+    #footer {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #footer-bottom > img {
+        height: 100px !important;
+    }
+
+    #footer-bottom > a {
+        font-size: 1.5em;
+    }
+
+    p.copyright {
+        font-size: 20px;
+    }
+
+    #header-title > span {
+        font-size: 40px;
+        line-height: 0.7;
+    }
+
+    #header-title > a {
+        font-size: 20px;
+        padding: 8px;
+        text-align: center;
+    }
+
+    #header-logos {
+        padding: 0 12px;
+        margin-bottom: 30px;
+    }
+
+    #header-logos img {
+        height: 90px !important;
+    }
+}
