@@ -530,16 +530,18 @@ class NvsSPARQL(Source):
             'http://purl.org/dc/terms/publisher': "Publisher",
         }
         agent = {}
+        # sort Related instances lik this: SameAs, Broader, Related then Narrower
         related_instance_types = {
-            'http://www.w3.org/2004/02/skos/core#exactMatch': "Exact Match",
-            'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
-            'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
-            'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
-            'http://www.w3.org/2004/02/skos/core#broader': "Broader",
-            'http://www.w3.org/2004/02/skos/core#narrower': "Narrower",
             'http://www.w3.org/2002/07/owl#sameAs': "Same As",
-            'http://www.w3.org/2004/02/skos/core#related': "Related"
+            'http://www.w3.org/2004/02/skos/core#broader': "Broader",
+            'http://www.w3.org/2004/02/skos/core#related': "Related",
+            'http://www.w3.org/2004/02/skos/core#narrower': "Narrower",
+            'http://www.w3.org/2004/02/skos/core#exactMatch': "Exact Match",
+            'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
+            'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
+            'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
         }
+
         provenance_property_types = {
             "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
             "http://purl.org/pav/version": "Version",
@@ -618,12 +620,26 @@ class NvsSPARQL(Source):
         for i, ri in related_instances.items():
             ri["instances"].sort(key=nvs_rel_concept_sort)
 
+        import operator
+        def specified_order(s):
+            order = [
+                'http://www.w3.org/2002/07/owl#sameAs',
+                'http://www.w3.org/2004/02/skos/core#broader',
+                'http://www.w3.org/2004/02/skos/core#related',
+                'http://www.w3.org/2004/02/skos/core#narrower',
+                'http://www.w3.org/2004/02/skos/core#exactMatch',
+                'http://www.w3.org/2004/02/skos/core#broadMatch',
+                'http://www.w3.org/2004/02/skos/core#closeMatch',
+                'http://www.w3.org/2004/02/skos/core#narrowMatch',
+            ]
+            return order.index(s[0])
+
         return Concept(
             self.vocab_uri,
             uri,
             pl,
             d,
-            related_instances,
+            dict(sorted(related_instances.items(), key=lambda x: specified_order(x))),
             annotations=annotations,
             other_properties=other_properties
         )
