@@ -286,13 +286,16 @@ class NvsSPARQL(Source):
 
         if acc_dep == "accepted":
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                SELECT DISTINCT ?c ?pl ?broader ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?broader ?dep
                 WHERE {{
                     {{?c skos:inScheme <{vocab_uri}>}}
 
                     ?c a skos:Concept ;
-                         skos:prefLabel ?pl .
+                         skos:prefLabel ?pl ;
+                         skos:definition ?def ;
+                         dcterms:date ?date . 
                         
                     ?c <http://www.w3.org/2002/07/owl#deprecated> "false" .
 
@@ -308,13 +311,16 @@ class NvsSPARQL(Source):
                 """.format(vocab_uri=vocab.uri, language=self.language)
         elif acc_dep == "deprecated":
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                SELECT DISTINCT ?c ?pl ?broader ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?broader ?dep
                 WHERE {{
                     {{?c skos:inScheme <{vocab_uri}>}}
 
                     ?c a skos:Concept ;
-                         skos:prefLabel ?pl .
+                         skos:prefLabel ?pl ;
+                         skos:definition ?def ;
+                         dcterms:date ?date .                         
                          
                     ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
 
@@ -330,13 +336,16 @@ class NvsSPARQL(Source):
                 """.format(vocab_uri=vocab.uri, language=self.language)
         else:
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                SELECT DISTINCT ?c ?pl ?broader ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?broader ?dep
                 WHERE {{
                     {{?c skos:inScheme <{vocab_uri}>}}
 
                     ?c a skos:Concept ;
-                         skos:prefLabel ?pl .
+                         skos:prefLabel ?pl ;
+                         skos:definition ?def ;
+                         dcterms:date ?date .
 
                     OPTIONAL {{
                         {{?c skos:broader ?broader}}
@@ -353,7 +362,10 @@ class NvsSPARQL(Source):
             (
                 concept["c"]["value"],
                 concept["pl"]["value"],
-                concept["broader"]["value"] if concept.get("broader") else None
+                concept["def"]["value"],
+                concept["date"]["value"],
+                concept["dep"]["value"],
+                concept["broader"]["value"] if concept.get("broader") else None,
             )
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
         ]
@@ -363,9 +375,10 @@ class NvsSPARQL(Source):
 
         if acc_dep == "accepted":
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?c ?pl ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?dep
                 WHERE {{
                         <{vocab_uri}> skos:member ?c .
                         
@@ -375,16 +388,20 @@ class NvsSPARQL(Source):
                             ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
                         }}
 
-                        ?c skos:prefLabel ?pl .
+                        ?c skos:prefLabel ?pl ;
+                             skos:definition ?def ;
+                             dcterms:date ?date .
+                             
                         FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
                 }}
                 ORDER BY ?pl
                 """.format(vocab_uri=vocab.uri, language=self.language)
         elif acc_dep == "deprecated":
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?c ?pl ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?dep
                 WHERE {{
                         <{vocab_uri}> skos:member ?c .
                         
@@ -394,16 +411,20 @@ class NvsSPARQL(Source):
                             ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
                         }}
 
-                        ?c skos:prefLabel ?pl .
+                        ?c skos:prefLabel ?pl ;
+                             skos:definition ?def ;
+                             dcterms:date ?date .
+                             
                         FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
                 }}
                 ORDER BY ?pl
                 """.format(vocab_uri=vocab.uri, language=self.language)
         else:
             q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?c ?pl ?dep
+                SELECT DISTINCT ?c ?pl ?def ?date ?dep
                 WHERE {{
                         <{vocab_uri}> skos:member ?c .
 
@@ -411,7 +432,10 @@ class NvsSPARQL(Source):
                             ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
                         }}
 
-                        ?c skos:prefLabel ?pl .
+                        ?c skos:prefLabel ?pl ;
+                            skos:definition ?def ;
+                            dcterms:date ?date .
+                            
                         FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
                 }}
                 ORDER BY ?pl
@@ -421,6 +445,8 @@ class NvsSPARQL(Source):
             (
                 concept["c"]["value"],
                 concept["pl"]["value"],
+                concept["def"]["value"],
+                concept["date"]["value"],
                 True if concept.get("dep") and concept["dep"]["value"] == "true" else False
             )
             for concept in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)

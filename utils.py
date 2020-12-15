@@ -483,6 +483,14 @@ def get_vocab_id(vocab_or_concept_uri):
     return "Ext"
 
 
+def get_concept_id(concept_uri):
+    m = re.search("\/current\/([A-Z0-9\_]+)\/", concept_uri)
+    if m is not None:
+        return m[1]
+    else:
+        return concept_uri.split("/current/")[1].replace("/", "")
+
+
 def get_pretty_mediatype(mediatype):
     MEDIATYPE_NAMES = {
         "text/html": "HTML",

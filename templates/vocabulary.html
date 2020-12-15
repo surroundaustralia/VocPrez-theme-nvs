@@ -85,12 +85,38 @@
         <tr>
           <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
           <td>
+            <style>
+              table.concepts {
+                  max-width:800px;
+              }
+              td.onefifty {
+                  max-width:150px;
+                  word-wrap:break-word;
+              }
+              td.threefifty {
+                  max-width:350px;
+                  word-wrap:break-word;
+              }
+            </style>
+            <table style="">
+            <tr>
+              <th>Identifier</th>
+              <th>PrefLabel</th>
+              <th>Definition</th>
+              <th>Date</th>
+            </tr>
             {% for concept in vocab.concepts %}
-              <p style="line-height:1.1em;"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ concept[1] }}</a>{% if concept[2] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</p>
+              <tr style="line-height:1.1em;">
+                <td class="onefifty"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
+                <td class="onefifty">{{ concept[1] }}{% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
+                <td class="threefifty">{{ concept[2] }}</td>
+                <td class="onefifty">{{ concept[3].split(" ")[0] }}</td>
+              </tr>
             {% endfor %}
             {% if vocab.concepts|length < 1 %}
-              <p><em>There are no Concepts listed for this view of a Vocabulary</em></p>
+              <tr><th colspan="4"><em>There are no Concepts listed for this Vocabulary</em></th></tr>
             {% endif %}
+            </table>
           </td>
         </tr>
       {% elif vocab.collections is not none and vocab.collections|length > 0  -%}
