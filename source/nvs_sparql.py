@@ -603,8 +603,9 @@ class NvsSPARQL(Source):
                 # only add this instance if we don't already have one from the same vocab with the same prefLabel
                 seen = False
                 for ri in related_instances[r["p"]["value"]]["instances"]:
-                    if r["o"]["value"].split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
-                        seen = True
+                    if r.get("ropl") is not None:
+                        if r["o"]["value"].split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
+                            seen = True
 
                 if seen:
                     pass
