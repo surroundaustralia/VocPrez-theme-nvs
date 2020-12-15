@@ -395,6 +395,21 @@ ul {
     display: none;
 }
 
+#top-wrapper {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+#collection-heading {
+    width: 70%;
+}
+
+#alt-wrapper {
+    margin-left: 20px;
+}
+
 @media (max-device-width: 575.98px) {
     #mainmenu {
         font-size: 20px;
@@ -407,7 +422,7 @@ ul {
     }
 
     #footer-top > .dropdown > a {
-        font-size: 20px;
+        font-size: 12px !important;
     }
 
     #vocprez {
@@ -490,5 +505,22 @@ ul {
 
     #header-logos img {
         height: 90px !important;
+    }
+
+    html {
+        text-size-adjust: 100%;
+    }
+
+    #top-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #collection-heading {
+        width: 100%;
+    }
+
+    #alt-wrapper {
+        margin-left: 0px;
     }
 }
