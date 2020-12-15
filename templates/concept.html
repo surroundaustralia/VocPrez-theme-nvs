@@ -45,7 +45,9 @@
             <th><a href="{{ k }}">{{ v["label"] }}</a></th>
             <td>
               {% for inst in v["instances"] %}
+                {% if utils.get_vocab_id(inst[0]) != 'Ext' %}
                 <strong><a href="{{ utils.get_vocab_uri_from_concept_uri(inst[0]) }}">{{ utils.get_vocab_id(inst[0]) }}</a></strong>:
+                {% endif %}
                 <a href="{{ utils.get_content_uri(inst[0]) }}">{% if inst[1] is none %}{{ inst[0] }}{% else %}{{ inst[1] }}{% endif %}</a><br />
               {% endfor %}
             </td>

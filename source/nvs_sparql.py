@@ -530,15 +530,18 @@ class NvsSPARQL(Source):
             'http://purl.org/dc/terms/publisher': "Publisher",
         }
         agent = {}
+        # sort Related instances lik this: SameAs, Broader, Related then Narrower
         related_instance_types = {
-            'http://www.w3.org/2004/02/skos/core#exactMatch': "Exact Match",
-            'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
-            'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
-            'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
+            'http://www.w3.org/2002/07/owl#sameAs': "Same As",
             'http://www.w3.org/2004/02/skos/core#broader': "Broader",
+            'http://www.w3.org/2004/02/skos/core#related': "Related",
             'http://www.w3.org/2004/02/skos/core#narrower': "Narrower",
-            'http://www.w3.org/2002/07/owl#sameAs': "Same As"
+            'http://www.w3.org/2004/02/skos/core#exactMatch': "Exact Match",
+            'http://www.w3.org/2004/02/skos/core#broadMatch': "Broad Match",
+            'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
+            'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
         }
+
         provenance_property_types = {
             "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
             "http://purl.org/pav/version": "Version",
@@ -571,9 +574,18 @@ class NvsSPARQL(Source):
                         "instances": [],
                         "label": related_instance_types[r["p"]["value"]]
                     }
-                related_instances[r["p"]["value"]]["instances"].append(
-                    (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
-                )
+                # only add this instance if we don't already have one from the same vocab with the same prefLabel
+                seen = False
+                for ri in related_instances[r["p"]["value"]]["instances"]:
+                    if r["o"]["value"].split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
+                        seen = True
+
+                if seen:
+                    pass
+                else:
+                    related_instances[r["p"]["value"]]["instances"].append(
+                        (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
+                    )
             elif r["p"]["value"] in provenance_property_types.keys():
                 if r["p"]["value"] == "http://purl.org/pav/hasCurrentVersion":
                     if r["o"]["value"] not in unique_versions:
@@ -608,12 +620,26 @@ class NvsSPARQL(Source):
         for i, ri in related_instances.items():
             ri["instances"].sort(key=nvs_rel_concept_sort)
 
+        import operator
+        def specified_order(s):
+            order = [
+                'http://www.w3.org/2002/07/owl#sameAs',
+                'http://www.w3.org/2004/02/skos/core#broader',
+                'http://www.w3.org/2004/02/skos/core#related',
+                'http://www.w3.org/2004/02/skos/core#narrower',
+                'http://www.w3.org/2004/02/skos/core#exactMatch',
+                'http://www.w3.org/2004/02/skos/core#broadMatch',
+                'http://www.w3.org/2004/02/skos/core#closeMatch',
+                'http://www.w3.org/2004/02/skos/core#narrowMatch',
+            ]
+            return order.index(s[0])
+
         return Concept(
             self.vocab_uri,
             uri,
             pl,
             d,
-            related_instances,
+            dict(sorted(related_instances.items(), key=lambda x: specified_order(x))),
             annotations=annotations,
             other_properties=other_properties
         )
