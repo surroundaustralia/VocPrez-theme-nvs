@@ -36,11 +36,11 @@
                 </div>
                 <div id="filter">
                   <h4>Filter</h4>
-                  <form method="get" action="{{ request.base_url }}"  style="display: inline-block;">
+                  <form method="get" action=""  style="display: inline-block;">
                     <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
                     <button>Filter</button>
                   </form>
-                  <form method="get" action="{{ request.base_url }}" style="display: inline-block;">
+                  <form method="get" action="" style="display: inline-block;">
                     <button>Clear</button>
                   </form>
                   <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
