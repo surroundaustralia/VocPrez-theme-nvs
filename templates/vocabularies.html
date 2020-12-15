@@ -35,7 +35,7 @@
             </div>
             <div id="filter">
               <h4>Filter</h4>
-              <form method="get" action="{{ url_for('vocabularies') }}"  style="display: inline-block;">
+              <form method="get" action="{{ request.base_url }}"  style="display: inline-block;">
                 <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
                 <button>Filter</button>
               </form>
