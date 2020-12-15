@@ -1,48 +1,50 @@
 {% extends "page.html" %}
 {% block content %}
     <div style="display:grid; grid-template-columns: 80% auto;">
-        <div style="grid-column: 1; grid-row: 1;">
-            <h1>{{ label }}</h1>
-            <dl>
-              <dt>URI</dt>
-              <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
-              {% if comment is not none %}
-              <dt>Description</dt>
-              <dd>{{ comment|safe }}</dd>
-              {% endif %}
-              {% if parent_container_uri is not none %}
-              <dt>Parent Container</dt>
-              {% if parent_container_label is not none %}
-              <dd><a href="{{ parent_container_uri }}">{{ parent_container_uri }}</a></dd>
-              {% else %}
-              <dd><a href="{{ parent_container_uri }}">{{ parent_container_label }}</a></dd>
-              {% endif %}
-              {% endif %}
-            </dl>
-        </div>
-        <div style="grid-column: 2; grid-row: 1;">
-            <div id="altprofiles">
-              <h4>Alternates Profiles</h4>
-              <p>Different views and formats:</p>
-              <p>
-                {% if "/scheme/" in uri %}
-                <a href="{{ url_for('conceptschemes') }}?_profile=alt">Alternate Profiles</a>
-                {% else %}
-                <a href="{{ url_for('collections') }}?_profile=alt">Alternate Profiles</a>
-                {% endif %}
-                <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
-              </p>
+        <div id="top-wrapper">
+            <div id="collection-heading" style="grid-column: 1; grid-row: 1;">
+                <h1>{{ label }}</h1>
+                <dl>
+                  <dt>URI</dt>
+                  <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
+                  {% if comment is not none %}
+                  <dt>Description</dt>
+                  <dd>{{ comment|safe }}</dd>
+                  {% endif %}
+                  {% if parent_container_uri is not none %}
+                  <dt>Parent Container</dt>
+                  {% if parent_container_label is not none %}
+                  <dd><a href="{{ parent_container_uri }}">{{ parent_container_uri }}</a></dd>
+                  {% else %}
+                  <dd><a href="{{ parent_container_uri }}">{{ parent_container_label }}</a></dd>
+                  {% endif %}
+                  {% endif %}
+                </dl>
             </div>
-            <div id="filter">
-              <h4>Filter</h4>
-              <form method="get" action="{{ url_for('vocabularies') }}"  style="display: inline-block;">
-                <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
-                <button>Filter</button>
-              </form>
-              <form method="get" action="{{ url_for('vocabularies') }}" style="display: inline-block;">
-                <button>Clear</button>
-              </form>
-              <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
+            <div id="alt-wrapper" style="grid-column: 2; grid-row: 1;">
+                <div id="altprofiles">
+                  <h4>Alternates Profiles</h4>
+                  <p>Different views and formats:</p>
+                  <p>
+                    {% if "/scheme/" in uri %}
+                    <a href="{{ url_for('conceptschemes') }}?_profile=alt">Alternate Profiles</a>
+                    {% else %}
+                    <a href="{{ url_for('collections') }}?_profile=alt">Alternate Profiles</a>
+                    {% endif %}
+                    <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
+                  </p>
+                </div>
+                <div id="filter">
+                  <h4>Filter</h4>
+                  <form method="get" action="{{ url_for('vocabularies') }}"  style="display: inline-block;">
+                    <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
+                    <button>Filter</button>
+                  </form>
+                  <form method="get" action="{{ url_for('vocabularies') }}" style="display: inline-block;">
+                    <button>Clear</button>
+                  </form>
+                  <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
+                </div>
             </div>
         </div>
         <div style="grid-column: 1/3; grid-row: 2;">
