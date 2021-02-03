@@ -8,6 +8,7 @@ import json as j
 from vocprez.model.vocabulary import Vocabulary, VocabularyRenderer
 import logging
 import requests
+import vocprez._config as config
 
 
 class NvsVocabularyRenderer(VocabularyRenderer):
@@ -52,24 +53,51 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                 return self._render_nvs_html()
 
     def _render_nvs_rdf(self):
-        if self.vocab.collections == "Collection":
-            if "/standard_name/" in self.vocab.uri:
-                api_vocab_uri = "$DB2RDF_STANDARD_NAME_URI"
-            else:
-                api_vocab_uri = "$DB2RDF_COLLECTIONS_URI" + self.vocab.uri.split("/collection/")[1]
+        if "/scheme/" in self.request.base_url:
+            # ConceptScheme metadata
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                DESCRIBE <xxx> ?c 
+                WHERE {
+                    ?c skos:inScheme <xxx> .
+                }
+                """.replace("xxx", self.vocab.uri)
         else:
-            api_vocab_uri = "$DB2RDF_SCHEMES_URI" + self.vocab.uri.split("/scheme/")[1]
+            # collection metadata
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                DESCRIBE <xxx> ?c 
+                WHERE {
+                    <xxx> skos:member ?c .
+                }
+                """.replace("xxx", self.vocab.uri)
 
-        r = requests.get(api_vocab_uri)
+        r = requests.get(
+            config.SPARQL_ENDPOINT,
+            params={"query": q},
+            headers={"Accept": "application/ld+json"}
+        )
 
-        if self.mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:
+        # shortcut to return JSON-LD
+        if self.mediatype == "application/ld+json":
             return Response(
                 r.text,
                 mimetype=self.mediatype,
                 headers=self.headers,
             )
         else:
-            g = Graph().parse(data=r.text, format="xml")
+            g = Graph().parse(data=r.text, format="json-ld")
+
+            prefixes = {
+                "dc": "http://purl.org/dc/terms/",
+                "dce": "http://purl.org/dc/elements/1.1/",
+                "owl": "http://www.w3.org/2002/07/owl#",
+                "pav": "http://purl.org/pav/",
+                "skos": "http://www.w3.org/2004/02/skos/core#",
+                "void": "http://rdfs.org/ns/void#",
+            }
+            for k, v in prefixes.items():
+                g.bind(k, v)
 
             # serialise in other RDF format
             if self.mediatype in ["application/rdf+json", "application/json"]:

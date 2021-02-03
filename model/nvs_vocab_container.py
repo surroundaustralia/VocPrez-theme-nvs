@@ -4,6 +4,7 @@ from pyldapi import Renderer, ContainerRenderer
 from rdflib import Graph, Literal, URIRef
 from vocprez.model.profiles import profile_nvs
 import requests
+import vocprez._config as config
 
 
 class NvsContainerRenderer(ContainerRenderer):
@@ -101,18 +102,113 @@ class NvsContainerRenderer(ContainerRenderer):
 
     def _render_nvs_profile_rdf(self):
         if "/scheme/" in self.request.base_url:
-            r = requests.get("$DB2RDF_SCHEMES_URI")
+            q = """
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                CONSTRUCT {
+                    ?cs a skos:ConceptScheme ;
+                        dcterms:alternative ?alt ;
+                        dcterms:creator ?creator ;
+                        dcterms:date ?modified ;
+                        dcterms:publisher ?publisher ;
+                        dcterms:title ?title ;
+                        owl:versionInfo ?version ;
+                        skos:hasTopConcept ?tc ;
+                        skos:altLabel ?al ;
+                        dcterms:description ?description ;
+                        skos:prefLabel ?pl .
+                }
+                WHERE {
+                    ?cs a skos:ConceptScheme ;
+                        dcterms:alternative ?alt ;
+                        dcterms:creator ?creator ;
+                        dcterms:date ?modified ;
+                        dcterms:publisher ?publisher ;
+                        dcterms:title ?title ;
+                        owl:versionInfo ?version ;
+    
+                    OPTIONAL {?cs skos:hasTopConcept ?tc .}
+                    OPTIONAL { ?cs skos:altLabel ?al . }
+                    {
+                        ?cs dcterms:description ?description .
+                        FILTER(lang(?description) = "en" || lang(?description) = "")
+                    }
+                    {
+                        ?cs skos:prefLabel ?pl .
+                        FILTER(lang(?title) = "en" || lang(?pl) = "")
+                    }
+                }
+                """
         else:
-            r = requests.get("$DB2RDF_COLLECTIONS_URI")
+            q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX grg: <http://www.isotc211.org/schemas/grg/>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    
+                CONSTRUCT {
+                    ?cs a skos:Collection ;
+                        dcterms:alternative ?alternative ;
+                        dcterms:creator ?creator ;
+                        dcterms:date ?date ;
+                        dcterms:description ?description ;
+                        dcterms:publisher ?publisher ;
+                        dcterms:title ?title ;
+                        rdfs:comment ?comment ;
+                        owl:versionInfo ?version ;
+                        skos:altLabel ?al ;
+                        skos:narrower ?narrower ;
+                        skos:prefLabel ?pl .
+    
+                    ?cs
+                        grg:RE_RegisterManager ?registermanager ;
+                        grg:RE_RegisterOwner ?registerowner .
+    
+                    ?cs rdfs:seeAlso ?seeAlso .
+                }
+                WHERE {
+                    ?cs a skos:Collection ;
+                        dcterms:alternative ?alternative ;
+                        dcterms:creator ?creator ;
+                        dcterms:date ?date ;
+                        dcterms:description ?description ;
+                        dcterms:publisher ?publisher ;
+                        dcterms:title ?title ;
+                        rdfs:comment ?comment ;
+                        owl:versionInfo ?version ;
+                        skos:prefLabel ?pl .
+    
+                    OPTIONAL { ?cs skos:altLabel ?al }
+                    OPTIONAL { ?cs skos:narrower ?narrower }
+                    OPTIONAL {
+                        ?cs skos:prefLabel ?pl .
+                        FILTER(lang(?pl) = "en" || lang(?pl) = "")
+                    }
+                    OPTIONAL {
+                        ?cs grg:RE_RegisterManager ?registermanager .
+                        ?cs grg:RE_RegisterManager ?registerowner .
+                    }
+                    OPTIONAL { ?cs rdfs:seeAlso ?seeAlso }
+                }
+                """
 
-        if self.mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:
+        r = requests.get(
+            config.SPARQL_ENDPOINT,
+            params={"query": q},
+            headers={"Accept": "application/ld+json"}
+        )
+
+        # shortcut to return JSON-LD
+        if self.mediatype == "application/ld+json":
             return Response(
                 r.text,
                 mimetype=self.mediatype,
                 headers=self.headers,
             )
         else:
-            g = Graph().parse(data=r.text, format="xml")
+            g = Graph().parse(data=r.text, format="json-ld")
 
             # serialise in other RDF format
             if self.mediatype in ["application/rdf+json", "application/json"]:

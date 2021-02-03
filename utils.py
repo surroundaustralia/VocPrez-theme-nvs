@@ -484,11 +484,15 @@ def get_vocab_id(vocab_or_concept_uri):
 
 
 def get_concept_id(concept_uri):
+    logging.debug(concept_uri)
+    if "/standard_name/" in concept_uri:
+        return concept_uri.split("/standard_name/")[1].rstrip("/")
+
     m = re.search("\/current\/([A-Z0-9\_]+)\/", concept_uri)
     if m is not None:
         return m[1]
-    else:
-        return concept_uri.split("/current/")[1].replace("/", "")
+
+    return concept_uri.split("/current/")[1].replace("/", "")
 
 
 def get_pretty_mediatype(mediatype):

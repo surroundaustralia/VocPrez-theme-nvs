@@ -110,7 +110,7 @@
                 <td class="onefifty"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
                 <td class="onefifty">{{ concept[1] }}{% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
                 <td class="threefifty">{{ concept[2] }}</td>
-                <td class="onefifty">{{ concept[3].split(" ")[0] }}</td>
+                <td class="onefifty">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
               </tr>
             {% endfor %}
             {% if vocab.concepts|length < 1 %}

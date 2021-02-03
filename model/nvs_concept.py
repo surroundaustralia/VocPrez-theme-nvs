@@ -38,32 +38,36 @@ class NvsConceptRenderer(ConceptRenderer):
                 return self._render_nvs_html()
 
     def _render_nvs_rdf(self):
-        if "/standard_name/" in self.concept.uri:
-            api_concept_uri = "$DB2RDF_STANDARD_NAME_URI" + self.concept.uri.split("/standard_name/")[1]
+        r = requests.get(
+            config.SPARQL_ENDPOINT,
+            params={"query": "DESCRIBE <{}>".format(self.concept.uri)},
+            headers={"Accept": "text/turtle"}
+        )
+
+        g = Graph().parse(data=r.text, format="turtle")
+
+        prefixes = {
+            "dc": "http://purl.org/dc/terms/",
+            "dce": "http://purl.org/dc/elements/1.1/",
+            "owl": "http://www.w3.org/2002/07/owl#",
+            "pav": "http://purl.org/pav/",
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "void": "http://rdfs.org/ns/void#",
+        }
+        for k, v in prefixes.items():
+            g.bind(k, v)
+
+        # serialise in other RDF format
+        if self.mediatype in ["application/rdf+json", "application/json"]:
+            graph_text = g.serialize(format="json-ld")
         else:
-            api_concept_uri = "$DB2RDF_COLLECTIONS_URI" + self.concept.uri.split("/collection/")[1]
-        r = requests.get(api_concept_uri)
+            graph_text = g.serialize(format=self.mediatype)
 
-        if self.mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:
-            return Response(
-                r.text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
-        else:
-            g = Graph().parse(data=r.text, format="xml")
-
-            # serialise in other RDF format
-            if self.mediatype in ["application/rdf+json", "application/json"]:
-                graph_text = g.serialize(format="json-ld")
-            else:
-                graph_text = g.serialize(format=self.mediatype)
-
-            return Response(
-                graph_text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
+        return Response(
+            graph_text,
+            mimetype=self.mediatype,
+            headers=self.headers,
+        )
 
     def _render_nvs_html(self):
         _template_context = {

@@ -83,15 +83,6 @@ else
     sed -i 's#"/sparql"#"/sparql/"#' $VP_HOME/vocprez/app.py
 fi
 
-echo "Add in real db2rdf endpoints"
-sed -i 's#$DB2RDF_SCHEMES_URI#'"$DB2RDF_SCHEMES_URI"'#' $VP_HOME/vocprez/model/nvs_vocab_container.py
-sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez/model/nvs_vocab_container.py
-sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez/model/nvs_concept.py
-sed -i 's#$DB2RDF_STANDARD_NAME_URI#'"$DB2RDF_STANDARD_NAME_URI"'#' $VP_HOME/vocprez/model/nvs_concept.py
-sed -i 's#$DB2RDF_COLLECTIONS_URI#'"$DB2RDF_COLLECTIONS_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
-sed -i 's#$DB2RDF_SCHEMES_URI#'"$DB2RDF_SCHEMES_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
-sed -i 's#$DB2RDF_STANDARD_NAME_URI#'"$DB2RDF_STANDARD_NAME_URI"'#' $VP_HOME/vocprez/model/nvs_vocabulary.py
-
 echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source
 
