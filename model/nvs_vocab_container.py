@@ -104,34 +104,34 @@ class NvsContainerRenderer(ContainerRenderer):
         if "/scheme/" in self.request.base_url:
             q = """
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX owl: <http://www.w3.org/2002/07/owl#>
                 CONSTRUCT {
                     ?cs a skos:ConceptScheme ;
-                        dcterms:alternative ?alt ;
-                        dcterms:creator ?creator ;
-                        dcterms:date ?modified ;
-                        dcterms:publisher ?publisher ;
-                        dcterms:title ?title ;
+                        dc:alternative ?alt ;
+                        dc:creator ?creator ;
+                        dc:date ?modified ;
+                        dc:publisher ?publisher ;
+                        dc:title ?title ;
                         owl:versionInfo ?version ;
                         skos:hasTopConcept ?tc ;
                         skos:altLabel ?al ;
-                        dcterms:description ?description ;
+                        dc:description ?description ;
                         skos:prefLabel ?pl .
                 }
                 WHERE {
                     ?cs a skos:ConceptScheme ;
-                        dcterms:alternative ?alt ;
-                        dcterms:creator ?creator ;
-                        dcterms:date ?modified ;
-                        dcterms:publisher ?publisher ;
-                        dcterms:title ?title ;
+                        dc:alternative ?alt ;
+                        dc:creator ?creator ;
+                        dc:date ?modified ;
+                        dc:publisher ?publisher ;
+                        dc:title ?title ;
                         owl:versionInfo ?version ;
     
                     OPTIONAL {?cs skos:hasTopConcept ?tc .}
                     OPTIONAL { ?cs skos:altLabel ?al . }
                     {
-                        ?cs dcterms:description ?description .
+                        ?cs dc:description ?description .
                         FILTER(lang(?description) = "en" || lang(?description) = "")
                     }
                     {
@@ -142,7 +142,7 @@ class NvsContainerRenderer(ContainerRenderer):
                 """
         else:
             q = """
-                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX grg: <http://www.isotc211.org/schemas/grg/>
                 PREFIX owl: <http://www.w3.org/2002/07/owl#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -150,12 +150,12 @@ class NvsContainerRenderer(ContainerRenderer):
     
                 CONSTRUCT {
                     ?cs a skos:Collection ;
-                        dcterms:alternative ?alternative ;
-                        dcterms:creator ?creator ;
-                        dcterms:date ?date ;
-                        dcterms:description ?description ;
-                        dcterms:publisher ?publisher ;
-                        dcterms:title ?title ;
+                        dc:alternative ?alternative ;
+                        dc:creator ?creator ;
+                        dc:date ?date ;
+                        dc:description ?description ;
+                        dc:publisher ?publisher ;
+                        dc:title ?title ;
                         rdfs:comment ?comment ;
                         owl:versionInfo ?version ;
                         skos:altLabel ?al ;
@@ -170,12 +170,12 @@ class NvsContainerRenderer(ContainerRenderer):
                 }
                 WHERE {
                     ?cs a skos:Collection ;
-                        dcterms:alternative ?alternative ;
-                        dcterms:creator ?creator ;
-                        dcterms:date ?date ;
-                        dcterms:description ?description ;
-                        dcterms:publisher ?publisher ;
-                        dcterms:title ?title ;
+                        dc:alternative ?alternative ;
+                        dc:creator ?creator ;
+                        dc:date ?date ;
+                        dc:description ?description ;
+                        dc:publisher ?publisher ;
+                        dc:title ?title ;
                         rdfs:comment ?comment ;
                         owl:versionInfo ?version ;
                         skos:prefLabel ?pl .

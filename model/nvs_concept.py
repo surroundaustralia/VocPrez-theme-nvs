@@ -49,6 +49,7 @@ class NvsConceptRenderer(ConceptRenderer):
         prefixes = {
             "dc": "http://purl.org/dc/terms/",
             "dce": "http://purl.org/dc/elements/1.1/",
+            "grg": "http://www.isotc211.org/schemas/grg/",
             "owl": "http://www.w3.org/2002/07/owl#",
             "pav": "http://purl.org/pav/",
             "skos": "http://www.w3.org/2004/02/skos/core#",
