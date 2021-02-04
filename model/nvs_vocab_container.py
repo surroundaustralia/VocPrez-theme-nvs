@@ -5,6 +5,7 @@ from rdflib import Graph, Literal, URIRef
 from vocprez.model.profiles import profile_nvs
 import requests
 import vocprez._config as config
+from vocprez.utils import serialize_by_mediatype
 
 
 class NvsContainerRenderer(ContainerRenderer):
@@ -200,24 +201,8 @@ class NvsContainerRenderer(ContainerRenderer):
             headers={"Accept": "application/ld+json"}
         )
 
-        # shortcut to return JSON-LD
-        if self.mediatype == "application/ld+json":
-            return Response(
-                r.text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
-        else:
-            g = Graph().parse(data=r.text, format="json-ld")
-
-            # serialise in other RDF format
-            if self.mediatype in ["application/rdf+json", "application/json"]:
-                graph_text = g.serialize(format="json-ld")
-            else:
-                graph_text = g.serialize(format=self.mediatype)
-
-            return Response(
-                graph_text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
+        return Response(
+            serialize_by_mediatype(g, self.mediatype),
+            mimetype=self.mediatype,
+            headers=self.headers,
+        )

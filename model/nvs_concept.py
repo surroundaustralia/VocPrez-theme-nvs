@@ -10,6 +10,7 @@ from vocprez.model.property import Property
 from vocprez.model.concept import Concept, ConceptRenderer
 import requests
 import logging
+from vocprez.utils import serialize_by_mediatype
 
 
 class NvsConceptRenderer(ConceptRenderer):
@@ -55,17 +56,9 @@ class NvsConceptRenderer(ConceptRenderer):
             "skos": "http://www.w3.org/2004/02/skos/core#",
             "void": "http://rdfs.org/ns/void#",
         }
-        for k, v in prefixes.items():
-            g.bind(k, v)
-
-        # serialise in other RDF format
-        if self.mediatype in ["application/rdf+json", "application/json"]:
-            graph_text = g.serialize(format="json-ld")
-        else:
-            graph_text = g.serialize(format=self.mediatype)
 
         return Response(
-            graph_text,
+            serialize_by_mediatype(g, self.mediatype, prefixes),
             mimetype=self.mediatype,
             headers=self.headers,
         )

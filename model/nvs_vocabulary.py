@@ -9,6 +9,7 @@ from vocprez.model.vocabulary import Vocabulary, VocabularyRenderer
 import logging
 import requests
 import vocprez._config as config
+from vocprez.utils import serialize_by_mediatype
 
 
 class NvsVocabularyRenderer(VocabularyRenderer):
@@ -75,42 +76,26 @@ class NvsVocabularyRenderer(VocabularyRenderer):
         r = requests.get(
             config.SPARQL_ENDPOINT,
             params={"query": q},
-            headers={"Accept": "application/ld+json"}
+            headers={"Accept": "application/rdf+xml"}
         )
 
-        # shortcut to return JSON-LD
-        if self.mediatype == "application/ld+json":
-            return Response(
-                r.text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
-        else:
-            g = Graph().parse(data=r.text, format="json-ld")
+        g = Graph().parse(data=r.text, format="xml")
 
-            prefixes = {
-                "dc": "http://purl.org/dc/terms/",
-                "dce": "http://purl.org/dc/elements/1.1/",
-                "grg": "http://www.isotc211.org/schemas/grg/",
-                "owl": "http://www.w3.org/2002/07/owl#",
-                "pav": "http://purl.org/pav/",
-                "skos": "http://www.w3.org/2004/02/skos/core#",
-                "void": "http://rdfs.org/ns/void#",
-            }
-            for k, v in prefixes.items():
-                g.bind(k, v)
+        prefixes = {
+            "dc": "http://purl.org/dc/terms/",
+            "dce": "http://purl.org/dc/elements/1.1/",
+            "grg": "http://www.isotc211.org/schemas/grg/",
+            "owl": "http://www.w3.org/2002/07/owl#",
+            "pav": "http://purl.org/pav/",
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "void": "http://rdfs.org/ns/void#",
+        }
 
-            # serialise in other RDF format
-            if self.mediatype in ["application/rdf+json", "application/json"]:
-                graph_text = g.serialize(format="json-ld")
-            else:
-                graph_text = g.serialize(format=self.mediatype)
-
-            return Response(
-                graph_text,
-                mimetype=self.mediatype,
-                headers=self.headers,
-            )
+        return Response(
+            serialize_by_mediatype(g, self.mediatype, prefixes),
+            mimetype=self.mediatype,
+            headers=self.headers,
+        )
 
     def _render_nvs_html(self):
         _template_context = {

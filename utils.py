@@ -502,7 +502,7 @@ def get_pretty_mediatype(mediatype):
         "text/turtle": "Turtle",
         "application/rdf+xml": "RDF/XML",
         "application/ld+json": "JSON-LD",
-        "text/n3": "Notation-3",
+        "text/n3": "N3",
         "application/n-triples": "N-Triples",
     }
     return MEDIATYPE_NAMES.get(mediatype, mediatype)
@@ -523,3 +523,16 @@ def get_status_label(mediatype):
         "http://www.opengis.net/def/status/valid": "valid",
     }
     return STATUSES.get(mediatype, mediatype)
+
+
+def serialize_by_mediatype(g: Graph, mediatype: str, prefixes: dict = None) -> str:
+    if prefixes is not None:
+        for k, v in prefixes.items():
+            g.bind(k, v)
+
+    if mediatype in ["application/rdf+json", "application/json"]:
+        return g.serialize(format="json-ld")
+    elif mediatype in ["application/rdf+xml", "application/xml", "text/xml"]:
+        return g.serialize(format="pretty-xml")
+    else:
+        return g.serialize(format=mediatype)
