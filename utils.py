@@ -484,7 +484,6 @@ def get_vocab_id(vocab_or_concept_uri):
 
 
 def get_concept_id(concept_uri):
-    logging.debug(concept_uri)
     if "/standard_name/" in concept_uri:
         return concept_uri.split("/standard_name/")[1].rstrip("/")
 
@@ -536,3 +535,10 @@ def serialize_by_mediatype(g: Graph, mediatype: str, prefixes: dict = None) -> s
         return g.serialize(format="pretty-xml")
     else:
         return g.serialize(format=mediatype)
+
+
+def suppressed_properties():
+    return [
+        "http://www.w3.org/2000/01/rdf-schema#label",
+        "http://www.w3.org/2004/02/skos/core#inScheme",
+    ]

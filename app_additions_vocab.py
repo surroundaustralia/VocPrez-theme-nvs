@@ -1,4 +1,14 @@
 # ROUTE one vocab
+# @app.route("/collection/<string:vocab_id>/<int:vocab_version>/")
+# def vocabuary_version(vocab_id, vocab_version):
+#     vocab_uri = None
+#     for v in g.VOCABS.keys():
+#         if vocab_id in v:
+#             vocab_uri = v
+#
+#     return return_vocab2(vocab_uri, None)
+
+
 @app.route("/collection/<string:vocab_id>/current/")
 @app.route("/collection/<string:vocab_id>/current/<string:acc_dep>/")
 def vocabulary(vocab_id, acc_dep=None):

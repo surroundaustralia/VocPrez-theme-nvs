@@ -5,131 +5,102 @@
     <div style="grid-column: 1; grid-row: 1;">
       <h1>Vocabulary</h1>
       <h2>{{ vocab.title }}</h2>
-    </div>
-    <div style="grid-column: 2; grid-row: 1;">
-      <div class="altprof">
-        <h3>Alternate Profiles</h3>
-        <p>Different views and formats:</p>
-        <p>
-          <a href="{{ utils.get_content_uri(uri) }}?_profile=alt">Alternate Profiles</a>
-          <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Different Media Types (HTML, text, RDF, JSON etc.) and different information model views, <em>profiles</em>, are available for this resource.</span></span>
-        </p>
-      </div>
-      <!--
-      <div class="search">
-        <h3>Search</h3>
-        <input type="text" id="sw-text" name="sw-text" />
-        <label for="sw-text" class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">Enter a search term here to search within this vocabulary. To search across all vocabularies, use the 'Search NVS' link at top</span></label>
-        <input id="#sw-submit" type="submit" value="Search" />
-      </div>
-      -->
-    </div>
-  </div>
-  <table class="metadata">
-      <tr>
-        <th>URI</th>
-        <td><strong><a id="this_uri" href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></td>
-      </tr>
-      {%  if vocab.description is not none  -%}
-      <tr>
-        <th><a href="http://purl.org/dc/terms/description">Description</a></th><td>{{ vocab.description }}</td>
-      </tr>
-      {% endif -%}
-      {%  if vocab.creator is not none  -%}
-      <tr>
-        <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</td>
-      </tr>
-      {% endif -%}
-      {%  if vocab.created is not none  -%}
-      <tr>
-        <th><a href="http://purl.org/dc/terms/created">Created</a></th><td>{{ vocab.created.strftime('%Y-%m-%d') }}</td>
-      </tr>
-      {% endif -%}
-      {%  if vocab.modified is not none  -%}
-      <tr>
-        <th><a href="http://purl.org/dc/terms/modified">Modified</a></th><td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
-      </tr>
-      {% endif -%}
-      {%  if vocab.versionInfo is not none  -%}
-      <tr>
-        <th><a href="http://www.w3.org/2002/07/owl#versionInfo">Version Info</a></th><td>{{ vocab.versionInfo }}</td>
-      </tr>
-      {% endif -%}
-      {% if vocab.downloadURL -%}
-      <tr>
-        <th>Download</th>
-        <td>
-          <a href="{{ vocab.downloadURL }}">RDF (turtle)</a>
-        </td>
-      </tr>
-      {% endif -%}
-      {% if vocab.other_properties is not none %}
-        {% for prop in vocab.other_properties %}
-          <tr>
-            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
-            <td>
-              {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      {% endif %}
-      {%  if vocab.concept_hierarchy is not none and vocab.concept_hierarchy|length > 0  -%}
-      <tr>
-        <th valign="top"><a href="http://www.w3.org/2004/02/skos/core#hasTopConcept">Concept Hierarchy</a></th>
-        <td>
-            {{ render_concept_hierarchy(vocab.concept_hierarchy)|safe }}
-        </td>
-      </tr>
-      {% endif -%}
-      {% if vocab.collections == "Collection" %}
+      <table class="metadata">
         <tr>
-          <th valign="top"><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></th>
+          <th>URI</th>
+          <td><strong><a id="this_uri" href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></td>
+        </tr>
+        {%  if vocab.description is not none  -%}
+        <tr>
+          <th><a href="http://purl.org/dc/terms/description">Description</a></th><td>{{ vocab.description }}</td>
+        </tr>
+        {% endif -%}
+        {%  if vocab.creator is not none  -%}
+        <tr>
+          <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</td>
+        </tr>
+        {% endif -%}
+        {%  if vocab.created is not none  -%}
+        <tr>
+          <th><a href="http://purl.org/dc/terms/created">Created</a></th><td>{{ vocab.created.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endif -%}
+        {%  if vocab.modified is not none  -%}
+        <tr>
+          <th><a href="http://purl.org/dc/terms/modified">Modified</a></th><td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endif -%}
+        {%  if vocab.versionInfo is not none  -%}
+        <tr>
+          <th><a href="http://www.w3.org/2002/07/owl#versionInfo">Version Info</a></th><td>{{ vocab.versionInfo }}</td>
+        </tr>
+        {% endif -%}
+        {% if vocab.downloadURL -%}
+        <tr>
+          <th>Download</th>
           <td>
-            <style>
-              table.concepts {
-                  max-width:800px;
-              }
-              td.onefifty {
-                  max-width:150px;
-                  word-wrap:break-word;
-              }
-              td.threefifty {
-                  max-width:350px;
-                  word-wrap:break-word;
-              }
-            </style>
-            <table style="">
-            <tr>
-              <th>Identifier</th>
-              <th>PrefLabel</th>
-              <th>Definition</th>
-              <th>Date</th>
-            </tr>
-            {% for concept in vocab.concepts %}
-              <tr style="line-height:1.1em;">
-                <td class="onefifty"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
-                <td class="onefifty">{{ concept[1] }}{% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
-                <td class="threefifty">{{ concept[2] }}</td>
-                <td class="onefifty">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
-              </tr>
-            {% endfor %}
-            {% if vocab.concepts|length < 1 %}
-              <tr><th colspan="4"><em>There are no Concepts listed for this Vocabulary</em></th></tr>
-            {% endif %}
-            </table>
+            <a href="{{ vocab.downloadURL }}">RDF (turtle)</a>
           </td>
         </tr>
-      {% elif vocab.collections is not none and vocab.collections|length > 0  -%}
-      <tr>
-        <th><a href="http://www.w3.org/2004/02/skos/core#Collection">Collections</a></th>
-        <td>
-          {% for collection in vocab.collections %}
-            <a href="{{ utils.get_content_uri(collection[0]) }}">{{ collection[1] }}</a>
+        {% endif -%}
+        {% if vocab.other_properties is not none %}
+          {% for prop in vocab.other_properties %}
+            <tr>
+              <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+              <td>
+                {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
+              </td>
+            </tr>
           {% endfor %}
-        </td>
-      </tr>
-      {% endif -%}
-  </table>
+        {% endif %}
+        {%  if vocab.concept_hierarchy is not none and vocab.concept_hierarchy|length > 0  -%}
+        <tr>
+          <th valign="top"><a href="http://www.w3.org/2004/02/skos/core#hasTopConcept">Concept Hierarchy</a></th>
+          <td>
+              {{ render_concept_hierarchy(vocab.concept_hierarchy)|safe }}
+          </td>
+        </tr>
+        {% endif -%}
+        {% if vocab.collections != "Collection" and vocab.collections|length > 0  -%}
+        <tr>
+          <th><a href="http://www.w3.org/2004/02/skos/core#Collection">Collections</a></th>
+          <td>
+            {% for collection in vocab.collections %}
+              <a href="{{ utils.get_content_uri(collection[0]) }}">{{ collection[1] }}</a>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endif -%}
+    </table>
+    </div>
+    <div style="grid-column: 2; grid-row: 1;">
+      {% include 'nvs_alt_link.html' %}
+    </div>
+  </div>
+  {% if vocab.collections == "Collection" %}
+    <div style="grid-column: 1/2; grid-row: 2;">
+      <h3><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></h3>
+      <table style="">
+        <tr>
+          <th>Identifier</th>
+          <th>PrefLabel</th>
+          <th>Definition</th>
+          <th>Date</th>
+        </tr>
+      {% for concept in vocab.concepts %}
+        <tr style="line-height:1.1em;">
+          <td class="onefifty"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
+          <td class="onefifty">{{ concept[1] }}{% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
+          <td class="threefifty">{{ concept[2] }}</td>
+          <td class="onefifty">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+      {% if vocab.concepts|length < 1 %}
+        <tr><th colspan="4"><em>There are no Concepts listed for this Vocabulary</em></th></tr>
+      {% endif %}
+      </table>
+    </div>
+  {% endif %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
   $(document).ready(function() {
