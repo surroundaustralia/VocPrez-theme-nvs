@@ -492,12 +492,16 @@ class NvsSPARQL(Source):
                 <xxxx> a skos:Concept ;
                        ?p ?o .
                 
-                FILTER(!isLiteral(?o) || lang(?o) = "en")
+                FILTER(!isLiteral(?o) || lang(?o) = "en" || lang(?o) = "")
 
                 OPTIONAL {
                     ?o skos:prefLabel ?ropl .
-                    FILTER (lang(?ropl) = "en")
-                }               
+                    FILTER(!isLiteral(?o) || lang(?o) = "en" || lang(?o) = "")
+                }
+                
+                OPTIONAL {
+                    ?o skos:notation ?ron
+                }
             }
             """.replace("xxxx", uri)
 
@@ -509,12 +513,15 @@ class NvsSPARQL(Source):
             "wasDerivedFrom": None,
         }
         annotation_types = {
+            "http://www.w3.org/2004/02/skos/core#notation": "Identifier",
+            # "http://purl.org/dc/terms/identifier": "Identifier",
             "http://www.opengis.net/def/metamodel/ogc-na/status": "Status",
-            # 'http://www.w3.org/2004/02/skos/core#altLabel': "Alternative Label",
+            'http://www.w3.org/2004/02/skos/core#altLabel': "Alternative Label",
             'http://www.w3.org/2004/02/skos/core#note': "Note",
             'http://www.w3.org/2004/02/skos/core#scopeNote': "Scope Note",
-            'http://www.w3.org/2004/02/skos/core#hostryNote': "History Note",
+            'http://www.w3.org/2004/02/skos/core#historyNote': "History Note",
         }
+        logging.debug(annotation_types.keys())
         annotations = []
         agent_types = {
             'http://purl.org/dc/terms/contributor': "Contributor",
@@ -561,7 +568,8 @@ class NvsSPARQL(Source):
             elif prop == "http://www.w3.org/ns/prov#wasDerivedFrom":
                 s["wasDerivedFrom"] = val
             elif prop in annotation_types.keys():
-                annotations.append(Property(prop, annotation_types[prop], val))
+                if val != "":
+                    annotations.append(Property(prop, annotation_types[prop], val))
             elif prop in related_instance_types.keys():
                 if related_instances.get(prop) is None:
                     related_instances[prop] = {
