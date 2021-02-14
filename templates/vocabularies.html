@@ -15,161 +15,127 @@
                 "applicable." %}
 {% endif %}
 {% block content %}
-    <div style="display:grid; grid-template-columns: 80% auto;">
-        <div id="top-wrapper">
-            <div id="collection-heading" style="grid-column: 1; grid-row: 1;">
-                <h1>{{ title }}</h1>
-                <dl>
-                  <dt>URI</dt>
-                  <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
-                  <dt>Description</dt>
-                  <dd>{{ description }}</dd>
-                </dl>
-            </div>
-            <div id="alt-wrapper" style="grid-column: 2; grid-row: 1;">
-                {% include 'nvs_alt_link.html' %}
-                <div id="filter">
-                  <h4>Filter</h4>
-                  <form method="get" action=""  style="display: inline-block;">
-                    <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
-                    <button>Filter</button>
-                  </form>
-                  <form method="get" action="" style="display: inline-block;">
-                    <button>Clear</button>
-                  </form>
-                  <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
-                </div>
-            </div>
+  <div style="display:grid; grid-template-columns: 80% auto;">
+    <div id="top-wrapper">
+      <div id="collection-heading" style="grid-column: 1; grid-row: 1;">
+        <h1>{{ title }}</h1>
+        <dl>
+          <dt>URI</dt>
+          <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
+          <dt>Description</dt>
+          <dd>{{ description }}</dd>
+        </dl>
+      </div>
+      <div id="alt-wrapper" style="grid-column: 2; grid-row: 1;">
+        {% include 'nvs_alt_link.html' %}
+        <div id="filter">
+          <h4>Filter</h4>
+          <form method="get" action=""  style="display: inline-block;">
+            <input type="text" name="filter" value="{{ request.values.get('filter') if request.values.get('filter') }}" />
+            <button>Filter</button>
+          </form>
+          <form method="get" action="" style="display: inline-block;">
+            <button>Clear</button>
+          </form>
+          <span class="tooltip" style="font-weight:bold;">?<span class="tooltiptext">A simple text matching filter of the list content to the left</span></span>
         </div>
-        <div style="grid-column: 1/3; grid-row: 2;">
-            <h3>Vocabularies</h3>
-            <p><em>Sort by click on table headings, Filter using the search to the right.</em></p>
-            <style>
-              #table_holder {
-                  max-width: 1100px;
-                  overflow: hidden;
-              }
-              table.vocs {
-                  border-collapse: collapse;
-                  border: none;
-                  table-layout: fixed;
-              }
-              table.vocs thead {
-                  background-color: lightgrey;
-              }
-              table.vocs thead td {
-                  cursor: pointer;
-              }
-              table.vocs thead th {
-                  padding: 3px;
-                  white-space: nowrap;
-                  cursor: pointer;
-              }
-              table.vocs tr:nth-child(even) {
-                  background-color: lightgrey;
-              }
-              table.vocs td {
-                  padding: 3px;
-                  max-width: 230px;
-              }
-            </style>
-            <table id="vocsort" class="vocs tablesorter">
-            <thead>
+      </div>
+    </div>
+    <div style="grid-column: 1/3; grid-row: 2;">
+      <h3>Vocabularies</h3>
+      <p><em>Sort by click on table headings, Filter using the search to the right.</em></p>
+      <table id="vocsort" class="vocs tablesorter">
+        <thead>
+          <tr>
+            <th style="width:50px;">ID <span class="arr">&uarr;</span></th>
+            <th style="width:100px; white-space: nowrap;">Title <span class="arr">&uarr;</span></th>
+            <th style="width:60px;">Version <span class="arr">&uarr;</span></th>
+            <th style="width:100px;">Version Date <span class="arr">&uarr;</span></th>
+            <th style="width:200px;">Description <span class="arr">&uarr;</span></th>
+            <th style="width:100px;">Governance <span class="arr">&uarr;</span></th>
+            <th style="width:100px;">External Link <span class="arr">&uarr;</span></th>
+          </tr>
+        </thead>
+        <tbody>
+        {%- for (url, vocab) in members -%}
+          {% if 'standard_name' not in vocab.uri %}
             <tr>
-              <th style="width:50px;">ID <span class="arr">&uarr;</span></th>
-              <th style="width:100px; white-space: nowrap;">Title <span class="arr">&uarr;</span></th>
-              <th style="width:60px;">Version <span class="arr">&uarr;</span></th>
-              <th style="width:100px;">Version Date <span class="arr">&uarr;</span></th>
-              <th style="width:200px;">Description <span class="arr">&uarr;</span></th>
-              <th style="width:100px;">Governance <span class="arr">&uarr;</span></th>
-              <th style="width:100px;">External Link <span class="arr">&uarr;</span></th>
+              <td><a href="{{ utils.get_content_uri(vocab.uri) }}">{{ utils.get_vocab_id(vocab.uri) }}</a></td>
+              <td>{{ vocab.title }}</td>
+              <td>{{ vocab.versionInfo }}</td>
+              <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
+              <td>{{ vocab.description }}</td>
+              <td>{{ vocab.creator }}</td>
+              <td>
+              {% for prop in vocab.other_properties %}
+                {% if prop.label == "See Also" %}
+                  <a href="{{ prop.value }}">{{ prop.value }}</a><br />
+                {% else %}
+                {% endif %}
+              {% endfor %}
+              </td>
             </tr>
-            </thead>
-            <tbody>
-            {%- for (url, vocab) in members -%}
-              {% if 'standard_name' not in vocab.uri %}
-                <tr>
-                  <td><a href="{{ utils.get_content_uri(vocab.uri) }}">{{ utils.get_vocab_id(vocab.uri) }}</a></td>
-                  <td>{{ vocab.title }}</td>
-                  <td>{{ vocab.versionInfo }}</td>
-                  <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
-                  <td>{{ vocab.description }}</td>
-                  <td>{{ vocab.creator }}</td>
-                  <td>
-                  {% for prop in vocab.other_properties %}
-                    {% if prop.label == "See Also" %}
-                      <a href="{{ prop.value }}">{{ prop.value }}</a><br />
-                    {% else %}
-                    {% endif %}
-                  {% endfor %}
-                  </td>
-                </tr>
-              {% endif %}
-            {%- endfor -%}
-            </tbody>
-            </table>
-        </div>
-        <div style="grid-column: 1; grid-row: 3;">
-          {{ pagination.links }}
-          <div class="autopaginationinfo">
-          <div><h4>Automated Pagination&nbsp;<span id="collapsible-toggle" class="collapsible" style="font-size: 14px;">(more)</span></h4></div>
-          <div id="content-pagination" class="collapsible-content">
-            <p>To page through these items, use query string arguments 'page' and 'per_page'.</p>
-            <p>HTTP <code>Link</code> headers of <code>first</code>, <code>prev</code>, <code>next</code> &amp; <code>last</code> are given in web responses.</p>
-                <p>Example: assuming 500 items, page 7, of 50 per page, is given by:</p>
-                <pre>{{ request.url }}?page=7&amp;per_page=50</pre>
-                <p>Link header with a response assuming 500 items would be:</p>
-                <pre>Link:   &lt;{{ request.url }}?per_page=500&gt; rel="first",
+          {% endif %}
+        {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+    <div style="grid-column: 1; grid-row: 3;">
+      {{ pagination.links }}
+      <div class="autopaginationinfo">
+      <div><h4>Automated Pagination&nbsp;<span id="collapsible-toggle" class="collapsible" style="font-size: 14px;">(more)</span></h4></div>
+      <div id="content-pagination" class="collapsible-content">
+        <p>To page through these items, use query string arguments 'page' and 'per_page'.</p>
+        <p>HTTP <code>Link</code> headers of <code>first</code>, <code>prev</code>, <code>next</code> &amp; <code>last</code> are given in web responses.</p>
+            <p>Example: assuming 500 items, page 7, of 50 per page, is given by:</p>
+            <pre>{{ request.url }}?page=7&amp;per_page=50</pre>
+            <p>Link header with a response assuming 500 items would be:</p>
+            <pre>Link:   &lt;{{ request.url }}?per_page=500&gt; rel="first",
 &lt;{{ request.url }}?per_page=500&amp;page=6&gt; rel="prev",
 &lt;{{ request.url }}?per_page=500&amp;page=8&gt; rel="next",
 &lt;{{ request.url }}?per_page=500&amp;page=10&gt; rel="last"
-                </pre>
-                <p>If you want to page through the whole collection, start at <code>first</code> and follow link headers until you reach <code>last</code> or until no <code>last</code> is given. You shouldn't try to calculate each <code>page</code> query string argument yourself.</p>
-                </div>
+            </pre>
+            <p>If you want to page through the whole collection, start at <code>first</code> and follow link headers until you reach <code>last</code> or until no <code>last</code> is given. You shouldn't try to calculate each <code>page</code> query string argument yourself.</p>
             </div>
         </div>
     </div>
-    <script>
-        var coll = document.getElementById("collapsible-toggle");
+  </div>
+  <script>
+      var coll = document.getElementById("collapsible-toggle");
 
-        coll.addEventListener("click", function() {
-            var content = document.getElementById("content-pagination");
-            if (content.style.display === "inline") {
-              content.style.display = "none";
-              document.getElementsByClassName("collapsible")[0].innerHTML = "(more)";
-            } else {
-              content.style.display = "inline";
-              document.getElementsByClassName("collapsible")[0].innerHTML = "(less)";
-            }
-        });
+      coll.addEventListener("click", function() {
+          var content = document.getElementById("content-pagination");
+          if (content.style.display === "inline") {
+            content.style.display = "none";
+            document.getElementsByClassName("collapsible")[0].innerHTML = "(more)";
+          } else {
+            content.style.display = "inline";
+            document.getElementsByClassName("collapsible")[0].innerHTML = "(less)";
+          }
+      });
 
-        let cards = document.getElementsByClassName("card")
-        let i;
-        for (i = 0; i < cards.length; i++) {
-            if (cards[i].children[1].children[0] === undefined) {
-                cards[i].children[1].innerHTML = "<em>No metadata found.</em>";
-            }
-        }
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
-    <script>
+      let cards = document.getElementsByClassName("card")
+      let i;
+      for (i = 0; i < cards.length; i++) {
+          if (cards[i].children[1].children[0] === undefined) {
+              cards[i].children[1].innerHTML = "<em>No metadata found.</em>";
+          }
+      }
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
+  <script>
       $(function() {
         $("#vocsort").tablesorter();
       });
 
       $("#vocsort thead tr th").click(function(event) {
-          // reset all others
-
-          // set this one
-          console.log($(this).find(".arr").html());
-          if ($(this).find(".arr").html() == "↓") {
-              $(".arr").html("&uarr;")
-          } else {
-              $(".arr").html("&uarr;")
-              $(this).find(".arr").html("&darr;")
-          }
+        if ($(this).find(".arr").html() == "↓") {
+          $(".arr").html("&uarr;")
+        } else {
+          $(".arr").html("&uarr;")
+          $(this).find(".arr").html("&darr;")
+        }
       });
-
     </script>
 {% endblock %}

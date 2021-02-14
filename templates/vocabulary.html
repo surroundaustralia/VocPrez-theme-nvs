@@ -79,23 +79,27 @@
   </div>
   {% if vocab.collections == "Collection" %}
     <div style="grid-column: 1/2; grid-row: 2;">
-      <h3><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></h3>
-      <table style="table-layout:fixed; max-width:1000px; margin-bottom:20px;">
-        <tr>
-          <th>ID</th>
-          <th>Preferred&nbsp;Label</th>
-          <th>Definition</th>
-          <th>Date</th>
-        </tr>
-      {% for concept in vocab.concepts %}
-        <tr>
-          <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; word-break:break-all; max-width:150px;"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
-          <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; max-width:250px;">{{ concept[1] }}
-            {% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
-          <td style="vertical-align:top; padding:0 10px 10px 10px; word-wrap:break-word; max-width:510px;">{{ concept[2] }}</td>
-          <td style="vertical-align:top; padding-bottom:10px; width:80px;">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
-        </tr>
-      {% endfor %}
+      <h3><a href="http://www.w3.org/2004/02/skos/core#member">Members</a></h3>
+      <table id="vocsort" class="vocs tablesorter" style="table-layout:fixed; max-width:1000px; margin-bottom:20px;">
+        <thead>
+          <tr>
+            <th>ID <span class="arr">&uarr;</span></th>
+            <th>Preferred&nbsp;Label <span class="arr">&uarr;</span></th>
+            <th>Definition <span class="arr">&uarr;</span></th>
+            <th>Date <span class="arr">&uarr;</span></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for concept in vocab.concepts %}
+          <tr>
+            <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; word-break:break-all; max-width:150px;"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
+            <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; max-width:250px;">{{ concept[1] }}
+              {% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
+            <td style="vertical-align:top; padding:0 10px 10px 10px; word-wrap:break-word; max-width:510px;">{{ concept[2] }}</td>
+            <td style="vertical-align:top; padding-bottom:10px; width:80px;">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
       {% if vocab.concepts|length < 1 %}
         <tr><th colspan="4"><em>There are no Concepts listed for this Vocabulary</em></th></tr>
       {% endif %}
@@ -103,49 +107,19 @@
     </div>
   {% endif %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
   <script>
-  $(document).ready(function() {
-    $("#sw-submit").click(function(event) {
-        console.log("click");
-      var redirect = 'https://www.bodc.ac.uk/resources/vocabularies/vocabulary_search/{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}/';
-      var payload = {
-        "searchstrVocab": $("#sw-text").val(),
-        "identifier": "identifier",
-        "preflabel": "preflabel",
-        "altlabel": "altlabel",
-        "definition": "definition",
-        "searchtype": "concepts",
-        "collectionID": "{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}",
-        "vocab": "{{ vocab.id.replace("http://vocab.nerc.ac.uk/collection/", "").replace("/current/", "") }}",
-        "dosearch": "true",
-        "vocabtitle": "{{ vocab.title }}",
-        "resultsPerPage": 10,
-      };
-      console.log(payload);
-      //$.redirectPost(redirect, payload);
+    $(function() {
+      $("#vocsort").tablesorter();
     });
 
-    /* redirects to NVS search system */
-    $.extend({
-        redirectPost: function(location, args)
-        {
-          var form = $('<form></form>');
-          form.attr("method", "post");
-          form.attr("action", location);
-
-          $.each( args, function( key, value ) {
-            var field = $('<input></input>');
-
-            field.attr("type", "hidden");
-            field.attr("name", key);
-            field.attr("value", value);
-
-            form.append(field);
-          });
-
-          $(form).appendTo('body').submit();
-        }
-      });
-  });
+    $("#vocsort thead tr th").click(function(event) {
+      if ($(this).find(".arr").html() == "↓") {
+        $(".arr").html("&uarr;")
+      } else {
+        $(".arr").html("&uarr;")
+        $(this).find(".arr").html("&darr;")
+      }
+    });
   </script>
 {% endblock -%}
