@@ -488,17 +488,18 @@ class NvsSPARQL(Source):
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
             SELECT DISTINCT *            
-            WHERE {{
-                <{concept_uri}> a skos:Concept ;
-                                ?p ?o .
+            WHERE {
+                <xxxx> a skos:Concept ;
+                       ?p ?o .
+                
+                FILTER(!isLiteral(?o) || lang(?o) = "en")
 
-                OPTIONAL {{
+                OPTIONAL {
                     ?o skos:prefLabel ?ropl .
-                }}                
-            }}
-            """.format(
-            concept_uri=uri
-        )
+                    FILTER (lang(?ropl) = "en")
+                }               
+            }
+            """.replace("xxxx", uri)
 
         pl = None
         d = None
@@ -532,6 +533,7 @@ class NvsSPARQL(Source):
             'http://www.w3.org/2004/02/skos/core#closeMatch': "Close Match",
             'http://www.w3.org/2004/02/skos/core#narrowMatch': "Narrow Match",
         }
+        related_instances = {}
 
         provenance_property_types = {
             "http://purl.org/pav/hasCurrentVersion": "Has Current Version",
@@ -541,57 +543,58 @@ class NvsSPARQL(Source):
             "http://purl.org/dc/terms/isVersionOf": "Is Version Of",
             "http://purl.org/pav/authoredOn": "Authored On"
         }
-        related_instances = {}
 
         other_properties = []
         unique_alt_labels = []
         unique_versions = []
         for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
-            if r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#prefLabel":
-                pl = r["o"]["value"]
-            elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#definition":
-                d = r["o"]["value"]
-            elif r["p"]["value"] == "http://purl.org/dc/terms/provenance":
-                s["provenance"] = r["o"]["value"]
-            elif r["p"]["value"] == "http://purl.org/dc/terms/source":
-                s["source"] = r["o"]["value"]
-            elif r["p"]["value"] == "http://www.w3.org/ns/prov#wasDerivedFrom":
-                s["wasDerivedFrom"] = r["o"]["value"]
-            elif r["p"]["value"] in annotation_types.keys():
-                annotations.append(Property(r["p"]["value"], annotation_types[r["p"]["value"]], r["o"]["value"]))
-            elif r["p"]["value"] in related_instance_types.keys():
-                if related_instances.get(r["p"]["value"]) is None:
-                    related_instances[r["p"]["value"]] = {
+            prop = r["p"]["value"]
+            val = r["o"]["value"]
+            if prop == "http://www.w3.org/2004/02/skos/core#prefLabel":
+                pl = val
+            elif prop == "http://www.w3.org/2004/02/skos/core#definition":
+                d = val
+            elif prop == "http://purl.org/dc/terms/provenance":
+                s["provenance"] = val
+            elif prop == "http://purl.org/dc/terms/source":
+                s["source"] = val
+            elif prop == "http://www.w3.org/ns/prov#wasDerivedFrom":
+                s["wasDerivedFrom"] = val
+            elif prop in annotation_types.keys():
+                annotations.append(Property(prop, annotation_types[prop], val))
+            elif prop in related_instance_types.keys():
+                if related_instances.get(prop) is None:
+                    related_instances[prop] = {
                         "instances": [],
-                        "label": related_instance_types[r["p"]["value"]]
+                        "label": related_instance_types[prop]
                     }
                 # only add this instance if we don't already have one from the same vocab with the same prefLabel
                 seen = False
-                for ri in related_instances[r["p"]["value"]]["instances"]:
+                for ri in related_instances[prop]["instances"]:
                     if r.get("ropl") is not None:
-                        if r["o"]["value"].split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
+                        if val.split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
                             seen = True
 
                 if seen:
                     pass
                 else:
-                    related_instances[r["p"]["value"]]["instances"].append(
-                        (r["o"]["value"], r["ropl"]["value"] if r.get("ropl") is not None else None)
+                    related_instances[prop]["instances"].append(
+                        (val, r["ropl"]["value"] if r.get("ropl") is not None else None)
                     )
-            elif r["p"]["value"] in provenance_property_types.keys():
-                if r["p"]["value"] == "http://purl.org/pav/hasCurrentVersion":
-                    if r["o"]["value"] not in unique_versions:
-                        unique_versions.append(r["o"]["value"])
+            elif prop in provenance_property_types.keys():
+                if prop == "http://purl.org/pav/hasCurrentVersion":
+                    if val not in unique_versions:
+                        unique_versions.append(val)
                         other_properties.append(
-                            Property(r["p"]["value"], "Has Current Version", r["o"]["value"]))
+                            Property(prop, "Has Current Version", val))
                 else:
                     other_properties.append(
-                        Property(r["p"]["value"], provenance_property_types[r["p"]["value"]], r["o"]["value"].rstrip(".0")))
-            elif r["p"]["value"] == "http://www.w3.org/2004/02/skos/core#altLabel":
-                if r["o"]["value"] not in unique_alt_labels:
-                    unique_alt_labels.append(r["o"]["value"])
+                        Property(prop, provenance_property_types[prop], val.rstrip(".0")))
+            elif prop == "http://www.w3.org/2004/02/skos/core#altLabel":
+                if val not in unique_alt_labels:
+                    unique_alt_labels.append(val)
                     other_properties.append(
-                        Property(r["p"]["value"], "Alternative Label", r["o"]["value"]))
+                        Property(prop, "Alternative Label", val))
 
             # TODO: Agents
 
@@ -610,9 +613,9 @@ class NvsSPARQL(Source):
                     return ss
 
         for i, ri in related_instances.items():
-            ri["instances"].sort(key=nvs_rel_concept_sort)
+            # ri["instances"].sort(key=nvs_rel_concept_sort)
+            ri["instances"].sort(key=lambda a: a[1].lower())
 
-        import operator
         def specified_order(s):
             order = [
                 'http://www.w3.org/2002/07/owl#sameAs',
