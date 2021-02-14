@@ -80,7 +80,6 @@ class NvsSPARQL(Source):
         sparql_vocabs = {}
         for v in vocabularies:
             vocab_uri = v["v"]["value"]
-            logging.debug("store vocab {}".format(vocab_uri))
 
             other_properties = []
             other_properties.append(

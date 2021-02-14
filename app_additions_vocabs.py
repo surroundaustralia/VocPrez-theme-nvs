@@ -1,6 +1,6 @@
 # ROUTE vocabs
 @app.route("/vocab/")
-def vocabularies(t=None, uri=None, label=None, comment=None):
+def vocabularies(t=None, uri=None, label=None, description=None):
     page = (
         int(request.values.get("page")) if request.values.get("page") is not None else 1
     )
@@ -33,13 +33,12 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     start = (page - 1) * per_page
     end = start + per_page
     vocabs = vocabs[start:end]
-    logging.debug(vocabs)
 
     return NvsContainerRenderer(
         request,
         uri if uri is not None else config.VOCS_URI,
         label if label is not None else config.VOCS_TITLE,
-        comment if comment is not None else config.VOCS_DESC,
+        description if description is not None else config.VOCS_DESC,
         None,
         None,
         vocabs,
@@ -51,28 +50,10 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
 
 @app.route("/collection/")
 def collections():
-    return vocabularies(
-        t="Collection",
-        uri=config.ABS_URI_BASE_IN_DATA + "/collection/",
-        label="NVS Vocabularies",
-        comment="SKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
-                "group of concepts shares something in common, and it is convenient to group them under a common label."
-                " In the NVS, concept collections are synonymous with controlled vocabularies or code lists. Each "
-                "collection is associated with its governance body. An external website link is displayed when "
-                "applicable."
-    )
+    return vocabularies(t="Collection")
 
 
 @app.route("/scheme/")
 def conceptschemes():
-    return vocabularies(
-        t="ConceptScheme",
-        uri=config.ABS_URI_BASE_IN_DATA + "/scheme/",
-        label="NVS Thesauri",
-        comment="SKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
-                "aggregation of one or more SKOS concepts. Semantic relationships (links) between those concepts may "
-                "also be viewed as part of a concept scheme. A concept scheme is therefore useful for containing the "
-                "concepts registered in multiple concept collections that relate to each other as a single semantic "
-                "unit, such as a thesaurus."
-)
+    return vocabularies(t="ConceptScheme")
 # END ROUTE vocabs

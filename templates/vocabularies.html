@@ -1,24 +1,29 @@
 {% extends "page.html" %}
+{% if "scheme" in request.url %}
+  {% set title = "NVS Thesauri" %}
+  {% set description = "xSKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
+                "aggregation of one or more SKOS concepts. Semantic relationships (links) between those concepts may "
+                "also be viewed as part of a concept scheme. A concept scheme is therefore useful for containing the "
+                "concepts registered in multiple concept collections that relate to each other as a single semantic "
+                "unit, such as a thesaurus." %}
+{% else %}
+  {% set title = "NVS Vocabularies" %}
+  {% set description = "xSKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
+                "group of concepts shares something in common, and it is convenient to group them under a common label."
+                " In the NVS, concept collections are synonymous with controlled vocabularies or code lists. Each "
+                "collection is associated with its governance body. An external website link is displayed when "
+                "applicable." %}
+{% endif %}
 {% block content %}
     <div style="display:grid; grid-template-columns: 80% auto;">
         <div id="top-wrapper">
             <div id="collection-heading" style="grid-column: 1; grid-row: 1;">
-                <h1>{{ label }}</h1>
+                <h1>{{ title }}</h1>
                 <dl>
                   <dt>URI</dt>
                   <dd><strong><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></dd>
-                  {% if comment is not none %}
                   <dt>Description</dt>
-                  <dd>{{ comment|safe }}</dd>
-                  {% endif %}
-                  {% if parent_container_uri is not none %}
-                  <dt>Parent Container</dt>
-                  {% if parent_container_label is not none %}
-                  <dd><a href="{{ parent_container_uri }}">{{ parent_container_uri }}</a></dd>
-                  {% else %}
-                  <dd><a href="{{ parent_container_uri }}">{{ parent_container_label }}</a></dd>
-                  {% endif %}
-                  {% endif %}
+                  <dd>{{ description }}</dd>
                 </dl>
             </div>
             <div id="alt-wrapper" style="grid-column: 2; grid-row: 1;">
