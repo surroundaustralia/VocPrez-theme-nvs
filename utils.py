@@ -30,7 +30,7 @@ def cache_write(cache_object):
     """
     Function to write object to cache if cache file is older than cache_hours.
     """
-    logging.debug("cache_write({})".format(cache_object))
+    logging.debug("cache_write()")
 
     # create dir if not there
     if not os.path.isdir(os.path.dirname(config.CACHE_FILE)):
