@@ -11,23 +11,23 @@ def vocabularies(t=None, uri=None, label=None, comment=None):
     )
 
     # get this instance's list of vocabs
-    vocabs = list(g.VOCABS.keys())
+    vocab_ids = list(g.VOCABS.keys())
 
     if t == "Collection":
-        vocabs = [v for v in vocabs if g.VOCABS[v].collections == "Collection"]
+        vocabs = [v for v in vocab_ids if g.VOCABS[v].collections == "Collection"]
     elif t == "ConceptScheme":
-        vocabs = [v for v in vocabs if g.VOCABS[v].collections == "ConceptScheme"]
+        vocabs = [v for v in vocab_ids if g.VOCABS[v].collections == "ConceptScheme"]
 
     # respond to a filter
     if request.values.get("filter") is not None:
         vocabs = [
-            v for v in vocabs
+            v for v in vocab_ids
             if request.values.get("filter").lower() in g.VOCABS[v].id.lower()
                or request.values.get("filter").lower() in g.VOCABS[v].title.lower()
                or request.values.get("filter").lower() in g.VOCABS[v].description.lower()
         ]
 
-    vocabs = [(url_for("object", uri=v), g.VOCABS[v]) for v in vocabs]
+    vocabs = [(v, g.VOCABS[v]) for v in vocabs]
     vocabs.sort(key=lambda tup: tup[1].title)
     total = len(vocabs)
     start = (page - 1) * per_page

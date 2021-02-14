@@ -33,7 +33,7 @@ class NvsSPARQL(Source):
 
         },
         """
-        logging.debug("SPARQL collect()...")
+        logging.debug("NvsSPARQL collect()...")
 
         # Get all the ConceptSchemes from the SPARQL endpoint
         # Interpret each CS as a Vocab
@@ -42,162 +42,160 @@ class NvsSPARQL(Source):
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX dcterms: <http://purl.org/dc/terms/>
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
-            SELECT * WHERE {{
-                {{?cs a skos:ConceptScheme .}}
-                UNION
-                {{?cs a skos:Collection .}}
-                ?cs a ?t .
-                OPTIONAL {{ ?cs skos:prefLabel ?title .
-                    FILTER(lang(?title) = "{language}" || lang(?title) = "") }}
-                OPTIONAL {{ ?cs dcterms:created ?created }}
-                OPTIONAL {{ ?cs dcterms:issued ?issued }}
-                OPTIONAL {{ ?cs dcterms:date ?modified }}
-                OPTIONAL {{ ?cs dcterms:modified ?modified }}
-                OPTIONAL {{ ?cs dcterms:creator ?creator }}
-                OPTIONAL {{ ?cs dcterms:publisher ?publisher }}
-                OPTIONAL {{ ?cs owl:versionInfo ?version }}
-                OPTIONAL {{ ?cs dcterms:description ?description .
-                    FILTER(lang(?description) = "{language}" || lang(?description) = "") }}   
+            SELECT * 
+            WHERE {
+                VALUES ?t { skos:ConceptScheme skos:Collection }
+                ?v a ?t .
+                OPTIONAL { ?v skos:prefLabel ?title .
+                           FILTER(lang(?title) = "en" || lang(?title) = "") 
+                }
+                OPTIONAL { ?v dcterms:created ?created }
+                OPTIONAL { ?v dcterms:issued ?issued }
+                OPTIONAL { ?v dcterms:date ?modified }
+                OPTIONAL { ?v dcterms:modified ?modified }
+                OPTIONAL { ?v dcterms:creator ?creator }
+                OPTIONAL { ?v dcterms:publisher ?publisher }
+                OPTIONAL { ?v owl:versionInfo ?version }
+                OPTIONAL { ?v dcterms:description ?description .
+                           FILTER(lang(?description) = "en" || lang(?description) = "") 
+                }
                 # NVS special properties                 
-                OPTIONAL {{
-                    ?cs <http://www.isotc211.org/schemas/grg/RE_RegisterManager> ?registermanager .
-                    ?cs <http://www.isotc211.org/schemas/grg/RE_RegisterOwner> ?registerowner .
-                }}                
-                OPTIONAL {{ ?cs rdfs:seeAlso ?seeAlso }}                
-            }} 
+                OPTIONAL {
+                    ?v <http://www.isotc211.org/schemas/grg/RE_RegisterManager> ?registermanager .
+                    ?v <http://www.isotc211.org/schemas/grg/RE_RegisterOwner> ?registerowner .
+                }            
+                OPTIONAL { ?v rdfs:seeAlso ?seeAlso }
+            }
             ORDER BY ?title
-            """.format(language=config.DEFAULT_LANGUAGE)
+            """
         # record just the IDs & title for the VocPrez in-memory vocabs list
-        concept_schemes = u.sparql_query(
+        vocabularies = u.sparql_query(
             q,
             details["sparql_endpoint"],  # must specify a SPARQL endpoint if this source is to be a SPARQL source
             details.get("sparql_username"),
             details.get("sparql_password"),
         )
-        assert concept_schemes is not None, "Unable to query for ConceptSchemes"
+        assert vocabularies is not None, "Unable to query for Vocabularies"
 
         sparql_vocabs = {}
-        for cs in concept_schemes:
-            vocab_id = cs["cs"]["value"]
+        for v in vocabularies:
+            vocab_uri = v["v"]["value"]
+            logging.debug("store vocab {}".format(vocab_uri))
 
             other_properties = []
             other_properties.append(
                 Property(
                     "http://purl.org/dc/terms/identifier",
                     "Identifier",
-                    Literal(u.get_vocab_id(cs["cs"]["value"]))
+                    Literal(u.get_vocab_id(v["v"]["value"]))
                 )
             )
-            if cs.get("registermanager") is not None:
+            if v.get("registermanager") is not None:
                 other_properties.append(
                     Property(
                         "http://www.isotc211.org/schemas/grg/RE_RegisterManager",
                         "Register Manager",
-                        Literal(cs["registermanager"]["value"])
+                        Literal(v["registermanager"]["value"])
                     )
                 )
-            if cs.get("registerowner") is not None:
+            if v.get("registerowner") is not None:
                 other_properties.append(
                     Property(
                         "http://www.isotc211.org/schemas/grg/RE_RegisterOwner",
                         "Register Owner",
-                        Literal(cs["registerowner"]["value"])
+                        Literal(v["registerowner"]["value"])
                     )
                 )
-            if cs.get("seeAlso") is not None:
+            if v.get("seeAlso") is not None:
                 other_properties.append(
                     Property(
                         "http://www.w3.org/2000/01/rdf-schema#seeAlso",
                         "See Also",
-                        URIRef(cs["seeAlso"]["value"])
+                        URIRef(v["seeAlso"]["value"])
                     )
                 )
 
-            sparql_vocabs[vocab_id] = Vocabulary(
-                cs["cs"]["value"],
-                cs["cs"]["value"],
-                cs["title"].get("value") or vocab_id if cs.get("title") else vocab_id,  # Need str for sorting, not None
-                cs["description"].get("value") if cs.get("description") is not None else None,
-                cs["creator"].get("value") if cs.get("creator") is not None else None,
-                dateutil.parser.parse(cs.get("created").get("value")) if cs.get("created") is not None else None,
+            sparql_vocabs[vocab_uri] = Vocabulary(
+                vocab_uri,
+                vocab_uri,
+                v["title"]["value"],
+                v["description"].get("value") if v.get("description") is not None else None,
+                v["creator"].get("value") if v.get("creator") is not None else None,
+                dateutil.parser.parse(v.get("created").get("value")) if v.get("created") is not None else None,
                 # dct:issued not in Vocabulary
                 # dateutil.parser.parse(cs.get('issued').get('value')) if cs.get('issued') is not None else None,
-                dateutil.parser.parse(cs.get("modified").get("value")) if cs.get("modified") is not None else None,
-                cs["version"].get("value") if cs.get("version") is not None else None,  # versionInfo
+                dateutil.parser.parse(v.get("modified").get("value")) if v.get("modified") is not None else None,
+                v["version"].get("value") if v.get("version") is not None else None,  # versionInfo
                 config.VocabSource.NvsSPARQL,  # TODO: replace this var with a reference to self class type (Source type)
-                collections=str(cs["t"]["value"]).split("#")[-1],
+                collections=str(v["t"]["value"]).split("#")[-1],
                 sparql_endpoint=details["sparql_endpoint"],
                 sparql_username=details.get("sparql_username"),
                 sparql_password=details.get("sparql_password"),
                 other_properties=other_properties
             )
-        logging.debug("pickle latest standard_name")
-        import requests
-        from pathlib import Path
-        import pickle
+            if vocab_uri == "http://vocab.nerc.ac.uk/collection/P07/current/":
+                vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
 
-        r = requests.get(config.ABS_URI_BASE_IN_DATA + "/db2rdf/standard_name/")
-        gr = Graph()
-        gr.parse(data=r.text, format="xml")
-        with open(Path(config.APP_DIR) / "cache" / "standard_name.p", "wb") as f:
-            pickle.dump(gr, f)
-
-        for cs in gr.query(q):
-            vocab_id = str(cs["cs"])
-
-            other_properties = []
-            other_properties.append(
-                Property(
-                    "http://purl.org/dc/terms/identifier",
-                    "Identifier",
-                    Literal("standard_name")
+                other_properties = []
+                other_properties.append(
+                    Property(
+                        "http://purl.org/dc/terms/identifier",
+                        "Identifier",
+                        Literal("standard_name")
+                    )
                 )
-            )
-            # the following properties are filled with blanks, not None, in the vocab
-            # if cs.get("registermanager") is not None:
-            #     other_properties.append(
-            #         Property(
-            #             "http://www.isotc211.org/schemas/grg/RE_RegisterManager",
-            #             "Register Manager",
-            #             Literal(cs["registermanager"])
-            #         )
-            #     )
-            # if cs.get("registerowner") is not None:
-            #     other_properties.append(
-            #         Property(
-            #             "http://www.isotc211.org/schemas/grg/RE_RegisterOwner",
-            #             "Register Owner",
-            #             Literal(cs["registerowner"])
-            #         )
-            #     )
-            # if cs.get("seeAlso") is not None:
-            #     other_properties.append(
-            #         Property(
-            #             "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-            #             "See Also",
-            #             URIRef(cs["seeAlso"])
-            #         )
-            #     )
+                if v.get("registermanager") is not None:
+                    other_properties.append(
+                        Property(
+                            "http://www.isotc211.org/schemas/grg/RE_RegisterManager",
+                            "Register Manager",
+                            Literal(v["registermanager"]["value"])
+                        )
+                    )
+                if v.get("registerowner") is not None:
+                    other_properties.append(
+                        Property(
+                            "http://www.isotc211.org/schemas/grg/RE_RegisterOwner",
+                            "Register Owner",
+                            Literal(v["registerowner"]["value"])
+                        )
+                    )
+                if v.get("seeAlso") is not None:
+                    other_properties.append(
+                        Property(
+                            "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                            "See Also",
+                            URIRef(v["seeAlso"]["value"])
+                        )
+                    )
+                other_properties.append(
+                    Property(
+                        "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                        "See Also",
+                        URIRef("http://vocab.nerc.ac.uk/collection/P07/current/")
+                    )
+                )
 
-            sparql_vocabs[vocab_id] = Vocabulary(
-                "standard_name",
-                vocab_id,
-                str(cs["title"]),
-                str(cs["description"]),
-                str(cs["creator"]),
-                None,
-                # dct:issued not in Vocabulary
-                # dateutil.parser.parse(cs.get('issued').get('value')) if cs.get('issued') is not None else None,
-                dateutil.parser.parse(cs.get("modified")),
-                str(cs["version"]),  # versionInfo
-                config.VocabSource.NvsSPARQL,
-                collections="Collection",  # just like the other Collections
-                sparql_endpoint=details["sparql_endpoint"],
-                sparql_username=details.get("sparql_username"),
-                sparql_password=details.get("sparql_password"),
-                other_properties=other_properties
-            )
-
+                sparql_vocabs[vocab_uri] = Vocabulary(
+                    "standard_name",
+                    vocab_uri,
+                    v["title"].get("value") or vocab_uri if v.get("title") else vocab_uri,
+                    # Need str for sorting, not None
+                    v["description"].get("value") if v.get("description") is not None else None,
+                    v["creator"].get("value") if v.get("creator") is not None else None,
+                    dateutil.parser.parse(v.get("created").get("value")) if v.get("created") is not None else None,
+                    # dct:issued not in Vocabulary
+                    # dateutil.parser.parse(cs.get('issued').get('value')) if cs.get('issued') is not None else None,
+                    dateutil.parser.parse(v.get("modified").get("value")) if v.get("modified") is not None else None,
+                    v["version"].get("value") if v.get("version") is not None else None,  # versionInfo
+                    config.VocabSource.NvsSPARQL,
+                    # TODO: replace this var with a reference to self class type (Source type)
+                    collections=str(v["t"]["value"]).split("#")[-1],
+                    sparql_endpoint=details["sparql_endpoint"],
+                    sparql_username=details.get("sparql_username"),
+                    sparql_password=details.get("sparql_password"),
+                    other_properties=other_properties
+                )
         g.VOCABS = {}
         g.VOCABS.update(**sparql_vocabs)
         logging.debug("NvsSPARQL collect() complete.")
@@ -444,8 +442,8 @@ class NvsSPARQL(Source):
         return [
             (
                 concept["c"]["value"],
-                concept["pl"]["value"],
-                concept["def"]["value"],
+                concept["pl"]["value"].replace("_", " "),
+                concept["def"]["value"].replace("_", "_ "),
                 concept["date"]["value"],
                 True if concept.get("dep") and concept["dep"]["value"] == "true" else False
             )
@@ -453,51 +451,19 @@ class NvsSPARQL(Source):
         ]
 
     def list_concepts_for_standard_name(self, acc_dep=None):
-        if acc_dep == "deprecated":
-            q = """
-                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-                SELECT DISTINCT ?c ?pl ?dep
-                WHERE {{
-                        <{}/standard_name/> skos:member ?c .
-                        
-                        ?c <http://www.w3.org/2002/07/owl#deprecated> "true" .
-
-                        OPTIONAL {{
-                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                        }}
-
-                        ?c skos:prefLabel ?pl .
-                }}
-                ORDER BY ?pl
-                """.format(config.ABS_URI_BASE_IN_DATA)
-        else:
-            q = """
-                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    
-                SELECT DISTINCT ?c ?pl ?dep
-                WHERE {{
-                        <{}/standard_name/> skos:member ?c .
-    
-                        OPTIONAL {{
-                            ?c <http://www.w3.org/2002/07/owl#deprecated> ?dep .
-                        }}
-    
-                        ?c skos:prefLabel ?pl .
-                }}
-                ORDER BY ?pl
-                """.format(config.ABS_URI_BASE_IN_DATA)
-
-        import pickle
-        from pathlib import Path
-        return [
-            (
-                str(concept["c"]),
-                str(concept["pl"]),
-                True if concept.get("dep") and concept["dep"] == "true" else False
-            )
-            for concept in pickle.load(open(Path(config.APP_DIR) / "cache" / "standard_name.p", "rb")).query(q)
-        ]
+        self.vocab_uri = "http://vocab.nerc.ac.uk/collection/P07/current/"
+        concepts = self.list_concepts_for_a_collection(acc_dep)
+        sn_concepts = []
+        for concept in concepts:
+            sn_concepts.append((
+                "http://vocab.nerc.ac.uk/standard_name/" + concept[1].replace(" ", "_"),
+                concept[1],
+                concept[2],
+                concept[3],
+                concept[4],
+            ))
+        self.vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+        return sn_concepts
 
     def get_vocabulary(self, acc_dep=None):
         """

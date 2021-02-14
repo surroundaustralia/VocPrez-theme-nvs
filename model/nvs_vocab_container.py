@@ -198,8 +198,10 @@ class NvsContainerRenderer(ContainerRenderer):
         r = requests.get(
             config.SPARQL_ENDPOINT,
             params={"query": q},
-            headers={"Accept": "application/ld+json"}
+            headers={"Accept": "text/n3"}
         )
+
+        g = Graph().parse(data=r.text, format="n3")
 
         return Response(
             serialize_by_mediatype(g, self.mediatype),

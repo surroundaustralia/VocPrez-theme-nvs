@@ -80,19 +80,20 @@
   {% if vocab.collections == "Collection" %}
     <div style="grid-column: 1/2; grid-row: 2;">
       <h3><a href=http://www.w3.org/2004/02/skos/core#member">Members</a></h3>
-      <table style="">
+      <table style="table-layout:fixed; max-width:1000px; margin-bottom:20px;">
         <tr>
-          <th>Identifier</th>
-          <th>PrefLabel</th>
+          <th>ID</th>
+          <th>Preferred&nbsp;Label</th>
           <th>Definition</th>
           <th>Date</th>
         </tr>
       {% for concept in vocab.concepts %}
-        <tr style="line-height:1.1em;">
-          <td class="onefifty"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
-          <td class="onefifty">{{ concept[1] }}{% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
-          <td class="threefifty">{{ concept[2] }}</td>
-          <td class="onefifty">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
+        <tr>
+          <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; word-break:break-all; max-width:150px;"><a href="{{ utils.get_content_uri(concept[0]) }}">{{ utils.get_concept_id(concept[0]) }}</a></td>
+          <td style="vertical-align:top; padding-bottom:10px; word-wrap:break-word; max-width:250px;">{{ concept[1] }}
+            {% if concept[4] %}<sup style="color:red;">DEPRECATED</sup>{% endif %}</td>
+          <td style="vertical-align:top; padding:0 10px 10px 10px; word-wrap:break-word; max-width:510px;">{{ concept[2] }}</td>
+          <td style="vertical-align:top; padding-bottom:10px; width:80px;">{% if concept[3] %}{{ concept[3].split(" ")[0] }}{% endif %}</td>
         </tr>
       {% endfor %}
       {% if vocab.concepts|length < 1 %}

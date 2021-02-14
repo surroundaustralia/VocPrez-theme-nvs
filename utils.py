@@ -491,7 +491,7 @@ def get_concept_id(concept_uri):
     if m is not None:
         return m[1]
 
-    return concept_uri.split("/current/")[1].replace("/", "")
+    return concept_uri.split("/current/")[-1].replace("/", "")
 
 
 def get_pretty_mediatype(mediatype):
