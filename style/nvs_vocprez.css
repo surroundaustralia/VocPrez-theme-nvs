@@ -535,3 +535,27 @@ a.format-button {
     vertical-align:middle;
     font-size:80%;
 }
+
+table.vocs {
+    border-collapse: collapse;
+    border: none;
+    table-layout: fixed;
+}
+table.vocs thead {
+    background-color: lightgrey;
+}
+table.vocs thead td {
+    cursor: pointer;
+}
+table.vocs thead th {
+    padding: 3px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+table.vocs tr:nth-child(even) {
+    background-color: lightgrey;
+}
+table.vocs td {
+    padding: 3px;
+    max-width: 230px;
+}
