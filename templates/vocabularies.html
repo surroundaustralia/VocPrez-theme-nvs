@@ -1,14 +1,14 @@
 {% extends "page.html" %}
 {% if "scheme" in request.url %}
   {% set title = "NVS Thesauri" %}
-  {% set description = "xSKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
+  {% set description = "SKOS concept schemes managed by the NERC Vocabulary Server. A concept scheme can be viewed as an "
                 "aggregation of one or more SKOS concepts. Semantic relationships (links) between those concepts may "
                 "also be viewed as part of a concept scheme. A concept scheme is therefore useful for containing the "
                 "concepts registered in multiple concept collections that relate to each other as a single semantic "
                 "unit, such as a thesaurus." %}
 {% else %}
   {% set title = "NVS Vocabularies" %}
-  {% set description = "xSKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
+  {% set description = "SKOS concept collections held in the NERC Vocabulary Server. A concept collection is useful where a "
                 "group of concepts shares something in common, and it is convenient to group them under a common label."
                 " In the NVS, concept collections are synonymous with controlled vocabularies or code lists. Each "
                 "collection is associated with its governance body. An external website link is displayed when "
