@@ -123,6 +123,7 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                   
                   {
                     <xxx> skos:member ?m .
+                    ?m a skos:Concept .
                 
                     ?m ?p2 $o2 .
                   }
