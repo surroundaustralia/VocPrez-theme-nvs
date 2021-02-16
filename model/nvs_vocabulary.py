@@ -77,6 +77,7 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                   
                   {
                     <http://vocab.nerc.ac.uk/collection/P07/current/> skos:member ?m .
+                    ?m a skos:Concept .
                 
                     ?m ?p2 ?o2 .
                 
