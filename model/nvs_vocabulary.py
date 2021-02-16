@@ -54,45 +54,89 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                 return self._render_nvs_html()
 
     def _render_nvs_rdf(self):
-        if "/scheme/" in self.request.base_url:
-            # ConceptScheme metadata
+        if "/standard_name" in self.request.base_url:
+            q = """
+                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                PREFIX pav: <http://purl.org/pav/>
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                
+                CONSTRUCT {
+                  <http://vocab.nerc.ac.uk/standard_name/> ?p ?o . 
+                  
+                  <http://vocab.nerc.ac.uk/standard_name/> skos:member ?x .
+                
+                  ?x ?p2 ?o2 .                
+                }
+                WHERE {
+                  {
+                    <http://vocab.nerc.ac.uk/collection/P07/current/> ?p ?o .
+                  
+                    MINUS { <http://vocab.nerc.ac.uk/collection/P07/current/> skos:member ?o . }
+                  }
+                  
+                  {
+                    <http://vocab.nerc.ac.uk/collection/P07/current/> skos:member ?m .
+                
+                    ?m ?p2 ?o2 .
+                
+                    BIND (URI(CONCAT("http://vocab.nerc.ac.uk/standard_name/", STRAFTER(STR(?m),"/current/"))) AS ?x)
+                  }
+                }
+                """
+        elif "/scheme/" in self.request.base_url:
             q = """
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                DESCRIBE <xxx> ?c 
+                
+                CONSTRUCT {
+                  <xxx> ?p ?o .
+                  
+                  ?m skos:inScheme <xxx> .
+                
+                  ?m ?p2 ?o2 .
+                }
                 WHERE {
-                    ?c skos:inScheme <xxx> .
+                  <xxx> ?p ?o .
+                
+                  ?m skos:inScheme <xxx>.
+                
+                  ?m ?p2 ?o2 .
                 }
                 """.replace("xxx", self.vocab.uri)
         else:
-            # collection metadata
             q = """
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-                DESCRIBE <xxx> ?c 
+                
+                CONSTRUCT {
+                  <xxxx> ?p ?o . 
+                  
+                  <xxxx> skos:member ?m .
+                
+                  ?m ?p2 ?o2 .                
+                }
                 WHERE {
-                    <xxx> skos:member ?c .
+                  {
+                    <xxxx> ?p ?o .
+                  
+                    MINUS { <xxxx> skos:member ?o . }
+                  }
+                  
+                  {
+                    <xxxx> skos:member ?m .
+                
+                    ?m ?p2 $o2 .
+                  }
                 }
                 """.replace("xxx", self.vocab.uri)
 
         r = requests.get(
             config.SPARQL_ENDPOINT,
             params={"query": q},
-            headers={"Accept": "application/rdf+xml"}
+            headers={"Accept": self.mediatype}
         )
 
-        g = Graph().parse(data=r.text, format="xml")
-
-        prefixes = {
-            "dc": "http://purl.org/dc/terms/",
-            "dce": "http://purl.org/dc/elements/1.1/",
-            "grg": "http://www.isotc211.org/schemas/grg/",
-            "owl": "http://www.w3.org/2002/07/owl#",
-            "pav": "http://purl.org/pav/",
-            "skos": "http://www.w3.org/2004/02/skos/core#",
-            "void": "http://rdfs.org/ns/void#",
-        }
-
         return Response(
-            serialize_by_mediatype(g, self.mediatype, prefixes),
+            r.text,
             mimetype=self.mediatype,
             headers=self.headers,
         )

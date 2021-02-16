@@ -527,7 +527,7 @@ def get_status_label(mediatype):
 def serialize_by_mediatype(g: Graph, mediatype: str, prefixes: dict = None) -> str:
     if prefixes is not None:
         for k, v in prefixes.items():
-            g.bind(k, v)
+            g.bind(k, v, replace=True)
 
     if mediatype in ["application/rdf+json", "application/json"]:
         return g.serialize(format="json-ld")
