@@ -108,21 +108,21 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
                 
                 CONSTRUCT {
-                  <xxxx> ?p ?o . 
+                  <xxx> ?p ?o . 
                   
-                  <xxxx> skos:member ?m .
+                  <xxx> skos:member ?m .
                 
                   ?m ?p2 ?o2 .                
                 }
                 WHERE {
                   {
-                    <xxxx> ?p ?o .
+                    <xxx> ?p ?o .
                   
-                    MINUS { <xxxx> skos:member ?o . }
+                    MINUS { <xxx> skos:member ?o . }
                   }
                   
                   {
-                    <xxxx> skos:member ?m .
+                    <xxx> skos:member ?m .
                 
                     ?m ?p2 $o2 .
                   }
