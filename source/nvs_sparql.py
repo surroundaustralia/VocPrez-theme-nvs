@@ -201,85 +201,6 @@ class NvsSPARQL(Source):
         g.VOCABS.update(**sparql_vocabs)
         logging.debug("NvsSPARQL collect() complete.")
 
-    # def get_concept_hierarchy(self):
-    #     """
-    #     Function to draw concept hierarchy for vocabulary
-    #     """
-    #
-    #     def build_hierarchy(bindings_list, broader_concept=None, level=0):
-    #         """
-    #         Recursive helper function to build hierarchy list from a bindings list
-    #         Returns list of tuples: (<level>, <concept>, <concept_preflabel>, <broader_concept>)
-    #         """
-    #         level += 1  # Start with level 1 for top concepts
-    #         hier = []
-    #
-    #         narrower_list = sorted(
-    #             [
-    #                 binding_dict
-    #                 for binding_dict in bindings_list
-    #                 if (  # Top concept
-    #                            (broader_concept is None)
-    #                            and (binding_dict.get("broader_concept") is None)
-    #                    )
-    #                    or  # Narrower concept
-    #                    (
-    #                            (binding_dict.get("broader_concept") is not None)
-    #                            and (
-    #                                    binding_dict["broader_concept"]["value"] == broader_concept
-    #                            )
-    #                    )
-    #             ],
-    #             key=lambda binding_dict: binding_dict["concept_preflabel"]["value"],
-    #         )
-    #         for binding_dict in narrower_list:
-    #             concept = binding_dict["concept"]["value"]
-    #             hier += [
-    #                         (
-    #                             level,
-    #                             concept,
-    #                             binding_dict["concept_preflabel"]["value"],
-    #                             binding_dict["broader_concept"]["value"]
-    #                             if binding_dict.get("broader_concept")
-    #                             else None,
-    #                         )
-    #                     ] + build_hierarchy(bindings_list, concept, level)
-    #         return hier
-    #
-    #     vocab = g.VOCABS[self.vocab_uri]
-    #
-    #     query = """
-    #         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    #         PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    #
-    #         SELECT distinct ?concept ?concept_preflabel ?broader_concept
-    #         WHERE {{
-    #             {{ ?concept skos:inScheme <{vocab_uri}> . }}
-    #             UNION
-    #             {{ ?concept skos:topConceptOf <{vocab_uri}> . }}
-    #             UNION
-    #             {{ <{vocab_uri}> skos:hasTopConcept ?concept . }}
-    #             ?concept skos:prefLabel ?concept_preflabel .
-    #             OPTIONAL {{
-    #                 ?concept skos:broader ?broader_concept .
-    #                 ?broader_concept skos:inScheme <{vocab_uri}> .
-    #             }}
-    #             FILTER(lang(?concept_preflabel) = "{language}" || lang(?concept_preflabel) = "")
-    #         }}
-    #         ORDER BY ?concept_preflabel
-    #         """.format(
-    #         vocab_uri=vocab.uri,
-    #         language=self.language
-    #     )
-    #
-    #     bindings_list = u.sparql_query(query, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password)
-    #
-    #     assert bindings_list is not None, "SPARQL concept hierarchy query failed"
-    #
-    #     hierarchy = build_hierarchy(bindings_list)
-    #
-    #     return u.draw_concept_hierarchy(hierarchy, self.request, self.vocab_uri)
-
     def list_concepts(self, acc_dep=None):
         vocab = g.VOCABS[self.vocab_uri]
 
@@ -392,6 +313,7 @@ class NvsSPARQL(Source):
                              dcterms:date ?date .
                              
                         FILTER(lang(?pl) = "{language}" || lang(?pl) = "") 
+                        FILTER(lang(?def) = "{language}" || lang(?def) = "")
                 }}
                 ORDER BY ?pl
                 """.format(vocab_uri=vocab.uri, language=self.language)
@@ -730,7 +652,7 @@ class NvsSPARQL(Source):
 
             hierarchy = build_hierarchy(bindings_list)
 
-            return u.draw_concept_hierarchy(hierarchy, self.request, self.vocab_uri)
+            return u.draw_concept_hierarchy(hierarchy)
         except RecursionError as e:
             logging.warning("Encountered a recursion limit error for {}".format(self.vocab_uri))
             # make a flat list of concepts
