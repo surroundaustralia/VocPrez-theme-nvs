@@ -17,14 +17,13 @@ body {
 #vocprez {
     position: fixed;
     top: 240px;
-    left: -50px;
-    font-size: small;
+    left: -70px;
     transform: rotate(-90deg);
     color: grey;
 }
 
 #vocprez a {
-    font-size: 2em;
+    font-size: 26px;
     font-weight: bold;
     text-decoration: none;
     color: #007dbb;
@@ -35,7 +34,7 @@ body {
 }
 
 #vocprez a#versionlink {
-    font-size: 1em;
+    font-size: 14px;
 }
 
 #header {
@@ -54,7 +53,7 @@ body {
     display: inline-block;
     background-color: rgb(19, 50, 77);
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: normal;
     padding: 3px 5px 3px 5px;
     float: right;
@@ -137,30 +136,28 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 36px;
 }
 
 h2 {
-    font-size: 1.5em;
-    line-height: 1.5em;
-    font-weight: bold;
+    font-size: 26px;
 }
 
 h3 {
-    font-size: 1.25em;
+    font-size: 22px;
 }
 
 h4 {
-    font-size: 1.15em;
+    font-size: 18px;
+}
+
+p, a, li, td, th, dt, dd {
+    font-size: 14px;
 }
 
 dt {
     font-weight: bold;
     margin-top: 10px;
-}
-
-p, a, li, td, th, dt, dd {
-    font-size: 0.9em;
 }
 
 a {
