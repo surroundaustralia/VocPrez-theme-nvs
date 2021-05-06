@@ -1,5 +1,4 @@
 # ROUTE vocabs
-import markdown
 
 
 @app.route("/vocab/")

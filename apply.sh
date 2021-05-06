@@ -53,6 +53,12 @@ cat $VP_THEME_HOME/app_additions_about.py >> $VP_THEME_HOME/app_temp.py
 sed -e '1,/# END ROUTE about/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
 mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
 
+echo "Route object"
+sed -n '/# ROUTE object/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
+cat $VP_THEME_HOME/app_additions_object.py >> $VP_THEME_HOME/app_temp.py
+sed -e '1,/# END ROUTE object/ d' $VP_HOME/vocprez/app.py >> $VP_THEME_HOME/app_temp.py
+mv $VP_THEME_HOME/app_temp.py $VP_HOME/vocprez/app.py
+
 echo "Route RESTful Concept"
 sed -n '/# END ROUTE object/q;p' $VP_HOME/vocprez/app.py > $VP_THEME_HOME/app_temp.py
 cat $VP_THEME_HOME/app_additions_concept.py >> $VP_THEME_HOME/app_temp.py
