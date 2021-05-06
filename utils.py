@@ -93,7 +93,7 @@ def cache_reload():
     cache_load()
 
 
-def draw_concept_hierarchy(hierarchy, request, vocab_uri):
+def draw_concept_hierarchy(hierarchy):
         tab = "\t"
         previous_length = 1
 
@@ -118,9 +118,7 @@ def draw_concept_hierarchy(hierarchy, request, vocab_uri):
             if mult is None:  # else: # everything is normal
                 mult = item[0] - 1
 
-            uri = get_content_uri(item[1])
-
-            t = tab * mult + "* [" + item[2] + "](" + uri + ")\n"
+            t = tab * mult + "* [" + item[2] + "](" + get_content_uri(item[1]) + ")\n"
             text += t
             previous_length = mult
             tracked_items.append({"name": item[1], "indent": mult})
@@ -164,7 +162,11 @@ def get_graph(endpoint, q, sparql_username=None, sparql_password=None):
     return result_graph
 
 
-def sparql_query(q, sparql_endpoint=config.SPARQL_ENDPOINT, sparql_username=None, sparql_password=None):
+def sparql_query(
+        q,
+        sparql_endpoint=config.SPARQL_ENDPOINT,
+        sparql_username=config.SPARQL_USERNAME,
+        sparql_password=config.SPARQL_PASSWORD):
     sparql = SPARQLWrapper(sparql_endpoint)
     sparql.setQuery(q)
     sparql.setReturnFormat(JSON)
@@ -427,27 +429,59 @@ def parse_markdown(s):
     return markdown.markdown(s)
 
 
-def get_system_uri(vocab_or_concept_absolute_uri):
-    if vocab_or_concept_absolute_uri.startswith(config.ABSOLUTE_URI_BASE):
-        return config.SYSTEM_URI_BASE + vocab_or_concept_absolute_uri.replace(config.ABSOLUTE_URI_BASE, "")
+def make_query_string(qsas: dict):
+    if not qsas:
+        return ""
+
+    pairs = []
+    for k, v in qsas.items():
+        pairs.append("{}={}".format(k, url_encode(v)))
+
+    return "&".join(sorted(pairs))
+
+
+def get_system_uri(uri: str, qsas: dict = {}, system_uri_override=None):
+    s = make_query_string(qsas)
+    new_uri = uri.replace(config.ABSOLUTE_URI_BASE, config.SYSTEM_URI_BASE)
+    if s is not None and s != "":
+        return new_uri + "?" + s
     else:
-        return vocab_or_concept_absolute_uri
+        return new_uri
 
 
-def get_absolute_uri(vocab_or_concept_system_uri):
-    if vocab_or_concept_system_uri.startswith(config.SYSTEM_URI_BASE):
-        return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.SYSTEM_URI_BASE, "")
-    elif vocab_or_concept_system_uri.startswith(config.ABS_URI_BASE_IN_DATA):
-        return config.ABSOLUTE_URI_BASE + vocab_or_concept_system_uri.replace(config.ABS_URI_BASE_IN_DATA, "")
+def get_absolute_uri(uri, qsas:dict = {}):
+    if "?" not in uri:
+        s = make_query_string(qsas)
+        return url_decode(uri) if s == "" else url_decode(uri) + "?" + make_query_string(qsas)
     else:
-        return vocab_or_concept_system_uri
+        # system_uri = uri.split("?")[0]
+        for qsa in sorted(uri.split("?")[1].split("&")):
+            kv = qsa.split("=")
+            # ensure that any given qsas vars override same vars in uri
+            if qsas.get(kv[0]) is None:
+                qsas[kv[0]] = kv[1]
+        if qsas.get("uri") is not None:
+            uri = url_decode(qsas["uri"])
+            del qsas["uri"]
+        else:
+            uri = uri.split("?")[0]
+
+        s = make_query_string(qsas)
+        return uri if s == "" else uri + "?" + make_query_string(qsas)
 
 
-def get_content_uri(vocab_or_concept_uri):
+def get_content_uri(uri, qsas: dict = {}, system_uri_override=None):
     if config.USE_SYSTEM_URIS:
-        return get_system_uri(vocab_or_concept_uri)
+        return get_system_uri(uri, qsas=qsas, system_uri_override=system_uri_override)
     else:
-        return get_absolute_uri(vocab_or_concept_uri)
+        return get_absolute_uri(uri, qsas=qsas)
+
+
+def get_alt_prof_uri(uri):
+    if hasattr(config, "USE_ABS_ALT_URI") and config.USE_ABS_ALT_URI:
+        return get_absolute_uri(uri, qsas={"_profile": "alt"})
+    else:
+        return get_content_uri(uri, qsas={"_profile": "alt"})
 
 
 def get_vocab_uri_from_concept_uri(concept_uri):

@@ -13,8 +13,10 @@ class NvsSPARQL(Source):
     """Source for a generic SPARQL endpoint
     """
 
-    def __init__(self, vocab_uri, request, language=None):
-        super().__init__(vocab_uri, request, language)
+    def __init__(self, request, language=None):
+        super().__init__(request, language)
+        bare_uri = str(request.base_url).replace(config.SYSTEM_URI_BASE, config.ABS_URI_BASE_IN_DATA)
+        self.vocab_uri = bare_uri.split("/current/")[0] + "/current/"
 
     @staticmethod
     def collect(details):
@@ -475,7 +477,7 @@ class NvsSPARQL(Source):
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
             g.VOCABS[self.vocab_uri].concept_hierarchy = self.get_concept_hierarchy()
-            g.VOCABS[self.vocab_uri].collections = self.list_collections()
+            # g.VOCABS[self.vocab_uri].collections = self.list_collections()
         else:  # vocab.collection == "Collection":
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_a_collection(acc_dep=acc_dep)
 

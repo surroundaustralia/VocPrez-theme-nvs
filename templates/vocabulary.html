@@ -12,7 +12,7 @@
         </tr>
         {%  if vocab.description is not none  -%}
         <tr>
-          <th><a href="http://purl.org/dc/terms/description">Description</a></th><td>{{ vocab.description }}</td>
+          <th><a href="http://purl.org/dc/terms/description">Description</a></th><td>{{ vocab.description|markdown }}</td>
         </tr>
         {% endif -%}
         {%  if vocab.creator is not none  -%}

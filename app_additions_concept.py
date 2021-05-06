@@ -13,7 +13,7 @@ def concept(vocab_id, concept_id, version_no=None):
         concept_uri = config.ABS_URI_BASE_IN_DATA + "/collection/{}/current/{}/".format(vocab_id, concept_id)
 
     c = getattr(source, g.VOCABS[vocab_uri].source) \
-        (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
+        (request, request.values.get("lang")).get_concept(concept_uri)
 
     if c is None:
         return render_template("concept_404.html", uri=concept_uri), 404
@@ -31,7 +31,7 @@ def standard_name_concept(concept_id):
     concept_uri = config.ABS_URI_BASE_IN_DATA + "/standard_name/{}/".format(concept_id)
 
     c = getattr(source, g.VOCABS[vocab_uri].source) \
-        (vocab_uri, request, language=request.values.get("lang")).get_concept(concept_uri)
+        (request, request.values.get("lang")).get_concept(concept_uri)
 
     if c is None:
         return render_template("concept_404.html", uri=concept_uri), 404

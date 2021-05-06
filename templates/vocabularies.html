@@ -64,7 +64,7 @@
               <td>{{ vocab.title }}</td>
               <td>{{ vocab.versionInfo }}</td>
               <td>{% if vocab.modified is not none %}{{ vocab.modified.strftime('%Y-%m-%d') }}{% endif %}</td>
-              <td>{{ vocab.description }}</td>
+              <td>{{ vocab.description|markdown }}</td>
               <td>{{ vocab.creator }}</td>
               <td>
               {% for prop in vocab.other_properties %}

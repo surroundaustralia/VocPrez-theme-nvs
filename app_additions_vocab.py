@@ -42,7 +42,7 @@ def scheme(vocab_id, acc_dep=None):
             vocab_uri = v
 
     if vocab_uri is None:
-        return return_vocrez_error(
+        return return_vocprez_error(
             "vocab_id not valid",
             400,
             markdown.markdown(
@@ -62,7 +62,7 @@ def standard_name(acc_dep=None):
 def return_vocab2(uri, acc_dep):
     if uri in g.VOCABS.keys():
         # get vocab details using appropriate source handler
-        vocab = source.nvs_sparql.NvsSPARQL(uri, request, language=request.values.get("lang")).get_vocabulary(acc_dep)
+        vocab = source.nvs_sparql.NvsSPARQL(request, language=request.values.get("lang")).get_vocabulary(acc_dep)
         return NvsVocabularyRenderer(request, vocab).render()
     else:
         return None

@@ -1,4 +1,7 @@
 # ROUTE vocabs
+import markdown
+
+
 @app.route("/vocab/")
 def vocabularies(t=None, uri=None, label=None, description=None):
     page = (
