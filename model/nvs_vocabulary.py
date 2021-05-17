@@ -119,7 +119,7 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                   
                   <xxx> skos:member ?m .
                 
-                  ?m ?p2 ?o2 .                
+                  ?m ?p2 ?o2 .              
                 }
                 WHERE {
                   {
@@ -132,7 +132,10 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                     <xxx> skos:member ?m .
                     ?m a skos:Concept .
                 
-                    ?m ?p2 $o2 .
+                    ?m ?p2 ?o2 .
+                
+                    FILTER ( ?p2 != skos:broaderTransitive )
+                    FILTER ( ?p2 != skos:narrowerTransitive )
                   }
                 }
                 """.replace("xxx", self.vocab.uri)
