@@ -106,7 +106,13 @@ class NvsVocabularyRenderer(VocabularyRenderer):
                 """.replace("xxx", self.vocab.uri)
         else:
             q = """
+                PREFIX dc: <http://purl.org/dc/terms/>
+                PREFIX dce: <http://purl.org/dc/elements/1.1/>
+                PREFIX grg: <http://www.isotc211.org/schemas/grg/>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                PREFIX pav: <http://purl.org/pav/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                PREFIX void: <http://rdfs.org/ns/void#>
                 
                 CONSTRUCT {
                   <xxx> ?p ?o . 
