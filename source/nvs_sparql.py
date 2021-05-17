@@ -394,7 +394,7 @@ class NvsSPARQL(Source):
         :return:
         :rtype:
         """
-        if self.vocab_uri == config.ABS_URI_BASE_IN_DATA + "/standard_name/":
+        if "/standard_name/" in self.vocab_uri:
             g.VOCABS[self.vocab_uri].concepts = self.list_concepts_for_standard_name(acc_dep=acc_dep)
         # is this a Concept Scheme or a Collection?
         elif g.VOCABS[self.vocab_uri].collections == "ConceptScheme":
