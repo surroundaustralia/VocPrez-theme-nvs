@@ -1,24 +1,13 @@
-echo "Styles"
-echo "copying $VP_THEME_HOME/style content to $VP_HOME/vocprez/view/style"
-cp $VP_THEME_HOME/style/* $VP_HOME/vocprez/view/style
-
 echo "Pre-process sparql.html"
 sed -e 's#$ABS_URI_BASE_IN_DATA#'"$ABS_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/sparql.html > $VP_THEME_HOME/templates/sparql.html
 
-echo "Templates"
-echo "copying $VP_THEME_HOME/templates content to $VP_HOME/vocprez/view/templates"
-cp $VP_THEME_HOME/templates/* $VP_HOME/vocprez/view/templates
-
-echo "Model"
-echo "copying $VP_THEME_HOME/model content to $VP_HOME/vocprez/model"
+echo "Copy content"
 cp $VP_THEME_HOME/model/* $VP_HOME/vocprez/model
-
-echo "NVS Source"
 cp $VP_THEME_HOME/source/* $VP_HOME/vocprez/source
-
-echo "NVS Utils"
+cp $VP_THEME_HOME/style/* $VP_HOME/vocprez/view/style
+cp $VP_THEME_HOME/templates/* $VP_HOME/vocprez/view/templates
 cp $VP_THEME_HOME/utils.py $VP_HOME/vocprez/utils.py
-
+cp $VP_THEME_HOME/void.ttl $VP_HOME/vocprez/view/
 
 echo "Config"
 echo "Alter $VP_THEME_HOME/config.py to include variables"
@@ -74,8 +63,5 @@ echo "\tSPARQL training slash"
 sed -i 's#"/sparql"#"/sparql/"#' $APP
 
 sed -i 's# VocabularyRenderer# NvsVocabularyRenderer#' $APP
-
-echo "VoID file"
-cp "void.ttl" $VP_HOME/vocprez/view/
 
 echo "customisation done"
