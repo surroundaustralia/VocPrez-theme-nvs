@@ -1,4 +1,3 @@
-# END ROUTE object
 
 
 # ROUTE single concept
@@ -39,6 +38,3 @@ def standard_name_concept(concept_id):
     from vocprez.model.nvs_concept import NvsConceptRenderer
     return NvsConceptRenderer(request, c).render()
 # END ROUTE single concept
-
-
-# ROUTE about

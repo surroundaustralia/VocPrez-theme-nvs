@@ -17,6 +17,8 @@ class NvsSPARQL(Source):
         super().__init__(request, language)
         bare_uri = str(request.base_url).replace(config.SYSTEM_URI_BASE, config.ABS_URI_BASE_IN_DATA)
         self.vocab_uri = bare_uri.split("/current/")[0] + "/current/"
+        if "/standard_name/" in self.vocab_uri:
+            self.vocab_uri = "http://vocab.nerc.ac.uk/collection/P07/current/"
 
     @staticmethod
     def collect(details):
@@ -406,7 +408,6 @@ class NvsSPARQL(Source):
         return g.VOCABS[self.vocab_uri]
 
     def get_concept(self, uri):
-        vocab = g.VOCABS[self.vocab_uri]
         q = """
             PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -478,7 +479,7 @@ class NvsSPARQL(Source):
         other_properties = []
         unique_alt_labels = []
         unique_versions = []
-        for r in u.sparql_query(q, vocab.sparql_endpoint, vocab.sparql_username, vocab.sparql_password):
+        for r in u.sparql_query(q):
             prop = r["p"]["value"]
             val = r["o"]["value"]
             if prop == "http://www.w3.org/2004/02/skos/core#prefLabel":
@@ -545,8 +546,7 @@ class NvsSPARQL(Source):
                     return ss
 
         for i, ri in related_instances.items():
-            # ri["instances"].sort(key=nvs_rel_concept_sort)
-            ri["instances"].sort(key=lambda a: a[1].lower())
+            ri["instances"].sort(key=lambda a: a[1].lower() if a[1] is not None else "")
 
         def specified_order(s):
             order = [

@@ -1,4 +1,3 @@
-# END ROUTE about
 
 
 # ROUTE contact us
@@ -11,6 +10,3 @@ def contact_us():
         "contact_us.html"
     )
 # END ROUTE contact us
-
-
-# ROUTE sparql

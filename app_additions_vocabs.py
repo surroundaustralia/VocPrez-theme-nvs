@@ -1,6 +1,4 @@
 # ROUTE vocabs
-
-
 @app.route("/vocab/")
 def vocabularies(t=None, uri=None, label=None, description=None):
     page = (
