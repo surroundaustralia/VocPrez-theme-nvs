@@ -75,4 +75,7 @@ sed -i 's#"/sparql"#"/sparql/"#' $APP
 
 sed -i 's# VocabularyRenderer# NvsVocabularyRenderer#' $APP
 
+echo "VoID file"
+cp "void.ttl" $VP_HOME/vocprez/view/
+
 echo "customisation done"
