@@ -1,3 +1,5 @@
+source .env
+
 echo "Pre-process sparql.html"
 sed -e 's#$ABS_URI_BASE_IN_DATA#'"$ABS_URI_BASE_IN_DATA"'#' $VP_THEME_HOME/sparql.html > $VP_THEME_HOME/templates/sparql.html
 
