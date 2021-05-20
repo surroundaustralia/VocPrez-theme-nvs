@@ -15,7 +15,7 @@ class NvsSPARQL(Source):
 
     def __init__(self, request, language=None):
         super().__init__(request, language)
-        bare_uri = str(request.base_url).replace(config.SYSTEM_URI_BASE, config.ABS_URI_BASE_IN_DATA)
+        bare_uri = str(request.base_url).replace(config.SYSTEM_BASE_URI, config.ABS_URI_BASE_IN_DATA)
         self.vocab_uri = bare_uri.split("/current/")[0] + "/current/"
         if "/standard_name/" in self.vocab_uri:
             self.vocab_uri = "http://vocab.nerc.ac.uk/collection/P07/current/"

@@ -442,7 +442,7 @@ def make_query_string(qsas: dict):
 
 def get_system_uri(uri: str, qsas: dict = {}, system_uri_override=None):
     s = make_query_string(qsas)
-    new_uri = uri.replace(config.ABSOLUTE_URI_BASE, config.SYSTEM_URI_BASE)
+    new_uri = uri.replace(config.ABSOLUTE_URI_BASE, config.SYSTEM_BASE_URI)
     if s is not None and s != "":
         return new_uri + "?" + s
     else:
@@ -487,7 +487,7 @@ def get_alt_prof_uri(uri):
 def get_vocab_uri_from_concept_uri(concept_uri):
     new_uri = get_content_uri(concept_uri)
     if config.USE_SYSTEM_URIS:
-        base = config.SYSTEM_URI_BASE
+        base = config.SYSTEM_BASE_URI
     else:
         base = config.ABSOLUTE_URI_BASE
 

@@ -22,7 +22,7 @@ def object():
             "A Query String Argument of 'uri' must be supplied for this endpoint"
         )
 
-    if uri == config.SYSTEM_URI_BASE or uri == config.SYSTEM_URI_BASE + "/":
+    if uri == config.SYSTEM_BASE_URI or uri == config.SYSTEM_BASE_URI + "/":
         return index()
 
     if uri == config.VOCS_URI or uri == config.VOCS_URI + "/":
