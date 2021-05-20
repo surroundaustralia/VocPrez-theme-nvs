@@ -39,26 +39,41 @@ class NvsConceptRenderer(ConceptRenderer):
                 return self._render_nvs_html()
 
     def _render_nvs_rdf(self):
+        q = """
+            PREFIX dc: <http://purl.org/dc/terms/>
+            PREFIX dce: <http://purl.org/dc/elements/1.1/>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX pav: <http://purl.org/pav/>
+            PREFIX prov: <https://www.w3.org/ns/prov#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            PREFIX void: <http://rdfs.org/ns/void#>
+            
+            CONSTRUCT {
+              <xxx> ?p ?o .
+              ?s ?p2 ?o2 .
+            }
+            WHERE {
+                <xxx> ?p ?o .
+              
+                OPTIONAL {
+                    ?s rdf:subject <xxx> ;
+                       prov:has_provenance ?m .
+                        
+                    { ?s ?p2 ?o2 }
+                }
+            }        
+            """.replace("xxx", self.concept.uri)
         r = requests.get(
             config.SPARQL_ENDPOINT,
-            params={"query": "DESCRIBE <{}>".format(self.concept.uri)},
+            params={"query": q},
             headers={"Accept": "text/turtle"}
         )
 
         g = Graph().parse(data=r.text, format="turtle")
 
-        prefixes = {
-            "dc": "http://purl.org/dc/terms/",
-            "dce": "http://purl.org/dc/elements/1.1/",
-            "grg": "http://www.isotc211.org/schemas/grg/",
-            "owl": "http://www.w3.org/2002/07/owl#",
-            "pav": "http://purl.org/pav/",
-            "skos": "http://www.w3.org/2004/02/skos/core#",
-            "void": "http://rdfs.org/ns/void#",
-        }
-
         return Response(
-            serialize_by_mediatype(g, self.mediatype, prefixes),
+            serialize_by_mediatype(g, self.mediatype),
             mimetype=self.mediatype,
             headers=self.headers,
         )
