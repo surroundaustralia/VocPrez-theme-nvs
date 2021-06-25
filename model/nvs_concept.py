@@ -10,7 +10,7 @@ from vocprez.model.property import Property
 from vocprez.model.concept import Concept, ConceptRenderer
 import requests
 import logging
-from vocprez.utils import serialize_by_mediatype
+from vocprez.utils import serialize_by_mediatype, get_vocab_uri_from_concept_uri
 
 
 class NvsConcept:
@@ -153,9 +153,11 @@ class NvsConceptRenderer(ConceptRenderer):
         )
 
     def _render_nvs_html(self):
+        if "/standard_name/" in self.concept.vocab_uri:
+            self.concept.vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
         _template_context = {
             "version": __version__,
-            "vocab_uri": self.concept.vocab_uri if self.concept.vocab_uri is not None else self.request.values.get("vocab_uri"),
+            "vocab_uri": self.concept.vocab_uri,
             "vocab_title": g.VOCABS[self.concept.vocab_uri].title,
             "uri": self.request.values.get("uri"),
             "concept": self.concept,
