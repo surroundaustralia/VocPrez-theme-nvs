@@ -3,7 +3,7 @@ from pyldapi import Renderer
 from flask import Response, render_template, g
 from rdflib import Graph, URIRef, Literal
 from rdflib.namespace import DCTERMS, RDF, RDFS, SKOS
-from vocprez.model.profiles import profile_skos, profile_nvs
+from vocprez.model.profiles import profile_skos, profile_nvs, profile_puv
 import vocprez._config as config
 from typing import List
 from vocprez.model.property import Property
@@ -13,14 +13,72 @@ import logging
 from vocprez.utils import serialize_by_mediatype
 
 
+class NvsConcept:
+    def __init__(
+        self,
+        vocab_uri,
+        uri,
+        prefLabel,
+        definition,
+        related_instances,
+        annotations=None,
+        other_properties: List[Property] = None,
+        puv_properties: List[Property] = None
+    ):
+        self.vocab_uri = vocab_uri
+        self.uri = uri
+        self.prefLabel = prefLabel
+        self.definition = definition
+        self.related_instances = related_instances
+        self.annotations = annotations
+        self.agents = None
+
+        self.other_properties = other_properties
+        self.puv_properties = puv_properties
+
+
 class NvsConceptRenderer(ConceptRenderer):
     def __init__(self, request, concept):
         self.request = request
         self.profiles = {
             "nvs": profile_nvs,
-            "skos": profile_skos
+            "skos": profile_skos,
         }
         self.concept = concept
+
+        # Only make the PUV profile available for certain vocabs
+        # TODO: replace with a lookup for vocab conformsTo PUV data
+        puv_vocabs_ids = [
+            "A05",
+            "P01",
+            "S02",
+            "S03",
+            "S04",
+            "S05",
+            "S06",
+            "S07",
+            "S09",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S18",
+            "S19",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "S26",
+            "S27",
+            "S29",
+            "S30"
+        ]
+        if any(f"/{x}/" in self.concept.vocab_uri for x in puv_vocabs_ids):
+            self.profiles["puv"] = profile_puv
 
         super(ConceptRenderer, self).__init__(self.request, self.concept.uri, self.profiles, "nvs")
 
@@ -37,6 +95,14 @@ class NvsConceptRenderer(ConceptRenderer):
                 return self._render_nvs_rdf()
             else:
                 return self._render_nvs_html()
+        elif self.profile == "puv":
+            if (
+                self.mediatype in Renderer.RDF_MEDIA_TYPES
+                or self.mediatype in Renderer.RDF_SERIALIZER_TYPES_MAP
+            ):
+                return self._render_puv_rdf()
+            else:
+                return self._render_puv_html()
 
     def _render_nvs_rdf(self):
         q = """
@@ -51,29 +117,37 @@ class NvsConceptRenderer(ConceptRenderer):
             
             CONSTRUCT {
               <xxx> ?p ?o .
-              ?s ?p2 ?o2 .
+              
+              # remove provenance, for now
+              # ?s ?p2 ?o2 .              
+              # ?s rdf:subject <xxx> ;
+              #   prov:has_provenance ?m .              
             }
             WHERE {
                 <xxx> ?p ?o .
               
-                OPTIONAL {
-                    ?s rdf:subject <xxx> ;
-                       prov:has_provenance ?m .
-                        
-                    { ?s ?p2 ?o2 }
-                }
+                # remove provenance, for now
+                # OPTIONAL {
+                #     ?s rdf:subject <xxx> ;
+                #        prov:has_provenance ?m .
+                #         
+                #     # { ?s ?p2 ?o2 }
+                # }
+                
+                # exclude PUV properties from NVS view
+                FILTER (!STRSTARTS(STR(?p), "https://w3id.org/env/puv#"))
             }        
             """.replace("xxx", self.concept.uri)
         r = requests.get(
             config.SPARQL_ENDPOINT,
             params={"query": q},
-            headers={"Accept": "text/turtle"}
+            headers={"Accept": self.mediatype}
         )
 
         g = Graph().parse(data=r.text, format="turtle")
 
         return Response(
-            serialize_by_mediatype(g, self.mediatype),
+            r.text,
             mimetype=self.mediatype,
             headers=self.headers,
         )
@@ -143,6 +217,75 @@ class NvsConceptRenderer(ConceptRenderer):
 
         return Response(
             graph_text,
+            mimetype=self.mediatype,
+            headers=self.headers,
+        )
+
+    def _render_puv_html(self):
+        _template_context = {
+            "version": __version__,
+            "vocab_uri": self.concept.vocab_uri if self.concept.vocab_uri is not None else self.request.values.get("vocab_uri"),
+            "vocab_title": g.VOCABS[self.concept.vocab_uri].title,
+            "uri": self.request.values.get("uri"),
+            "concept": self.concept,
+        }
+
+        return Response(
+            render_template("concept_puv.html", **_template_context), headers=self.headers
+        )
+
+    def _render_puv_rdf(self):
+        q = """
+            PREFIX dc: <http://purl.org/dc/terms/>
+            PREFIX dce: <http://purl.org/dc/elements/1.1/>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX pav: <http://purl.org/pav/>
+            PREFIX prov: <https://www.w3.org/ns/prov#>
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            PREFIX void: <http://rdfs.org/ns/void#>
+
+            CONSTRUCT {
+              <xxx> ?p ?o .
+              # ?s ?p2 ?o2 .
+
+              # ?s rdf:subject <xxx> ;
+              #   prov:has_provenance ?m .              
+            }
+            WHERE {
+                <xxx> ?p ?o .
+
+                # exclude PUV properties from NVS view
+                FILTER (!STRSTARTS(STR(?p), "https://w3id.org/env/puv#"))
+            }        
+            """.replace("xxx", self.concept.uri)
+        r = requests.get(
+            config.SPARQL_ENDPOINT,
+            params={"query": q},
+            headers={"Accept": "text/turtle"}
+        )
+
+        g = Graph().parse(data=r.text, format="turtle")
+
+        g.parse(
+            data="""
+            @prefix puv: <https://w3id.org/env/puv#> .
+
+            <xxx> 
+                a puv:Parameter ;
+                puv:biologicalObject <http://vocab.nerc.ac.uk/collection/S25/current/BE006569/> ;
+                puv:chemicalObject <http://vocab.nerc.ac.uk/collection/S27/current/CS003687/> ;
+                puv:matrix <http://vocab.nerc.ac.uk/collection/S26/current/MAT01963/> ;
+                puv:matrixRelationship <http://vocab.nerc.ac.uk/collection/S02/current/S041/> ;
+                puv:property <http://vocab.nerc.ac.uk/collection/S06/current/S0600045/> ;
+                puv:uom <http://vocab.nerc.ac.uk/collection/P06/current/UUKG/> ;
+            .
+            """.replace("xxx", self.concept.uri),
+            format="turtle"
+        )
+
+        return Response(
+            serialize_by_mediatype(g, self.mediatype),
             mimetype=self.mediatype,
             headers=self.headers,
         )

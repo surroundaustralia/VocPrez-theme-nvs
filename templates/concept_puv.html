@@ -1,0 +1,110 @@
+{% extends "page.html" %}
+{% set uri = concept.uri %}
+{% block content %}
+  <div style="display:grid; grid-template-columns: 80% auto;">
+    <div style="grid-column: 1;">
+      <h1>PUV Parameter
+      {% if concept.other_properties is not none %}
+        {% for prop in concept.other_properties %}
+          {% if prop.uri == 'http://www.w3.org/2002/07/owl#deprecated' and prop.value == 'true' %}
+            <sup style="color:red;">DEPRECATED</sup>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      </h1>
+      <h2>{{ concept.prefLabel }}</h2>
+      <table class="metadata concept">
+        <tr>
+          <th>URI</th>
+          <td><a href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></td>
+        </tr>
+        <tr>
+          <th>Within Vocab</th>
+          <td><a href="{{ utils.get_vocab_uri_from_concept_uri(uri) }}">{{ vocab_title }}</a></td>
+        </tr>
+        <tr>
+          <th><a href="http://www.w3.org/2004/02/skos/core#prefLabel">Preferred Label</a></th>
+          <td>{{ concept.prefLabel }}</td>
+        </tr>
+        {% if concept.altLabels|length > 0 %}
+        <tr>
+          <th><a href="http://www.w3.org/2004/02/skos/core#altLabel">Alternative Labels</a></th>
+          <td>
+            {% for a in concept.altLabels %}
+              {{ a }}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endif %}
+        <tr>
+          <th><a href="http://www.w3.org/2004/02/skos/core#definition">Definition</a></th>
+            <td>{{ concept.definition|safe }}</td>
+        </tr>
+        <tr>
+          <th colspan="2"><a href="https://w3id.org/env/puv"><h3 style="color: rgb(0, 125, 187);">PUV Ontology Properties</h3></a></th>
+        </tr>
+        {% if concept.puv_properties is not none %}
+          {% for k, v in concept.puv_properties.items() %}
+            <tr>
+              <th><a href="{{ k }}">{{ v["prop_label"] }}</a></th>
+              <th><a href="{{ v["val"] }}">{{ v["val_label"] }}</a></th>
+            </tr>
+          {% endfor %}
+        {% endif %}
+        <tr>
+          <th colspan="2"><h3>NVS SKOS Properties</h3></th>
+        </tr>
+        {% if concept.related_instances|length > 0 %}
+          {% for k, v in concept.related_instances.items() %}
+          <tr>
+            <th><a href="{{ k }}">{{ v["label"] }}</a></th>
+            <td>
+              <table>
+              {% for inst in v["instances"] %}
+                <tr>
+                  <td>
+                    <code>
+                    {% if utils.get_vocab_id(inst[0]) != 'Ext' %}
+                    <a href="{{ utils.get_vocab_uri_from_concept_uri(inst[0]) }}">{{ utils.get_vocab_id(inst[0]) }}</a>:<a href="{{ utils.get_content_uri(inst[0]) -}}">{{ utils.get_content_uri(inst[0]).split("/")[-2] }}</a>
+                    {% endif %}
+                    </code>
+                  </td>
+                  <td>
+                    {{ inst[1] }}
+                  </td>
+                </tr>
+              {% endfor %}
+              </table>
+            </td>
+          </tr>
+          {% endfor %}
+      {% endif %}
+      {% if concept.annotations is not none %}
+        {% for prop in concept.annotations %}
+        <tr>
+          <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+          <td>
+            {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% endif %}
+      {% if concept.other_properties is not none %}
+        {% for prop in concept.other_properties %}
+          <tr>
+            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+            <td>
+              {% if prop.value[:4] == 'http' %}
+                <a href="{{ utils.get_content_uri(prop.value) }}">{{ prop.value }}</a>
+              {% else %}
+                {{ prop.value }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+      </table>
+    </div>
+    {% include 'nvs_alt_link.html' %}
+  </div>
+{% endblock %}

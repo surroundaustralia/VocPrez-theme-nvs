@@ -1,12 +1,13 @@
 import logging
 import dateutil.parser
+import pprint
 from flask import g
 from vocprez import _config as config
 from vocprez.model.vocabulary import Vocabulary
 from vocprez.model.property import Property
 from vocprez.source._source import *
 import vocprez.utils as u
-from rdflib import Literal, URIRef, Graph
+from rdflib import Literal, URIRef, Namespace
 
 
 class NvsSPARQL(Source):
@@ -17,8 +18,6 @@ class NvsSPARQL(Source):
         super().__init__(request, language)
         bare_uri = str(request.base_url).replace(config.SYSTEM_BASE_URI, config.ABS_URI_BASE_IN_DATA)
         self.vocab_uri = bare_uri.split("/current/")[0] + "/current/"
-        if "/standard_name/" in self.vocab_uri:
-            self.vocab_uri = "http://vocab.nerc.ac.uk/collection/P07/current/"
 
     @staticmethod
     def collect(details):
@@ -429,7 +428,6 @@ class NvsSPARQL(Source):
                 }
             }
             """.replace("xxxx", uri)
-
         pl = None
         d = None
         s = {
@@ -476,10 +474,164 @@ class NvsSPARQL(Source):
             "http://purl.org/pav/authoredOn": "Authored On"
         }
 
+        PUV = Namespace("https://w3id.org/env/puv/")
+        puv_property_types = {
+            str(PUV.analyticalMethod):  "analytical method",
+            str(PUV.biologicalObject):  "biological object of interest",
+            str(PUV.chemicalObject):    "chemical object of interest",
+            str(PUV.dataProcessing):    "data processing method",
+            str(PUV.isComposedOf):      "is composed of",
+            str(PUV.matrix):            "matrix",
+            str(PUV.matrixRelationship): "measurement-matrix relationship",
+            str(PUV.method):            "method",
+            str(PUV.objectOfInterest):  "object of interest",
+            str(PUV.physicalObject):    "physical object of interest",
+            str(PUV.property):          "property",
+            str(PUV.samplePreparation): "sample-preparation method",
+            str(PUV.statistic):         "statistic",
+            str(PUV.uom):               "unit-of-measurement",
+        }
+        puv_properties = {}
+
         other_properties = []
         unique_alt_labels = []
         unique_versions = []
-        for r in u.sparql_query(q):
+        res = u.sparql_query(q)
+
+        static_puv_params = [
+            {
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                },
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/Parameter'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'Parameter',
+                    'xml:lang': 'en'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/biologicalObject'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/S25/current/BE006569/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'Mytilus galloprovincialis (ITIS: 79456: WoRMS 140481) [Subcomponent: flesh]',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:S25:BE006569'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/chemicalObject'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/S27/current/CS003687/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': '1,2,3,7,8-pentachlorodibenzofuran',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:S27:CS003687'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/matrix'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/S26/current/MAT01963/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'biota',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:S26:MAT01963'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/matrixRelationship'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/S02/current/S041/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'per unit dry weight of',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:S02:S041'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/property'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/S06/current/S0600045/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'Concentration',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:S06:S0600045'
+                },
+            },
+            {
+                'p': {
+                    'type': 'uri',
+                    'value': 'https://w3id.org/env/puv/uom'
+                },
+                'o': {
+                    'type': 'uri',
+                    'value': 'http://vocab.nerc.ac.uk/collection/P06/current/UUKG/'
+                },
+                'ropl': {
+                    'type': 'literal',
+                    'value': 'Micrograms per kilogram',
+                    'xml:lang': 'en'
+                },
+                'ron': {
+                    'type': 'literal',
+                    'value': 'SDN:P06:UUKG'
+                },
+            }
+        ]
+        res.extend(static_puv_params)
+
+        for r in res:
             prop = r["p"]["value"]
             val = r["o"]["value"]
             if prop == "http://www.w3.org/2004/02/skos/core#prefLabel":
@@ -492,6 +644,12 @@ class NvsSPARQL(Source):
                 s["source"] = val
             elif prop == "http://www.w3.org/ns/prov#wasDerivedFrom":
                 s["wasDerivedFrom"] = val
+            elif prop in puv_property_types.keys():
+                puv_properties[prop] = {
+                    "prop_label": puv_property_types[prop],
+                    "val": val,
+                    "val_label": r["ropl"]["value"] if r.get("ropl") is not None else None,
+                }
             elif prop in annotation_types.keys():
                 if val != "":
                     annotations.append(Property(prop, annotation_types[prop], val))
@@ -536,7 +694,7 @@ class NvsSPARQL(Source):
         if pl is None:
             return None
 
-        from vocprez.model.concept import Concept
+        from vocprez.model.nvs_concept import NvsConcept
 
         def nvs_rel_concept_sort(s):
             for ss in s:
@@ -561,14 +719,15 @@ class NvsSPARQL(Source):
             ]
             return order.index(s[0])
 
-        return Concept(
+        return NvsConcept(
             self.vocab_uri,
             uri,
             pl,
             d,
             dict(sorted(related_instances.items(), key=lambda x: specified_order(x))),
             annotations=annotations,
-            other_properties=other_properties
+            other_properties=other_properties,
+            puv_properties=puv_properties
         )
 
     def get_concept_hierarchy(self):
