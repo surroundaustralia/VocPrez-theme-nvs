@@ -47,6 +47,7 @@
             <td>
               <table>
               {% for inst in v["instances"] %}
+                {% if inst[1] is not none %}
                 <tr>
                   <td>
                     <code>
@@ -59,6 +60,7 @@
                     {{ inst[1] }}
                   </td>
                 </tr>
+                {% endif %}
               {% endfor %}
               </table>
             </td>

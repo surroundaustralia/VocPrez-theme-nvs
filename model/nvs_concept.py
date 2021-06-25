@@ -144,8 +144,6 @@ class NvsConceptRenderer(ConceptRenderer):
             headers={"Accept": self.mediatype}
         )
 
-        g = Graph().parse(data=r.text, format="turtle")
-
         return Response(
             r.text,
             mimetype=self.mediatype,
