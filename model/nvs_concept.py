@@ -47,38 +47,39 @@ class NvsConceptRenderer(ConceptRenderer):
         self.concept = concept
 
         # Only make the PUV profile available for certain vocabs
-        # TODO: replace with a lookup for vocab conformsTo PUV data
-        puv_vocabs_ids = [
-            "A05",
-            "P01",
-            "S02",
-            "S03",
-            "S04",
-            "S05",
-            "S06",
-            "S07",
-            "S09",
-            "S10",
-            "S11",
-            "S12",
-            "S13",
-            "S14",
-            "S15",
-            "S18",
-            "S19",
-            "S20",
-            "S21",
-            "S22",
-            "S23",
-            "S24",
-            "S25",
-            "S26",
-            "S27",
-            "S29",
-            "S30"
-        ]
-        if any(f"/{x}/" in self.concept.vocab_uri for x in puv_vocabs_ids):
-            self.profiles["puv"] = profile_puv
+        # puv_vocabs_ids = [
+        #     "A05",
+        #     "P01",
+        #     "S02",
+        #     "S03",
+        #     "S04",
+        #     "S05",
+        #     "S06",
+        #     "S07",
+        #     "S09",
+        #     "S10",
+        #     "S11",
+        #     "S12",
+        #     "S13",
+        #     "S14",
+        #     "S15",
+        #     "S18",
+        #     "S19",
+        #     "S20",
+        #     "S21",
+        #     "S22",
+        #     "S23",
+        #     "S24",
+        #     "S25",
+        #     "S26",
+        #     "S27",
+        #     "S29",
+        #     "S30"
+        # ]
+        # if any(f"/{x}/" in self.concept.vocab_uri for x in puv_vocabs_ids):
+        for op in g.VOCABS[self.concept.vocab_uri].other_properties:
+            if op.uri == "http://purl.org/dc/terms/conformsTo" and op.value == URIRef("https://w3id.org/env/puv"):
+                self.profiles["puv"] = profile_puv
 
         super(ConceptRenderer, self).__init__(self.request, self.concept.uri, self.profiles, "nvs")
 
@@ -241,6 +242,7 @@ class NvsConceptRenderer(ConceptRenderer):
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
             PREFIX pav: <http://purl.org/pav/>
             PREFIX prov: <https://www.w3.org/ns/prov#>
+            PREFIX puv: <https://w3id.org/env/puv>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
             PREFIX void: <http://rdfs.org/ns/void#>
@@ -254,34 +256,12 @@ class NvsConceptRenderer(ConceptRenderer):
             }
             WHERE {
                 <xxx> ?p ?o .
-
-                # exclude PUV properties from NVS view
-                FILTER (!STRSTARTS(STR(?p), "https://w3id.org/env/puv#"))
             }        
             """.replace("xxx", self.concept.uri)
         r = requests.get(
             config.SPARQL_ENDPOINT,
             params={"query": q},
-            headers={"Accept": "text/turtle"}
-        )
-
-        g = Graph().parse(data=r.text, format="turtle")
-
-        g.parse(
-            data="""
-            @prefix puv: <https://w3id.org/env/puv#> .
-
-            <xxx> 
-                a puv:Parameter ;
-                puv:biologicalObject <http://vocab.nerc.ac.uk/collection/S25/current/BE006569/> ;
-                puv:chemicalObject <http://vocab.nerc.ac.uk/collection/S27/current/CS003687/> ;
-                puv:matrix <http://vocab.nerc.ac.uk/collection/S26/current/MAT01963/> ;
-                puv:matrixRelationship <http://vocab.nerc.ac.uk/collection/S02/current/S041/> ;
-                puv:property <http://vocab.nerc.ac.uk/collection/S06/current/S0600045/> ;
-                puv:uom <http://vocab.nerc.ac.uk/collection/P06/current/UUKG/> ;
-            .
-            """.replace("xxx", self.concept.uri),
-            format="turtle"
+            headers={"Accept": self.mediatype}
         )
 
         return Response(

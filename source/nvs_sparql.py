@@ -58,6 +58,7 @@ class NvsSPARQL(Source):
                 OPTIONAL { ?v dcterms:modified ?modified }
                 OPTIONAL { ?v dcterms:creator ?creator }
                 OPTIONAL { ?v dcterms:publisher ?publisher }
+                OPTIONAL { ?v dcterms:conformsTo ?conforms_to }
                 OPTIONAL { ?v owl:versionInfo ?version }
                 OPTIONAL { ?v dcterms:description ?description .
                            FILTER(lang(?description) = "en" || lang(?description) = "") 
@@ -92,6 +93,16 @@ class NvsSPARQL(Source):
                     Literal(u.get_vocab_id(v["v"]["value"]))
                 )
             )
+            if v.get("conforms_to") is not None:
+                if v["conforms_to"].get("value") == "https://w3id.org/env/puv":
+                    other_properties.append(
+                        Property(
+                            "http://purl.org/dc/terms/conformsTo",
+                            "Conforms To",
+                            URIRef(v["conforms_to"]["value"])
+                        )
+                    )
+
             if v.get("registermanager") is not None:
                 other_properties.append(
                     Property(
@@ -498,138 +509,138 @@ class NvsSPARQL(Source):
         unique_versions = []
         res = u.sparql_query(q)
 
-        static_puv_params = [
-            {
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-                },
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/Parameter'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'Parameter',
-                    'xml:lang': 'en'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/biologicalObject'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/S25/current/BE006569/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'Mytilus galloprovincialis (ITIS: 79456: WoRMS 140481) [Subcomponent: flesh]',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:S25:BE006569'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/chemicalObject'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/S27/current/CS003687/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': '1,2,3,7,8-pentachlorodibenzofuran',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:S27:CS003687'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/matrix'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/S26/current/MAT01963/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'biota',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:S26:MAT01963'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/matrixRelationship'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/S02/current/S041/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'per unit dry weight of',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:S02:S041'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/property'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/S06/current/S0600045/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'Concentration',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:S06:S0600045'
-                },
-            },
-            {
-                'p': {
-                    'type': 'uri',
-                    'value': 'https://w3id.org/env/puv/uom'
-                },
-                'o': {
-                    'type': 'uri',
-                    'value': 'http://vocab.nerc.ac.uk/collection/P06/current/UUKG/'
-                },
-                'ropl': {
-                    'type': 'literal',
-                    'value': 'Micrograms per kilogram',
-                    'xml:lang': 'en'
-                },
-                'ron': {
-                    'type': 'literal',
-                    'value': 'SDN:P06:UUKG'
-                },
-            }
-        ]
-        res.extend(static_puv_params)
+        # static_puv_params = [
+        #     {
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+        #         },
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/Parameter'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Parameter',
+        #             'xml:lang': 'en'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/biologicalObject'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S25/current/BE006569/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Mytilus galloprovincialis (ITIS: 79456: WoRMS 140481) [Subcomponent: flesh]',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S25:BE006569'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/chemicalObject'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S27/current/CS003687/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': '1,2,3,7,8-pentachlorodibenzofuran',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S27:CS003687'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/matrix'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S26/current/MAT01963/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'biota',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S26:MAT01963'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/matrixRelationship'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S02/current/S041/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'per unit dry weight of',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S02:S041'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/property'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S06/current/S0600045/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Concentration',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S06:S0600045'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/uom'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/P06/current/UUKG/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Micrograms per kilogram',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:P06:UUKG'
+        #         },
+        #     }
+        # ]
+        # res.extend(static_puv_params)
 
         for r in res:
             prop = r["p"]["value"]
