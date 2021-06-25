@@ -5,32 +5,37 @@
     <div style="grid-column: 1; grid-row: 1;">
       <h1>Vocabulary</h1>
       <h2>{{ vocab.title }}</h2>
+        {% if is_puv_vocab %}
+        <h4>
+          <em>This collection is part of the <a style="font-size:revert;" href="https://w3id.org/env/puv">Parameter Usage Vocabulary</a> set of vocabularies.</em>
+        </h4>
+        {% endif %}
       <table class="metadata">
         <tr>
           <th>URI</th>
           <td><strong><a id="this_uri" href="{{ utils.get_content_uri(uri) }}">{{ uri }}</a></strong></td>
         </tr>
-        {%  if vocab.description is not none  -%}
+        {% if vocab.description is not none  -%}
         <tr>
           <th><a href="http://purl.org/dc/terms/description">Description</a></th><td>{{ vocab.description|markdown }}</td>
         </tr>
         {% endif -%}
-        {%  if vocab.creator is not none  -%}
+        {% if vocab.creator is not none  -%}
         <tr>
           <th><a href="http://purl.org/dc/terms/creator">Creator</a></th><td>{{ vocab.creator }}</td>
         </tr>
         {% endif -%}
-        {%  if vocab.created is not none  -%}
+        {% if vocab.created is not none  -%}
         <tr>
           <th><a href="http://purl.org/dc/terms/created">Created</a></th><td>{{ vocab.created.strftime('%Y-%m-%d') }}</td>
         </tr>
         {% endif -%}
-        {%  if vocab.modified is not none  -%}
+        {% if vocab.modified is not none  -%}
         <tr>
           <th><a href="http://purl.org/dc/terms/modified">Modified</a></th><td>{{ vocab.modified.strftime('%Y-%m-%d') }}</td>
         </tr>
         {% endif -%}
-        {%  if vocab.versionInfo is not none  -%}
+        {% if vocab.versionInfo is not none  -%}
         <tr>
           <th><a href="http://www.w3.org/2002/07/owl#versionInfo">Version Info</a></th><td>{{ vocab.versionInfo }}</td>
         </tr>

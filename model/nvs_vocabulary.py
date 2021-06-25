@@ -25,6 +25,40 @@ class NvsVocabularyRenderer(VocabularyRenderer):
         self.language = language
         self.request = request
 
+        puv_vocabs_ids = [
+            "A05",
+            "P01",
+            "S02",
+            "S03",
+            "S04",
+            "S05",
+            "S06",
+            "S07",
+            "S09",
+            "S10",
+            "S11",
+            "S12",
+            "S13",
+            "S14",
+            "S15",
+            "S18",
+            "S19",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "S26",
+            "S27",
+            "S29",
+            "S30"
+        ]
+        if any(f"/{x}/" in self.uri for x in puv_vocabs_ids):
+            self.is_puv_vocab = True
+        else:
+            self.is_puv_vocab = False
+
         super(VocabularyRenderer, self).__init__(request, vocab.uri, self.profiles, "nvs")
 
     def render(self):
@@ -158,6 +192,7 @@ class NvsVocabularyRenderer(VocabularyRenderer):
             "uri": self.uri,
             "vocab": self.vocab,
             "title": self.vocab.title,
+            "is_puv_vocab": self.is_puv_vocab
         }
 
         return Response(
