@@ -32,22 +32,22 @@ else
 fi
 
 echo "\tvocabs"
-sed -i -e '/# ROUTE vocabs/!b;:a;N;/# END ROUTE vocabs/M!ba;r app_additions_vocabs.py' -e 'd' $APP
+sed -i -e '/# ROUTE vocabs/!b;:a;N;/# END ROUTE vocabs/M!ba;r '$VP_THEME_HOME'/app_additions_vocabs.py' -e 'd' $APP
 
 echo "\tvocab"
-sed -i -e '/# ROUTE one vocab/!b;:a;N;/# END ROUTE one vocab/M!ba;r app_additions_vocab.py' -e 'd' $APP
+sed -i -e '/# ROUTE one vocab/!b;:a;N;/# END ROUTE one vocab/M!ba;r '$VP_THEME_HOME'/app_additions_vocab.py' -e 'd' $APP
 
 echo "\tsearch"
-sed -i -e '/# ROUTE search/!b;:a;N;/# END ROUTE search/M!ba;r app_additions_search.py' -e 'd' $APP
+sed -i -e '/# ROUTE search/!b;:a;N;/# END ROUTE search/M!ba;r '$VP_THEME_HOME'/app_additions_search.py' -e 'd' $APP
 
 echo "\tabout"
-sed -i -e '/# ROUTE about/!b;:a;N;/# END ROUTE about/M!ba;r app_additions_about.py' -e 'd' $APP
+sed -i -e '/# ROUTE about/!b;:a;N;/# END ROUTE about/M!ba;r '$VP_THEME_HOME'/app_additions_about.py' -e 'd' $APP
 
 echo "\tcontact us"
 sed -i "/# END ROUTE about/r $VP_THEME_HOME/app_additions_contact_us.py" $APP
 
 echo "\tobject"
-sed -i -e '/# ROUTE object/!b;:a;N;/# END ROUTE object/M!ba;r app_additions_object.py' -e 'd' $APP
+sed -i -e '/# ROUTE object/!b;:a;N;/# END ROUTE object/M!ba;r '$VP_THEME_HOME'/app_additions_object.py' -e 'd' $APP
 
 echo "\tRESTful Concept"
 sed -i "/# END ROUTE object/r $VP_THEME_HOME/app_additions_concept.py" $APP
