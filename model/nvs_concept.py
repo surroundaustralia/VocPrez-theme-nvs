@@ -242,7 +242,7 @@ class NvsConceptRenderer(ConceptRenderer):
             PREFIX owl: <http://www.w3.org/2002/07/owl#>
             PREFIX pav: <http://purl.org/pav/>
             PREFIX prov: <https://www.w3.org/ns/prov#>
-            PREFIX puv: <https://w3id.org/env/puv>
+            PREFIX puv: <https://w3id.org/env/puv#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
             PREFIX void: <http://rdfs.org/ns/void#>
@@ -263,6 +263,8 @@ class NvsConceptRenderer(ConceptRenderer):
             params={"query": q},
             headers={"Accept": self.mediatype}
         )
+
+        g = Graph().parse(data=r.text, format=self.mediatype)
 
         return Response(
             serialize_by_mediatype(g, self.mediatype),
