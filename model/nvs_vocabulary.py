@@ -90,35 +90,35 @@ class NvsVocabularyRenderer(VocabularyRenderer):
 
     def _render_nvs_rdf(self):
         if "/standard_name" in self.request.base_url:
-            q = """
+            q = f"""
                 PREFIX dcterms: <http://purl.org/dc/terms/>
                 PREFIX owl: <http://www.w3.org/2002/07/owl#>
                 PREFIX pav: <http://purl.org/pav/>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
                 
-                CONSTRUCT {
-                  <http://vocab.nerc.ac.uk/standard_name/> ?p ?o . 
+                CONSTRUCT {{
+                  <{config.ABSOLUTE_URI_BASE}/standard_name/> ?p ?o . 
                   
-                  <http://vocab.nerc.ac.uk/standard_name/> skos:member ?x .
+                  <{config.ABSOLUTE_URI_BASE}/standard_name/> skos:member ?x .
                 
                   ?x ?p2 ?o2 .                
-                }
-                WHERE {
-                  {
-                    <http://vocab.nerc.ac.uk/collection/P07/current/> ?p ?o .
+                }}
+                WHERE {{
+                  {{
+                    <{config.ABSOLUTE_URI_BASE}/collection/P07/current/> ?p ?o .
                   
-                    MINUS { <http://vocab.nerc.ac.uk/collection/P07/current/> skos:member ?o . }
-                  }
+                    MINUS {{ <{config.ABSOLUTE_URI_BASE}/collection/P07/current/> skos:member ?o . }}
+                  }}
                   
-                  {
-                    <http://vocab.nerc.ac.uk/collection/P07/current/> skos:member ?m .
+                  {{
+                    <{config.ABSOLUTE_URI_BASE}/collection/P07/current/> skos:member ?m .
                     ?m a skos:Concept .
                 
                     ?m ?p2 ?o2 .
                 
-                    BIND (URI(CONCAT("http://vocab.nerc.ac.uk/standard_name/", STRAFTER(STR(?m),"/current/"))) AS ?x)
-                  }
-                }
+                    BIND (URI(CONCAT("{config.ABSOLUTE_URI_BASE}/standard_name/", STRAFTER(STR(?m),"/current/"))) AS ?x)
+                  }}
+                }}
                 """
         elif "/scheme/" in self.request.base_url:
             q = """

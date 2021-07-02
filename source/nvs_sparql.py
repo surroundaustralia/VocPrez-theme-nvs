@@ -146,8 +146,8 @@ class NvsSPARQL(Source):
                 sparql_password=details.get("sparql_password"),
                 other_properties=other_properties
             )
-            if vocab_uri == "http://vocab.nerc.ac.uk/collection/P07/current/":
-                vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+            if vocab_uri == f"{config.ABSOLUTE_URI_BASE}/collection/P07/current/":
+                vocab_uri = f"{config.ABSOLUTE_URI_BASE}/standard_name/"
 
                 other_properties = []
                 other_properties.append(
@@ -185,7 +185,7 @@ class NvsSPARQL(Source):
                     Property(
                         "http://www.w3.org/2000/01/rdf-schema#seeAlso",
                         "See Also",
-                        URIRef("http://vocab.nerc.ac.uk/collection/P07/current/")
+                        URIRef(f"{config.ABSOLUTE_URI_BASE}/collection/P07/current/")
                     )
                 )
 
@@ -386,18 +386,18 @@ class NvsSPARQL(Source):
         ]
 
     def list_concepts_for_standard_name(self, acc_dep=None):
-        self.vocab_uri = "http://vocab.nerc.ac.uk/collection/P07/current/"
+        self.vocab_uri = f"{config.ABSOLUTE_URI_BASE}/collection/P07/current/"
         concepts = self.list_concepts_for_a_collection(acc_dep)
         sn_concepts = []
         for concept in concepts:
             sn_concepts.append((
-                "http://vocab.nerc.ac.uk/standard_name/" + concept[1].replace(" ", "_"),
+                f"{config.ABSOLUTE_URI_BASE}/standard_name/" + concept[1].replace(" ", "_"),
                 concept[1],
                 concept[2],
                 concept[3],
                 concept[4],
             ))
-        self.vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+        self.vocab_uri = f"{config.ABSOLUTE_URI_BASE}/standard_name/"
         return sn_concepts
 
     def get_vocabulary(self, acc_dep=None):

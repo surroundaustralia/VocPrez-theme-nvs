@@ -153,7 +153,7 @@ class NvsConceptRenderer(ConceptRenderer):
 
     def _render_nvs_html(self):
         if "/standard_name/" in self.concept.vocab_uri:
-            self.concept.vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
+            self.concept.vocab_uri = f"{config.ABSOLUTE_URI_BASE}/standard_name/"
         _template_context = {
             "version": __version__,
             "vocab_uri": self.concept.vocab_uri,
