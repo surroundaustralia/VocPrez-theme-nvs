@@ -485,7 +485,7 @@ class NvsSPARQL(Source):
             "http://purl.org/pav/authoredOn": "Authored On"
         }
 
-        PUV = Namespace("https://w3id.org/env/puv/")
+        PUV = Namespace("https://w3id.org/env/puv#")
         puv_property_types = {
             str(PUV.analyticalMethod):  "analytical method",
             str(PUV.biologicalObject):  "biological object of interest",
