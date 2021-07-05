@@ -623,6 +623,44 @@ class NvsSPARQL(Source):
         #     {
         #         'p': {
         #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/property'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S06/current/S0600082/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Temperature',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S06:S0600082'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
+        #             'value': 'https://w3id.org/env/puv/property'
+        #         },
+        #         'o': {
+        #             'type': 'uri',
+        #             'value': 'http://vocab.nerc.ac.uk/collection/S06/current/S06000160/'
+        #         },
+        #         'ropl': {
+        #             'type': 'literal',
+        #             'value': 'Temperature (IPTS-68)',
+        #             'xml:lang': 'en'
+        #         },
+        #         'ron': {
+        #             'type': 'literal',
+        #             'value': 'SDN:S06:S06000160'
+        #         },
+        #     },
+        #     {
+        #         'p': {
+        #             'type': 'uri',
         #             'value': 'https://w3id.org/env/puv/uom'
         #         },
         #         'o': {
@@ -656,11 +694,24 @@ class NvsSPARQL(Source):
             elif prop == "http://www.w3.org/ns/prov#wasDerivedFrom":
                 s["wasDerivedFrom"] = val
             elif prop in puv_property_types.keys():
-                puv_properties[prop] = {
-                    "prop_label": puv_property_types[prop],
-                    "val": val,
-                    "val_label": r["ropl"]["value"] if r.get("ropl") is not None else None,
-                }
+                if puv_properties.get(prop) is None:
+                    puv_properties[prop] = {
+                        "instances": [],
+                        "label": puv_property_types[prop]
+                    }
+                # only add this instance if we don't already have one from the same vocab with the same prefLabel
+                seen = False
+                for ri in puv_properties[prop]["instances"]:
+                    if r.get("ropl") is not None:
+                        if val.split("/current/")[0] in ri[0] and r["ropl"]["value"] == ri[1]:
+                            seen = True
+
+                if seen:
+                    pass
+                else:
+                    puv_properties[prop]["instances"].append(
+                        (val, r["ropl"]["value"] if r.get("ropl") is not None else None)
+                    )
             elif prop in annotation_types.keys():
                 if val != "":
                     annotations.append(Property(prop, annotation_types[prop], val))

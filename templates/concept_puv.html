@@ -51,6 +51,36 @@
             </tr>
           {% endfor %}
         {% endif %}
+
+        {% if concept.puv_properties|length > 0 %}
+          {% for k, v in concept.puv_properties.items() %}
+          <tr>
+            <th><a href="{{ k }}">{{ v["label"] }}</a></th>
+            <td>
+              <table>
+              {% for inst in v["instances"] %}
+                {% if inst[1] is not none %}
+                <tr>
+                  <td>
+                    <code>
+                    {% if utils.get_vocab_id(inst[0]) != 'Ext' %}
+                    <a href="{{ utils.get_vocab_uri_from_concept_uri(inst[0]) }}">{{ utils.get_vocab_id(inst[0]) }}</a>:<a href="{{ utils.get_content_uri(inst[0]) -}}">{{ utils.get_content_uri(inst[0]).split("/")[-2] }}</a>
+                    {% endif %}
+                    </code>
+                  </td>
+                  <td>
+                    {{ inst[1] }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </td>
+          </tr>
+          {% endfor %}
+      {% endif %}
+
+
         <tr>
           <th colspan="2"><h3>NVS SKOS Properties</h3></th>
         </tr>
