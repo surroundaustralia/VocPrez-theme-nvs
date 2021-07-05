@@ -77,6 +77,8 @@ class NvsConceptRenderer(ConceptRenderer):
         #     "S30"
         # ]
         # if any(f"/{x}/" in self.concept.vocab_uri for x in puv_vocabs_ids):
+        if "/standard_name/" in self.concept.vocab_uri:
+            self.concept.vocab_uri = "http://vocab.nerc.ac.uk/standard_name/"
         for op in g.VOCABS[self.concept.vocab_uri].other_properties:
             if op.uri == "http://purl.org/dc/terms/conformsTo" and op.value == URIRef("https://w3id.org/env/puv"):
                 self.profiles["puv"] = profile_puv

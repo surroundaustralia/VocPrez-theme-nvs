@@ -391,7 +391,7 @@ class NvsSPARQL(Source):
         sn_concepts = []
         for concept in concepts:
             sn_concepts.append((
-                f"{config.ABSOLUTE_URI_BASE}/standard_name/" + concept[1].replace(" ", "_"),
+                f"{config.ABSOLUTE_URI_BASE}/standard_name/" + concept[1].replace(" ", "_") + "/",
                 concept[1],
                 concept[2],
                 concept[3],
