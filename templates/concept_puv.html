@@ -40,6 +40,30 @@
           <th><a href="http://www.w3.org/2004/02/skos/core#definition">Definition</a></th>
             <td>{{ concept.definition|safe }}</td>
         </tr>
+        {% if concept.annotations is not none %}
+          {% for prop in concept.annotations %}
+          <tr>
+            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+            <td>
+              {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        {% endif %}
+        {% if concept.other_properties is not none %}
+          {% for prop in concept.other_properties %}
+            <tr>
+              <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
+              <td>
+                {% if prop.value[:4] == 'http' %}
+                  <a href="{{ utils.get_content_uri(prop.value) }}">{{ prop.value }}</a>
+                {% else %}
+                  {{ prop.value }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+      {% endif %}
         <tr>
           <th colspan="2"><a href="https://w3id.org/env/puv"><h3 style="color: rgb(0, 125, 187);">PUV Ontology Properties</h3></a></th>
         </tr>
@@ -110,30 +134,6 @@
             </td>
           </tr>
           {% endfor %}
-      {% endif %}
-      {% if concept.annotations is not none %}
-        {% for prop in concept.annotations %}
-        <tr>
-          <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
-          <td>
-            {% if prop.value[:4] == 'http' %}<a href="{{ prop.value }}">{{ prop.value }}</a>{% else %}{{ prop.value }}{% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      {% endif %}
-      {% if concept.other_properties is not none %}
-        {% for prop in concept.other_properties %}
-          <tr>
-            <th><a href="{{ prop.uri }}">{{ prop.label }}</a></th>
-            <td>
-              {% if prop.value[:4] == 'http' %}
-                <a href="{{ utils.get_content_uri(prop.value) }}">{{ prop.value }}</a>
-              {% else %}
-                {{ prop.value }}
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
       {% endif %}
       </table>
     </div>
